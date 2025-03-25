@@ -41,15 +41,21 @@ public final class StackNavigator<
   }
   
   public func replaceLast(with destination: DestinationType) {
-    #warning("TODO: Figure out how to replace stack with animation")
-    pop()
     push(destination)
+    
+    withoutAnimations { [weak self] in
+      self?.pop()
+      self?.push(destination)
+    }
   }
   
   public func replaceStack(with destination: DestinationType) {
-    #warning("TODO: Figure out how to replace stack with animation")
-    popToRoot()
     push(destination)
+    
+    withoutAnimations { [weak self] in
+      self?.popToRoot()
+      self?.push(destination)
+    }
   }
   
   public func pop() {
