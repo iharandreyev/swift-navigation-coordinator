@@ -58,14 +58,28 @@ extension Perception.Bindable where Value == ModalState {
         switch wrappedValue._destination {
         case let .cover(destination):
           guard let destination: Destination = destination.extract() else {
-            logWarning("Modal cover destination contains unexpected type. Returning nil to avoid hard crash")
+            logWarning(
+              """
+                Modal cover destination contains unexpected type.                       \  
+                Expected type is `\(ShortDescription(Destination.self))`.               \
+                Wrapped type is `\(ShortDescription(type(of: _destination.wrapped)))`.  \
+                Returning nil to avoid hard crash
+              """
+            )
             return .none
           }
           return .cover(destination)
           
         case let .sheet(destination):
           guard let destination: Destination = destination.extract() else {
-            logWarning("Modal sheet destination contains unexpected type. Returning nil to avoid hard crash")
+            logWarning(
+              """
+                Modal sheet destination contains unexpected type.                       \  
+                Expected type is `\(ShortDescription(Destination.self))`.               \
+                Wrapped type is `\(ShortDescription(type(of: _destination.wrapped)))`.  \
+                Returning nil to avoid hard crash
+              """
+            )
             return .none
           }
           return .sheet(destination)
@@ -78,7 +92,12 @@ extension Perception.Bindable where Value == ModalState {
         // SwiftUI can only dismiss the destination via binding
         // If some concrete value is passed, then something went horribly wrong
         guard expectedNil == nil else {
-          logWarning("Binding is trying to mutate ModalState, which is prohibited. Ignoring request")
+          logWarning(
+            """
+              Binding is trying to mutate ModalState, which is prohibited. 
+              Ignoring request
+              """
+          )
           return
         }
         
