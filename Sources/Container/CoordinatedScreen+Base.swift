@@ -35,6 +35,10 @@ struct _CoordinatedScreen_Base<
   }
   
   var body: some View {
-    coordinator.initialScreen()
+    coordinator
+      .initialScreen()
+      .onRemoveFromParent{ [weak coordinator] in
+        coordinator?.finish()
+      }
   }
 }
