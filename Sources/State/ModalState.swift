@@ -62,7 +62,7 @@ extension Perception.Bindable where Value == ModalState {
               """
                 Modal cover destination contains unexpected type.                       \  
                 Expected type is `\(ShortDescription(Destination.self))`.               \
-                Wrapped type is `\(ShortDescription(type(of: _destination.wrapped)))`.  \
+                Wrapped type is `\(ShortDescription(type(of: destination.wrapped)))`.  \
                 Returning nil to avoid hard crash
               """
             )
@@ -76,7 +76,7 @@ extension Perception.Bindable where Value == ModalState {
               """
                 Modal sheet destination contains unexpected type.                       \  
                 Expected type is `\(ShortDescription(Destination.self))`.               \
-                Wrapped type is `\(ShortDescription(type(of: _destination.wrapped)))`.  \
+                Wrapped type is `\(ShortDescription(type(of: destination.wrapped)))`.  \
                 Returning nil to avoid hard crash
               """
             )
