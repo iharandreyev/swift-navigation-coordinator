@@ -25,7 +25,6 @@ open class CoordinatorBase {
   ) {
     self.onFinish = onFinish
 
-    #warning("TODO: Use some kind of logger")
     #warning(
     """
       TODO: Shorten `self.description` string, 
@@ -33,13 +32,12 @@ open class CoordinatorBase {
       making things unreadable
     """
     )
-    print("INIT: `\(self)`")
+    logMessage("INIT: `\(self)`")
   }
   
   // MARK: - Deinit
   
   deinit {
-    #warning("TODO: Use some kind of logger")
     #warning(
     """
       TODO: Shorten `self.description` string, 
@@ -47,7 +45,7 @@ open class CoordinatorBase {
       making things unreadable
     """
     )
-    print("DEINIT: `\(self)`")
+    logMessage("DEINIT: `\(self)`")
   }
   
   // MARK: - Children Management
@@ -129,8 +127,7 @@ open class CoordinatorBase {
     
     children[anyDestination] = child
     
-    #warning("TODO: Use some kind of logger")
-    print("ADD: `\(child)` is added into `\(self)`")
+    logMessage("ADD: `\(child)` is added into `\(self)`")
   }
   
   public final func removeFromParent(
@@ -172,7 +169,6 @@ open class CoordinatorBase {
     removeFromParent()
     onFinish?()
     
-    #warning("TODO: Use some kind of logger")
     #warning(
     """
       TODO: Shorten `self.description` string, 
@@ -180,7 +176,7 @@ open class CoordinatorBase {
       making things unreadable
     """
     )
-    print("FINISH: \(self)")
+    logMessage("FINISH: \(self)")
   }
 
   public final func setOnFinish(
