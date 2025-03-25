@@ -210,6 +210,31 @@ open class CoordinatorBase {
       line: line
     )
   }
+  
+  // MARK: - Deeplink Event Handler
+  
+  open func processDeeplink(
+    _ deeplink: any DeeplinkEventType
+  ) -> ProcessDeeplinkResult {
+    .impossible
+  }
+  
+  final public func handleDeeplink(
+    _ deeplink: any DeeplinkEventType
+  ) -> Bool {
+    switch processDeeplink(deeplink) {
+    case .impossible: return false
+    case .partial: break
+    case .done: return true
+    }
+    
+    for child in children.values {
+      guard child.handleDeeplink(deeplink) else { continue }
+      return true
+    }
+
+    return false
+  }
 }
 
 extension CoordinatorBase {
