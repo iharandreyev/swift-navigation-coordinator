@@ -188,6 +188,28 @@ open class CoordinatorBase {
   ) {
     self.onFinish = onFinish
   }
+  
+  // MARK: - Child Event Handler
+  
+  open func handleChildEvent(
+    _ event: any ChildEventType,
+    file: StaticString = #file,
+    line: UInt = #line
+  ) {
+    guard let parent else {
+      fatalError(
+        "There's no handler for event `\(event)`",
+        file: file,
+        line: line
+      )
+    }
+    
+    return parent.handleChildEvent(
+      event,
+      file: file,
+      line: line
+    )
+  }
 }
 
 extension CoordinatorBase {
