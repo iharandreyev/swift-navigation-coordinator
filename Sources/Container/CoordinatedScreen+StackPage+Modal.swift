@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public extension CoordinatedScreen {
+extension CoordinatedScreen {
   /// Creates a container view that interfaces with a stack coordinator, that is responsible for managing one of the steps in a flow, that is presented as a stack.
   /// Use this factory method for cases when the managing coordinator interfaces with both `StackNavigator` and `ModalNavigator`.
   ///
@@ -17,14 +17,18 @@ public extension CoordinatedScreen {
   /// * observe destinations pushed into coordinator's `StackNavigator`;
   /// * observe destinations to be presented using coordinator's `ModalNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func stackPage<CoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType>(
+  public static func stackPage<
+    CoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  >(
     modalCoordinator coordinator: CoordinatorType
   ) -> some View {
-    CoordinatedScreen_StackPage_Modal(coordinator: coordinator)
+    _CoordinatedScreen_StackPage_Modal(coordinator: coordinator)
   }
 }
 
-public struct CoordinatedScreen_StackPage_Modal<CoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType>: View {
+struct _CoordinatedScreen_StackPage_Modal<
+  CoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+>: View {
   private let coordinator: CoordinatorType
 
   init(
@@ -33,8 +37,8 @@ public struct CoordinatedScreen_StackPage_Modal<CoordinatorType: ScreenCoordinat
     self.coordinator = coordinator
   }
   
-  public var body: some View {
-    CoordinatedScreen_StackPage(
+  var body: some View {
+    _CoordinatedScreen_StackPage(
       coordinator: coordinator
     )
     .modal(

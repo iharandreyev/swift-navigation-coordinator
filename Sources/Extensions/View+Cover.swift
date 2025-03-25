@@ -13,7 +13,7 @@ extension View {
   
   @inline(__always)
   @ViewBuilder
-  public func cover<Item: Identifiable, Content: View>(
+  func cover<Item: Identifiable, Content: View>(
     item: Binding<Item?>,
     onDismiss: (() -> Void)? = nil,
     @ViewBuilder content: @escaping (Item) -> Content

@@ -9,8 +9,8 @@ public protocol CoordinatorChildSearch: CoordinatorBase {
   associatedtype DestinationType: ScreenDestinationType
 }
 
-public extension CoordinatorChildSearch {
-  func child<
+extension CoordinatorChildSearch {
+  public func child<
     Child: CoordinatorBase & ScreenCoordinatorType
   >(
     ofType: Child.Type = Child.self,
@@ -39,7 +39,7 @@ public extension CoordinatorChildSearch {
     return child
   }
   
-  func child(
+  public func child(
     for destination: DestinationType
   ) -> CoordinatorBase? {
     children[AnyDestination(destination)]

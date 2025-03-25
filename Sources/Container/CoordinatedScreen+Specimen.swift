@@ -9,18 +9,21 @@ import Perception
 import SUIOnRemoveFromParent
 import SwiftUI
 
-public extension CoordinatedScreen {
+extension CoordinatedScreen {
   /// Creates a container view that interfaces with a specimen coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces `SpecimenNavigator`.
   ///
   /// The view configures infrastructure to:
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func specimen<CoordinatorType: SpecimenCoordinatorType, Content: View>(
+  public static func specimen<
+    CoordinatorType: SpecimenCoordinatorType,
+    Content: View
+  >(
     coordinator: CoordinatorType,
     @ViewBuilder content: @escaping (Binding<CoordinatorType.DestinationType>) -> Content
   ) -> some View {
-    CoordinatedScreen_Specimen(
+    _CoordinatedScreen_Specimen(
       coordinator: coordinator,
       content: content
     )
@@ -33,10 +36,12 @@ public extension CoordinatedScreen {
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func specimen<CoordinatorType: SpecimenCoordinatorType>(
+  public static func specimen<
+    CoordinatorType: SpecimenCoordinatorType
+  >(
     coordinator: CoordinatorType
   ) -> some View {
-    CoordinatedScreen_Specimen(
+    _CoordinatedScreen_Specimen(
       coordinator: coordinator,
       content: { [unowned coordinator] destination in
         coordinator.screen(
@@ -47,7 +52,7 @@ public extension CoordinatedScreen {
   }
 }
 
-public struct CoordinatedScreen_Specimen<
+struct _CoordinatedScreen_Specimen<
   CoordinatorType: SpecimenCoordinatorType,
   Content: View
 >: ObservingView {
@@ -66,7 +71,7 @@ public struct CoordinatedScreen_Specimen<
     self.contentBuilder = content
   }
   
-  public var content: some View {
+  var content: some View {
     contentBuilder(
       $state.destinationOf(CoordinatorType.DestinationType.self)
     )

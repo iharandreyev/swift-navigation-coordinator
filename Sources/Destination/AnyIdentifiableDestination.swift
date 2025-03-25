@@ -96,7 +96,7 @@ extension Optional where Wrapped == AnyIdentifiableDestination {
 }
 
 extension AnyIdentifiableDestination {
-  public func extract<T>(
+  func extract<T>(
     type: T.Type = T.self
   ) -> T? {
     wrapped as? T

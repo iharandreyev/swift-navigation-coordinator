@@ -9,7 +9,7 @@ import Perception
 import SwiftUI
 import SUIOnRemoveFromParent
 
-public extension CoordinatedScreen {
+extension CoordinatedScreen {
   /// Creates a container view that interfaces with a stack coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces only with `StackNavigator`.
   ///
@@ -18,23 +18,27 @@ public extension CoordinatedScreen {
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations pushed into coordinator's `StackNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func stackRoot<CoordinatorType: ScreenCoordinatorType & StackCoordinatorType>(
+  public static func stackRoot<
+    CoordinatorType: ScreenCoordinatorType & StackCoordinatorType
+  >(
     stackCoordinator coordinator: CoordinatorType
   ) -> some View {
-    CoordinatedScreen_StackRoot(coordinator: coordinator)
+    _CoordinatedScreen_StackRoot(coordinator: coordinator)
   }
 }
 
-public struct CoordinatedScreen_StackRoot<CoordinatorType: ScreenCoordinatorType & StackCoordinatorType>: View {
+struct _CoordinatedScreen_StackRoot<
+  CoordinatorType: ScreenCoordinatorType & StackCoordinatorType
+>: View {
   private let coordinator: CoordinatorType
   
-  public init(
+  init(
     coordinator: CoordinatorType
   ) {
     self.coordinator = coordinator
   }
   
-  public var body: some View {
+  var body: some View {
     _NavigationView(
       for: CoordinatorType.DestinationType.self,
       stackState: coordinator.stackNavigator.state,
@@ -59,7 +63,7 @@ private struct _NavigationView<
   private let rootContent: () -> RootContent
   private let destinationContent: (Destination) -> DestinationContent
   
-  public init(
+  init(
     for destinationType: Destination.Type,
     stackState: StackState,
     rootContent: @escaping () -> RootContent,
@@ -70,7 +74,7 @@ private struct _NavigationView<
     self.destinationContent = destinationContent
   }
   
-  public var content: some View {
+  var content: some View {
     NavigationStack(
       path: $stackState.path(),
       root: {
