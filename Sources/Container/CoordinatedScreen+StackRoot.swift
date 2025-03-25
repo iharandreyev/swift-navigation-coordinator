@@ -79,10 +79,10 @@ private struct _NavigationView<
       path: $stackState.path(),
       root: {
         rootContent()
-        .navigationDestination(
-          for: Destination.self,
-          destination: destinationContent
-        )
+          .navigationDestination(
+            for: Destination.self,
+            destination: destinationContent
+          )
       }
     )
   }
