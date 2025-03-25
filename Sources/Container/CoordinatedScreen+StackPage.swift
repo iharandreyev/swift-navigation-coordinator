@@ -1,5 +1,5 @@
 //
-//  CoordinatedScren+StackPage.swift
+//  CoordinatedScreen+StackPage.swift
 //  SUINavigationCoordinator
 //
 //  Created by Andreyeu, Ihar on 3/26/25.
