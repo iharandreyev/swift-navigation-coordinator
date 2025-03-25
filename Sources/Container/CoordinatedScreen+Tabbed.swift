@@ -9,7 +9,7 @@ import Perception
 import SwiftUI
 import SUIOnRemoveFromParent
 
-public extension CoordinatedScreen {
+extension CoordinatedScreen {
   /// Creates a container view that interfaces with a specimen coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces `SpecimenNavigator` and is intended to present `TabView`.
   ///
@@ -18,7 +18,9 @@ public extension CoordinatedScreen {
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func tabbed<CoordinatorType: LabelledSpecimenCoordinatorType>(
+  public static func tabbed<
+    CoordinatorType: LabelledSpecimenCoordinatorType
+  >(
     coordinator: CoordinatorType
   ) -> some View where CoordinatorType.DestinationType: CaseIterable, CoordinatorType.DestinationType.AllCases: RandomAccessCollection {
     CoordinatedScreen_Tabbed(coordinator: coordinator)
@@ -32,7 +34,9 @@ public extension CoordinatedScreen {
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func tabbed<CoordinatorType: LabelledSpecimenCoordinatorType>(
+  static func tabbed<
+    CoordinatorType: LabelledSpecimenCoordinatorType
+  >(
     coordinator: CoordinatorType,
     tabs: [CoordinatorType.DestinationType]
   ) -> some View {
@@ -43,7 +47,7 @@ public extension CoordinatedScreen {
 import Perception
 import SUIOnRemoveFromParent
 
-public struct CoordinatedScreen_Tabbed<
+struct CoordinatedScreen_Tabbed<
   CoordinatorType: LabelledSpecimenCoordinatorType
 >: ObservingView {
   private let coordinator: CoordinatorType
@@ -69,7 +73,7 @@ public struct CoordinatedScreen_Tabbed<
     self.tabs = tabs
   }
   
-  public var content: some View {
+  var content: some View {
     TabView(
       selection: $state.destinationOf(CoordinatorType.DestinationType.self)
     ) {

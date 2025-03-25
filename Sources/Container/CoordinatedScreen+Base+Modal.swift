@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public extension CoordinatedScreen {
+extension CoordinatedScreen {
   /// Creates a container view that interfaces with a single screen coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces only with `ModalNavigator`.
   ///
@@ -16,14 +16,18 @@ public extension CoordinatedScreen {
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `ModalNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy.
-  static func base<CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType>(
+  public static func base<
+    CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType
+  >(
     modalCoordinator coordinator: CoordinatorType
   ) -> some View {
-    CoordinatedScreen_Base_Modal(coordinator: coordinator)
+    _CoordinatedScreen_Base_Modal(coordinator: coordinator)
   }
 }
 
-public struct CoordinatedScreen_Base_Modal<CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType>: View {
+struct _CoordinatedScreen_Base_Modal<
+  CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType
+>: View {
   private let coordinator: CoordinatorType
 
   init(
@@ -32,8 +36,8 @@ public struct CoordinatedScreen_Base_Modal<CoordinatorType: ScreenCoordinatorTyp
     self.coordinator = coordinator
   }
   
-  public var body: some View {
-    CoordinatedScreen_Base(
+  var body: some View {
+    _CoordinatedScreen_Base(
       coordinator: coordinator
     )
     .modal(

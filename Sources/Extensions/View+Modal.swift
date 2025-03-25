@@ -21,7 +21,7 @@ private struct _ModalContainer<
   private let root: () -> Root
   private let destinationContent: (Destination) -> DestinationContent
   
-  public init(
+  init(
     modalState: ModalState,
     root: @escaping () -> Root,
     destinationContent: @escaping (Destination) -> DestinationContent
@@ -31,7 +31,7 @@ private struct _ModalContainer<
     self.destinationContent = destinationContent
   }
   
-  public var content: some View {
+  var content: some View {
     return root()
       .sheet(
         item: $modalState.destinationOf(Destination.self).sheet,
@@ -46,7 +46,7 @@ private struct _ModalContainer<
 
 extension View {
   @inline(__always)
-  public func modal<
+  func modal<
     Destination: ModalDestinationContentType,
     DestinationContent: View
   >(
