@@ -25,27 +25,13 @@ open class CoordinatorBase {
   ) {
     self.onFinish = onFinish
 
-    #warning(
-    """
-      TODO: Shorten `self.description` string, 
-      as it contains module information by default,
-      making things unreadable
-    """
-    )
-    logMessage("INIT: `\(self)`")
+    logMessage("INIT: `\(ShortDescription(self))`")
   }
   
   // MARK: - Deinit
   
   deinit {
-    #warning(
-    """
-      TODO: Shorten `self.description` string, 
-      as it contains module information by default,
-      making things unreadable
-    """
-    )
-    logMessage("DEINIT: `\(self)`")
+    logMessage("DEINIT: `\(ShortDescription(self))`")
   }
   
   // MARK: - Children Management
@@ -62,17 +48,11 @@ open class CoordinatorBase {
   ) -> Child {
     if let child = children[AnyDestination(destination)] {
       guard let child = child as? Child else {
-        #warning(
-        """
-          TODO: Shorten `Child.self.description` string, 
-          as it contains module information by default,
-          making things unreadable
-        """
-        )
         fatalError(
           """
             Type mismatch! \
-            Expected `\(child)` to be of type `\(Child.self)`
+            Expected `\(ShortDescription(child))` to be of type 
+            `\(ShortDescription(Child.self))`
           """,
           file: file,
           line: line
@@ -106,16 +86,10 @@ open class CoordinatorBase {
     let anyDestination = AnyDestination(destination)
     
     guard children[anyDestination] == nil else {
-      #warning(
-      """
-        TODO: Shorten `Child.self.description` string, 
-        as it contains module information by default,
-        making things unreadable
-      """
-      )
       fatalError(
         """
-          `\(self)` already contains child of type `\(Child.self)`"
+          `\(ShortDescription(self))` already contains child of type 
+          `\(ShortDescription(Child.self))`"
         """,
         file: file,
         line: line
@@ -127,7 +101,12 @@ open class CoordinatorBase {
     
     children[anyDestination] = child
     
-    logMessage("ADD: `\(child)` is added into `\(self)`")
+    logMessage(
+      """
+        ADD: `\(ShortDescription(child))` is added 
+        into `\(ShortDescription(self))`
+      """
+    )
   }
   
   public final func removeFromParent(
@@ -150,7 +129,7 @@ open class CoordinatorBase {
     }
     
     fatalError(
-      "`\(self)` is not found in the `parent.children` list",
+      "`\(ShortDescription(self))` is not found in the `parent.children` list",
       file: file,
       line: line
     )
@@ -169,14 +148,7 @@ open class CoordinatorBase {
     removeFromParent()
     onFinish?()
     
-    #warning(
-    """
-      TODO: Shorten `self.description` string, 
-      as it contains module information by default,
-      making things unreadable
-    """
-    )
-    logMessage("FINISH: \(self)")
+    logMessage("FINISH: \(ShortDescription(self))")
   }
 
   public final func setOnFinish(
@@ -194,7 +166,7 @@ open class CoordinatorBase {
   ) {
     guard let parent else {
       fatalError(
-        "There's no handler for event `\(event)`",
+        "There's no handler for event `\(ShortDescription(event))`",
         file: file,
         line: line
       )
