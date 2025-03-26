@@ -14,7 +14,8 @@ let package = Package(
     .library(
       name: "SwiftNavigationCoordinator",
       targets: [
-        "SwiftNavigationCoordinator"
+        "SwiftNavigationCoordinator",
+        "SwiftNavigationCoordinatorTesting",
       ]
     ),
   ],
@@ -37,7 +38,19 @@ let package = Package(
     .testTarget(
       name: "SwiftNavigationCoordinatorTests",
       dependencies: [
-        "SwiftNavigationCoordinator"
+        "SwiftNavigationCoordinator",
+      ]
+    ),
+    .target(
+      name: "SwiftNavigationCoordinatorTesting",
+      dependencies: [
+        "SwiftNavigationCoordinator",
+      ]
+    ),
+    .testTarget(
+      name: "SwiftNavigationCoordinatorTestingTests",
+      dependencies: [
+        "SwiftNavigationCoordinatorTesting",
       ]
     ),
   ],
