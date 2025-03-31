@@ -12,7 +12,7 @@ public protocol ModalCoordinatorType: CoordinatorBase {
   associatedtype DestinationType: ModalDestinationContentType
   associatedtype DestinationScreenType: View
   
-  var modalNavigator: any ModalNavigatorType<DestinationType> { get }
+  var modalNavigator: ModalNavigator<DestinationType> { get }
   
   @ViewBuilder
   func screen(for destination: DestinationType) -> DestinationScreenType

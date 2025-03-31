@@ -6,15 +6,15 @@
 //
 
 import SwiftUI
+import SUIOnRemoveFromParent
 
 extension View {
   @inline(__always)
-  func modal<CoordinatorType: ModalCoordinatorType>(
+  public func modal<CoordinatorType: ModalCoordinatorType>(
     for coordinator: CoordinatorType
   ) -> some View {
     self.modal(
-      ofType: CoordinatorType.DestinationType.self,
-      from: coordinator.modalNavigator.state,
+      modalNavigator: coordinator.modalNavigator,
       content: { [unowned coordinator] destination in
         coordinator.screen(for: destination)
       }
@@ -29,6 +29,17 @@ extension View {
       for: CoordinatorType.DestinationType.self,
       destination: { [unowned coordinator] destination in
         coordinator.screen(for: destination)
+      }
+    )
+  }
+  
+  @inline(__always)
+  public func onRemoveFromHierarchy(
+    finish coordinator: CoordinatorBase
+  ) -> some View {
+    self.onRemoveFromParent(
+      perform: { [weak coordinator] in
+        coordinator?.finish()
       }
     )
   }
