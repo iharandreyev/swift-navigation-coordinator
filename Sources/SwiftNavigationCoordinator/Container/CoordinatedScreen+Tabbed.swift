@@ -96,6 +96,10 @@ struct _CoordinatedScreen_Tabbed<
         }
       }
     )
+    .animation(
+      .easeInOut,
+      value: specimenNavigator.destination
+    )
     .onRemoveFromParent(
       perform: { [weak coordinator] in
         coordinator?.finish()
