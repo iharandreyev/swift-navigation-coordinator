@@ -9,12 +9,12 @@ final class Logger: LoggerType {
   private var external: LoggerType?
 
   @inline(__always)
-  func logWarning(_ message: @autoclosure () -> Any) {
+  func logWarning(_ message: @autoclosure () -> String) {
     external?.logWarning(message())
   }
   
   @inline(__always)
-  func logMessage(_ message: @autoclosure () -> Any) {
+  func logMessage(_ message: @autoclosure () -> String) {
     external?.logMessage(message())
   }
 }
@@ -29,13 +29,13 @@ extension Logger {
 }
 
 @inline(__always)
-func logWarning(_ message: @autoclosure () -> Any) {
+func logWarning(_ message: @autoclosure () -> String) {
   Logger.shared.logWarning(message())
 }
 
 @inline(__always)
 func logWarning(
-  _ message: @autoclosure () -> Any,
+  _ message: @autoclosure () -> String,
   file: StaticString,
   line: UInt
 ) {
@@ -48,6 +48,6 @@ func logWarning(
 }
 
 @inline(__always)
-func logMessage(_ message: @autoclosure () -> Any) {
+func logMessage(_ message: @autoclosure () -> String) {
   Logger.shared.logMessage(message())
 }

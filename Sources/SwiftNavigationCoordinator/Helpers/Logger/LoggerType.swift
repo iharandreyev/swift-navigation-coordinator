@@ -6,6 +6,6 @@
 //
 
 public protocol LoggerType {
-  func logWarning(_ message: @autoclosure () -> Any)
-  func logMessage(_ message: @autoclosure () -> Any)
+  func logWarning(_ message: @autoclosure () -> String)
+  func logMessage(_ message: @autoclosure () -> String)
 }
