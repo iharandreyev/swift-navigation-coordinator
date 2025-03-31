@@ -33,6 +33,20 @@ func logWarning(_ message: @autoclosure () -> Any) {
 }
 
 @inline(__always)
+func logWarning(
+  _ message: @autoclosure () -> Any,
+  file: StaticString,
+  line: UInt
+) {
+  Logger.shared.logWarning(
+    """
+      \(message()).             \
+      Source: \(file):\(line).
+    """
+  )
+}
+
+@inline(__always)
 func logMessage(_ message: @autoclosure () -> Any) {
   Logger.shared.logMessage(message())
 }
