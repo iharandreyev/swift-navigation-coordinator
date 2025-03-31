@@ -5,6 +5,7 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
+import SwiftNavigationCoordinator
 import UIKit
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
@@ -12,6 +13,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
   ) -> Bool {
+    SwiftNavigationCoordinator.setLogger(Logger.shared)
+    
     return true
   }
   
