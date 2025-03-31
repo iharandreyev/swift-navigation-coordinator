@@ -91,4 +91,22 @@ final class AppCoordinator<
   private func onboardingDidFinish() {
     specimenNavigator.replaceDestination(with: .main)
   }
+  
+  override func processDeeplink(
+    _ deeplink: any DeeplinkEventType
+  ) -> ProcessDeeplinkResult {
+    switch deeplink {
+    case
+      Deeplink.showUsecases:
+      
+      guard specimenNavigator.destination == .main else {
+        return .impossible
+      }
+      
+      return .partial
+      
+    default:
+      return .impossible
+    }
+  }
 }

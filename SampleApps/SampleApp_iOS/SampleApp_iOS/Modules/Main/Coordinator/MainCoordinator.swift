@@ -71,4 +71,17 @@ final class MainCoordinator<
 //      }
     }
   }
+  
+  override func processDeeplink(
+    _ deeplink: any DeeplinkEventType
+  ) -> ProcessDeeplinkResult {
+    switch deeplink {
+    case Deeplink.showUsecases:
+      specimenNavigator.replaceDestination(with: .usecases)
+      return .done
+      
+    default:
+      return .impossible
+    }
+  }
 }
