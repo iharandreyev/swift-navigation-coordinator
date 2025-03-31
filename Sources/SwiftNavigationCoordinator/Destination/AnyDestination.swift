@@ -83,11 +83,3 @@ extension Optional where Wrapped == AnyDestination {
     }
   }
 }
-
-extension AnyDestination {
-  func extract<T>(
-    type: T.Type = T.self
-  ) -> T? {
-    wrapped as? T
-  }
-}
