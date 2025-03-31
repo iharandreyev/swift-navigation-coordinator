@@ -144,8 +144,15 @@ open class CoordinatorBase {
   
   // MARK: - Life Cycle
   
-  open func finish() {
-    removeFromParent()
+  open func finish(
+    file: StaticString = #file,
+    line: UInt = #line
+  ) {
+    removeFromParent(
+      file: file,
+      line: line
+    )
+    
     onFinish?()
     
     logMessage("FINISH: \(ShortDescription(self))")
