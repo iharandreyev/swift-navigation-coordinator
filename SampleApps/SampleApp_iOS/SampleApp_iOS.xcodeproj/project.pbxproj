@@ -25,9 +25,22 @@
 		963B76B52D936B7100ECEB6C /* SampleApp_iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleApp_iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		966EE5252D9B374400CF27A8 /* Exceptions for "SampleApp_iOS" folder in "SampleApp_iOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Assets/SampleApp-iOS-Info.plist",
+			);
+			target = 963B76A42D936B6C00ECEB6C /* SampleApp_iOS */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		963B76A72D936B6C00ECEB6C /* SampleApp_iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				966EE5252D9B374400CF27A8 /* Exceptions for "SampleApp_iOS" folder in "SampleApp_iOS" target */,
+			);
 			path = SampleApp_iOS;
 			sourceTree = "<group>";
 		};
