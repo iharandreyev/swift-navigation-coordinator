@@ -8,10 +8,8 @@
 import Perception
 import SwiftUI
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
 #warning("TODO: Implement async methods to wait for animation complete")
 /// An observable object used to manage optional modal presentation.
-@available(iOS 16, *)
 @Perceptible
 @MainActor
 public final class ModalNavigator<

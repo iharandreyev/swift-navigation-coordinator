@@ -10,9 +10,9 @@
 func withoutAnimations(
   perform job: @MainActor @escaping () -> Void
 ) {
-  if #available(iOS 16, *) {
+  #if os(iOS)
     withoutAnimations_iOS(perform: job)
-  } else {
+  #else
     fatalError("Not implemented")
-  }
+  #endif
 }

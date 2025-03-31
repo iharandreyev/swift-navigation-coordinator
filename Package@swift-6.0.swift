@@ -6,7 +6,7 @@ let package = Package(
   name: "swift-navigation-coordinator",
   platforms: [
     .iOS(.v16),
-//    .macOS(.v13),
+    .macOS(.v13),
 //    .tvOS(.v13),
 //    .watchOS(.v6)
   ],

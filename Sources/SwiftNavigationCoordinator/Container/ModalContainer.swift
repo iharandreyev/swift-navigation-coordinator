@@ -10,8 +10,6 @@ import Perception
 import SwiftUI
 import SwiftUINavigation
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
-@available(iOS 16, *)
 public struct ModalContainer<
   DestinationType: ModalDestinationContentType,
   Root: View,
