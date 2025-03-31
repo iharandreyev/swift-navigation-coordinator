@@ -44,35 +44,8 @@ struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
   
   func createMainCoordinator() -> some StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType {
     MainCoordinator(
-      specimenNavigator: SpecimenNavigator(initialDestination: MainCoordinator.DestinationType())
+      specimenNavigator: SpecimenNavigator(initialDestination: .usecases),
+      factory: MainCoordinatorFactoryDelegate()
     )
-  }
-}
-
-private final class MainCoordinator: CoordinatorBase, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
-  struct DestinationType: ScreenDestinationType, CaseIterable {
-    let id = "static-id"
-    
-    static let allCases: [MainCoordinator.DestinationType] = [DestinationType()]
-  }
-  
-  let specimenNavigator: SpecimenNavigator<DestinationType>
-  
-  init(
-    specimenNavigator: SpecimenNavigator<DestinationType>
-  ) {
-    self.specimenNavigator = specimenNavigator
-    
-    super.init()
-  }
-
-  @ViewBuilder
-  func screenContent(for destination: DestinationType) -> some View {
-    Text("TBD")
-  }
-  
-  @ViewBuilder
-  func label(for tab: DestinationType) -> some View {
-    Text("TBD")
   }
 }
