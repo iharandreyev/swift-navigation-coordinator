@@ -41,7 +41,13 @@ public final class StackNavigator<
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    guard canPerformOperation(file: file, line: line) else { return }
+    guard canPerformOperation(
+      "push(\(ShortDescription(destination)))",
+      file: file,
+      line: line
+    ) else {
+      return
+    }
     
     state.append(destination)
     stack.append(destination)
@@ -52,14 +58,22 @@ public final class StackNavigator<
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    guard canPerformOperation(file: file, line: line) else { return }
+    guard canPerformOperation(
+      "replaceLast(\(ShortDescription(destination)))",
+      file: file,
+      line: line
+    ) else {
+      return
+    }
     
     guard !state.isEmpty else {
       return logWarning(
         """
           Can't replace last with `\(ShortDescription(destination))` since the stack is empty. \
           Ignoring `replaceLast`.
-        """
+        """,
+        file: file,
+        line: line
       )
     }
 
@@ -81,7 +95,13 @@ public final class StackNavigator<
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    guard canPerformOperation(file: file, line: line) else { return }
+    guard canPerformOperation(
+      "replaceStack(with: \(ShortDescription(destination)))",
+      file: file,
+      line: line
+    ) else {
+      return
+    }
 
     push(destination)
     
@@ -101,7 +121,13 @@ public final class StackNavigator<
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    guard canPerformOperation(file: file, line: line) else { return }
+    guard canPerformOperation(
+      "pop",
+      file: file,
+      line: line
+    ) else {
+      return
+    }
     
     guard !state.isEmpty else {
       return logWarning(
@@ -121,14 +147,22 @@ public final class StackNavigator<
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    guard canPerformOperation(file: file, line: line) else { return }
+    guard canPerformOperation(
+      "popToDestination(\(ShortDescription(destination)))",
+      file: file,
+      line: line
+    ) else {
+      return
+    }
     
     guard let index = stack.firstIndex(of: destination) else {
       return logWarning(
         """
           Destination `\(ShortDescription(destination))` is not present in the stack. \
           Ignoring `popToDestination`.
-        """
+        """,
+        file: file,
+        line: line
       )
     }
     
@@ -142,7 +176,13 @@ public final class StackNavigator<
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    guard canPerformOperation(file: file, line: line) else { return }
+    guard canPerformOperation(
+      "popToRoot",
+      file: file,
+      line: line
+    ) else {
+      return
+    }
     
     state.removeLast(stack.count)
     stack = []
@@ -156,12 +196,12 @@ public final class StackNavigator<
     file: StaticString = #file,
     line: UInt = #line
   ) -> StackNavigator<ChildDestinationType> {
-    guard canPerformOperation(file: file, line: line) else {
-      fatalError(
-        "Can't scope from invalidated navigator",
-        file: file,
-        line: line
-      )
+    guard canPerformOperation(
+      "scope",
+      file: file,
+      line: line
+    ) else {
+      fatalError(file: file, line: line)
     }
     
     let child = StackNavigator<ChildDestinationType>(
@@ -183,12 +223,18 @@ public final class StackNavigator<
   
   @inline(__always)
   private func canPerformOperation(
+    _ operation: @autoclosure @escaping () -> String,
     file: StaticString = #file,
     line: UInt = #line
   ) -> Bool {
     guard isValid else {
       logWarning(
-        "`\(ShortDescription(self))` has been invalidated. All operations will be ignored"
+        """
+          Can't perform `\(operation())`.                             \
+          Reason: `\(ShortDescription(self))` has been invalidated.   
+        """,
+        file: file,
+        line: line
       )
       
       return false
@@ -205,7 +251,7 @@ extension StackNavigator: StackStateDelegate {
   func userDidChangeStack(
     with interaction: StackUserInteraction
   ) {
-    guard canPerformOperation() else { return }
+    guard isValid else { return }
 
     switch interaction {
     case .popToRoot:
@@ -225,7 +271,10 @@ extension StackNavigator: StackStateDelegate {
     
     guard let parent else {
       return logWarning(
-        "Can't pop stack of `\(self)`, since it's already empty, and parent is not set"
+        """
+          Can't pop stack of `\(ShortDescription(self))`, 
+          since it's already empty, and parent is not set
+        """
       )
     }
     
