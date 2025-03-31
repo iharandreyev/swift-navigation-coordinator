@@ -5,10 +5,11 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
-import Perception
 import SwiftUI
 import SUIOnRemoveFromParent
 
+#warning("TODO: Extend support to WatchOS, macOS and TvOS")
+@available(iOS 16, *)
 extension CoordinatedScreen {
   /// Creates a container view that interfaces with a specimen coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces `SpecimenNavigator` and is intended to present `TabView`.
@@ -23,7 +24,7 @@ extension CoordinatedScreen {
   >(
     coordinator: CoordinatorType
   ) -> some View where CoordinatorType.DestinationType: CaseIterable, CoordinatorType.DestinationType.AllCases: RandomAccessCollection {
-    CoordinatedScreen_Tabbed(coordinator: coordinator)
+    _CoordinatedScreen_Tabbed(coordinator: coordinator)
   }
   
   /// Creates a container view that interfaces with a specimen coordinator.
@@ -34,34 +35,33 @@ extension CoordinatedScreen {
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func tabbed<
+  public static func tabbed<
     CoordinatorType: LabelledSpecimenCoordinatorType
   >(
     coordinator: CoordinatorType,
     tabs: [CoordinatorType.DestinationType]
   ) -> some View {
-    CoordinatedScreen_Tabbed(coordinator: coordinator, tabs: tabs)
+    _CoordinatedScreen_Tabbed(coordinator: coordinator, tabs: tabs)
   }
 }
 
-import Perception
-import SUIOnRemoveFromParent
-
-struct CoordinatedScreen_Tabbed<
+#warning("TODO: Extend support to WatchOS, macOS and TvOS")
+@available(iOS 16, *)
+struct _CoordinatedScreen_Tabbed<
   CoordinatorType: LabelledSpecimenCoordinatorType
->: ObservingView {
+>: View {
   private let coordinator: CoordinatorType
-  @Perception.Bindable
-  private var state: SpecimenState
+  private let specimenNavigator: SpecimenNavigator<CoordinatorType.DestinationType>
   
   private let tabs: [CoordinatorType.DestinationType]
-
+  
   init(
     coordinator: CoordinatorType
   ) where CoordinatorType.DestinationType: CaseIterable, CoordinatorType.DestinationType.AllCases: RandomAccessCollection {
-    self.coordinator = coordinator
-    self.state = coordinator.specimenNavigator.state
-    self.tabs = Array(CoordinatorType.DestinationType.allCases)
+    self.init(
+      coordinator: coordinator,
+      tabs: Array(CoordinatorType.DestinationType.allCases)
+    )
   }
   
   init(
@@ -69,36 +69,41 @@ struct CoordinatedScreen_Tabbed<
     tabs: [CoordinatorType.DestinationType]
   ) {
     self.coordinator = coordinator
-    self.state = coordinator.specimenNavigator.state
+    self.specimenNavigator = coordinator.specimenNavigator
     self.tabs = tabs
   }
   
-  var content: some View {
-    TabView(
-      selection: $state.destinationOf(CoordinatorType.DestinationType.self)
-    ) {
-      ForEach(
-        tabs,
-        id: \.self,
-        content: { [unowned coordinator] tab in
-          coordinator.screen(
-            for: tab
+  var body: some View {
+    SpecimenContainer(
+      specimenNavigator: specimenNavigator,
+      destinationContent: { destination in
+        TabView(
+          selection: destination
+        ) {
+          ForEach(
+            tabs,
+            id: \.self,
+            content: { [unowned coordinator] tab in
+              coordinator.screen(
+                for: tab
+              )
+              .tabItem {
+                coordinator.label(for: tab)
+              }
+              .tag(tab)
+            }
           )
-          .tabItem {
-            coordinator.label(for: tab)
-          }
-          .tag(tab)
         }
-      )
-    }
-    .onRemoveFromParent(
-      perform: { [weak coordinator] in
-        coordinator?.finish()
       }
     )
     .animation(
       .easeInOut,
-      value: state._destination
+      value: specimenNavigator.destination
+    )
+    .onRemoveFromParent(
+      perform: { [weak coordinator] in
+        coordinator?.finish()
+      }
     )
   }
 }

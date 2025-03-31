@@ -5,10 +5,11 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
-import Perception
-import SUIOnRemoveFromParent
 import SwiftUI
+import SUIOnRemoveFromParent
 
+#warning("TODO: Extend support to WatchOS, macOS and TvOS")
+@available(iOS 16, *)
 extension CoordinatedScreen {
   /// Creates a container view that interfaces with a specimen coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces `SpecimenNavigator`.
@@ -52,13 +53,14 @@ extension CoordinatedScreen {
   }
 }
 
+#warning("TODO: Extend support to WatchOS, macOS and TvOS")
+@available(iOS 16, *)
 struct _CoordinatedScreen_Specimen<
   CoordinatorType: SpecimenCoordinatorType,
   Content: View
->: ObservingView {
+>: View {
   private let coordinator: CoordinatorType
-  @Perception.Bindable
-  private var state: SpecimenState
+  private let specimenNavigator: SpecimenNavigator<CoordinatorType.DestinationType>
   
   private let contentBuilder: (Binding<CoordinatorType.DestinationType>) -> Content
   
@@ -67,22 +69,23 @@ struct _CoordinatedScreen_Specimen<
     @ViewBuilder content: @escaping (Binding<CoordinatorType.DestinationType>) -> Content
   ) {
     self.coordinator = coordinator
-    self.state = coordinator.specimenNavigator.state
+    self.specimenNavigator = coordinator.specimenNavigator
     self.contentBuilder = content
   }
   
-  var content: some View {
-    contentBuilder(
-      $state.destinationOf(CoordinatorType.DestinationType.self)
+  var body: some View {
+    SpecimenContainer(
+      specimenNavigator: coordinator.specimenNavigator,
+      destinationContent: contentBuilder
+    )
+    .animation(
+      .easeInOut,
+      value: specimenNavigator.destination
     )
     .onRemoveFromParent(
       perform: { [weak coordinator] in
         coordinator?.finish()
       }
-    )
-    .animation(
-      .easeInOut,
-      value: state._destination
     )
   }
 }

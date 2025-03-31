@@ -13,7 +13,7 @@ public protocol SpecimenCoordinatorType: CoordinatorBase {
   associatedtype DestinationType: ScreenDestinationType
   associatedtype DestinationScreenContentType: View
   
-  var specimenNavigator: any SpecimenNavigatorType<DestinationType> { get }
+  var specimenNavigator: SpecimenNavigator<DestinationType> { get }
   
   @ViewBuilder
   func screenContent(for destination: DestinationType) -> DestinationScreenContentType
