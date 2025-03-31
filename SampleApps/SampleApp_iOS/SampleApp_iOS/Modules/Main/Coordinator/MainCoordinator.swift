@@ -36,7 +36,7 @@ final class MainCoordinator<
     switch destination {
     case .usecases:
       CoordinatedScreen.stackRoot(
-        stackCoordinator: addChild(
+        modalCoordinator: addChild(
           childFactory: {
             factory.createUsecasesCoordinator()
           },

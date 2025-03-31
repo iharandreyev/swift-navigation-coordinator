@@ -25,28 +25,3 @@ struct MainCoordinatorFactoryDelegate: MainCoordinatorFactoryDelegateType {
     DeeplinksCoordinator()
   }
 }
-
-private final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
-  struct DestinationType: ModalDestinationContentType {
-    let id = "temp"
-  }
-  
-  let stackNavigator: StackNavigator<DestinationType>
-  let modalNavigator: ModalNavigator<DestinationType>
-  
-  init(
-    stackNavigator: StackNavigator<DestinationType> = StackNavigator(),
-    modalNavigator: ModalNavigator<DestinationType> = ModalNavigator()
-  ) {
-    self.stackNavigator = stackNavigator
-    self.modalNavigator = modalNavigator
-  }
-  
-  func initialScreen() -> some View {
-    Text("Usecases initial")
-  }
-  
-  func screen(for destination: DestinationType) -> some View {
-    Text("TBD")
-  }
-}
