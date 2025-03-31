@@ -27,6 +27,18 @@ final class SceneDelegate: NSObject, UIWindowSceneDelegate {
     _ scene: UIScene,
     openURLContexts urlContexts: Set<UIOpenURLContext>
   ) {
-    // TODO: Handle deeplinks here
+    guard !urlContexts.isEmpty else { return }
+    
+    guard let application else {
+      logWarning("`\(Self.self).application` is missing. Deeplinks are disabled")
+      return
+    }
+    
+    let url = urlContexts.first!.url
+    
+    guard case .some = application.delegate?.application?(application, open: url, options: [:]) else {
+      logWarning("`\(Self.self).application` is missing infrastructure to open `\(url)`. Ignoring")
+      return
+    }
   }
 }

@@ -9,6 +9,8 @@ import SwiftNavigationCoordinator
 import UIKit
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
+  var onHandleDeeplink: ((Deeplink) -> Bool)?
+  
   func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
@@ -23,8 +25,14 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     open url: URL,
     options: [UIApplication.OpenURLOptionsKey : Any] = [:]
   ) -> Bool {
-    // TODO: Handle deeplink here
-    return true
+    do {
+      let deeplink = try DeeplinksParser().parse(url: url)
+      guard let onHandleDeeplink else { return false }
+      return onHandleDeeplink(deeplink)
+    } catch {
+      logWarning("Can't parse deeplink from \(url): \(error)")
+      return false
+    }
   }
   
   func application(
