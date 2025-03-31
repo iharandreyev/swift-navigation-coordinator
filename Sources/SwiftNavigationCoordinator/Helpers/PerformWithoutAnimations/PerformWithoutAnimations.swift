@@ -13,6 +13,6 @@ func withoutAnimations(
   #if os(iOS)
     withoutAnimations_iOS(perform: job)
   #else
-    fatalError("Not implemented")
+    fatalError("Current platform is not yet supported!")
   #endif
 }

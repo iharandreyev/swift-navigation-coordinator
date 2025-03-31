@@ -45,9 +45,10 @@ open class CoordinatorBase {
       guard let child = child as? Child else {
         fatalError(
           """
-            Type mismatch! \
+            Type mismatch!                                        \
             Expected `\(ShortDescription(child))` to be of type 
-            `\(ShortDescription(Child.self))`
+            `\(ShortDescription(Child.self))`                     \
+            Source: \(file):\(line)
           """,
           file: file,
           line: line
@@ -84,7 +85,8 @@ open class CoordinatorBase {
       fatalError(
         """
           `\(ShortDescription(self))` already contains child of type 
-          `\(ShortDescription(Child.self))`"
+          `\(ShortDescription(Child.self))`"                          \
+          Source: \(file):\(line)
         """,
         file: file,
         line: line
@@ -124,7 +126,10 @@ open class CoordinatorBase {
     }
     
     fatalError(
-      "`\(ShortDescription(self))` is not found in the `parent.children` list",
+      """
+        `\(ShortDescription(self))` is not found in the `parent.children` list. \
+        Source: \(file):\(line)
+      """,
       file: file,
       line: line
     )
@@ -161,7 +166,10 @@ open class CoordinatorBase {
   ) {
     guard let parent else {
       fatalError(
-        "There's no handler for event `\(ShortDescription(event))`",
+        """
+          There's no handler for event `\(ShortDescription(event))` \
+          Source: \(file):\(line)
+        """,
         file: file,
         line: line
       )
