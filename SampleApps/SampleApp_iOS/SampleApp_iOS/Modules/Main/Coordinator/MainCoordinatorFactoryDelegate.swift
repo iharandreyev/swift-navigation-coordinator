@@ -50,9 +50,3 @@ private final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType,
     Text("TBD")
   }
 }
-
-private final class DeeplinksCoordinator: CoordinatorBase, ScreenCoordinatorType {
-  func initialScreen() -> some View {
-    Text("Deeplinks initial")
-  }
-}

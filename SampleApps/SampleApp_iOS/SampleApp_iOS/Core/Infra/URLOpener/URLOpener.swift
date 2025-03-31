@@ -12,14 +12,14 @@ protocol URLOpener: Sendable {
   func openURL(_ url: URL)
 }
 
-private struct ThrowingURLOpener: URLOpener {
+private struct EmptyURLOpener: URLOpener {
   func openURL(_ url: URL) {
-    fatalError("URL Opener was never set")
+    logMessage("openURL(\(url))")
   }
 }
 
 private struct URLOpenerKey: EnvironmentKey {
-  static let defaultValue: URLOpener = ThrowingURLOpener()
+  static let defaultValue: URLOpener = EmptyURLOpener()
 }
 
 extension EnvironmentValues {
