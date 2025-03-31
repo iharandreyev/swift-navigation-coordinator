@@ -10,74 +10,91 @@ import SwiftUI
 
 #warning("TODO: Extend support to WatchOS, macOS and TvOS")
 /// An observable object used to manage stack presentation.
+///
+/// This object is necessary to keep `NavigationPath` bindings consistent and in sync.
 @available(iOS 16, *)
 @MainActor
 @Perceptible
-final public class StackState {
-  fileprivate var _path: NavigationPath = NavigationPath() {
-    didSet {
-      if _path.isEmpty {
-        // SwiftUI popped to root
-        stack.removeAll()
-        return
-      }
-      
-      switch (_path.count - stack.count) {
-      case -1:
-        // SwiftUI popped a view
-        stack.removeLast()
-      case 0:
-        // StackState updated _path
-        return
-      default:
-        fatalError("StackState is out of sync")
-      }
-    }
-  }
-  
+final class StackState {
+  fileprivate var _path: NavigationPath = NavigationPath()
+
   @PerceptionIgnored
-  fileprivate(set) public var stack: [AnyDestination] = []
-  
-  public init() { }
+  weak var delegate: StackStateDelegate?
   
   /// A Boolean that indicates whether this stack is empty.
   @PerceptionIgnored
-  public var isEmpty: Bool {
+  var isEmpty: Bool {
     _path.isEmpty
   }
   
   /// The number of elements in this stack.
   @PerceptionIgnored
-  public var count: Int {
+  var count: Int {
     _path.count
   }
   
   /// Appends a new destination value to the end of this stack.
-  public func append<Destination: Sendable & Hashable>(
+  func append<Destination: Sendable & Hashable>(
     _ destination: Destination
   ) {
-    stack.append(AnyDestination(destination))
     _path.append(destination)
   }
   /// Removes values from the end of this stack.
-  public func removeLast(
+  func removeLast(
     _ numOfItemsToRemove: Int = 1
   ) {
     guard numOfItemsToRemove > 0 else { return }
     
-    stack.removeLast(numOfItemsToRemove)
     _path.removeLast(numOfItemsToRemove)
+  }
+  
+  fileprivate func setBoundPath(
+    _ newValue: NavigationPath,
+    file: StaticString,
+    line: UInt
+  ) {
+    let interaction: StackUserInteraction
+    switch (newValue.count - _path.count) {
+    case 0:
+      return
+      
+    case -1:
+      interaction = .pop
+      
+    case _ where newValue.isEmpty:
+      interaction = .popToRoot
+      
+    default:
+      fatalError(
+        """
+          Invalid path update from count `\(_path.count)` to \(newValue.count). \
+          Source: \(file):\(line)
+        """,
+        file: file,
+        line: line
+      )
+    }
+
+    _path = newValue
+    delegate?.userDidChangeStack(with: interaction)
   }
 }
 
 extension Perception.Bindable where Value == StackState {
-  public func path() -> Binding<NavigationPath> {
+  func path(
+    file: StaticString = #file,
+    line: UInt = #line
+  ) -> Binding<NavigationPath> {
     Binding<NavigationPath>(
       get:  { [unowned wrappedValue] () -> NavigationPath in
         return wrappedValue._path
       },
       set: { [unowned wrappedValue] (updatedPath) in
-        wrappedValue._path = updatedPath
+        wrappedValue.setBoundPath(
+          updatedPath,
+          file: file,
+          line: line
+        )
       }
     )
   }

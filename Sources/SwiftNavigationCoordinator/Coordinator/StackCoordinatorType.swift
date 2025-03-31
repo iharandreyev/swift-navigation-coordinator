@@ -12,7 +12,7 @@ public protocol StackCoordinatorType: CoordinatorBase {
   associatedtype DestinationType: ScreenDestinationType
   associatedtype DestinationScreenType: View
   
-  var stackNavigator: any StackNavigatorType<DestinationType> { get }
+  var stackNavigator: StackNavigator<DestinationType> { get }
   
   @ViewBuilder
   func screen(for destination: DestinationType) -> DestinationScreenType
