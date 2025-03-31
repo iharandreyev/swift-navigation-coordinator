@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SUIOnRemoveFromParent
 
 @MainActor
 public protocol SpecimenCoordinatorType: CoordinatorBase {

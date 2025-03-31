@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SUIOnRemoveFromParent
 
 #warning("TODO: Extend support to WatchOS, macOS and TvOS")
 @available(iOS 16, *)
@@ -81,11 +80,6 @@ struct _CoordinatedScreen_Specimen<
     .animation(
       .easeInOut,
       value: specimenNavigator.destination
-    )
-    .onRemoveFromParent(
-      perform: { [weak coordinator] in
-        coordinator?.finish()
-      }
     )
   }
 }

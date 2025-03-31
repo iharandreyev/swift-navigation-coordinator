@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SUIOnRemoveFromParent
 
 extension View {
   @inline(__always)
@@ -28,6 +29,17 @@ extension View {
       for: CoordinatorType.DestinationType.self,
       destination: { [unowned coordinator] destination in
         coordinator.screen(for: destination)
+      }
+    )
+  }
+  
+  @inline(__always)
+  public func onRemoveFromHierarchy(
+    finish coordinator: CoordinatorBase
+  ) -> some View {
+    self.onRemoveFromParent(
+      perform: { [weak coordinator] in
+        coordinator?.finish()
       }
     )
   }
