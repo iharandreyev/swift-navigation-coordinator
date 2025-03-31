@@ -6,7 +6,7 @@
 //
 
 final class Logger: LoggerType {
-  fileprivate var external: LoggerType?
+  private var external: LoggerType?
 
   @inline(__always)
   func logWarning(_ message: @autoclosure () -> Any) {
@@ -20,10 +20,11 @@ final class Logger: LoggerType {
 }
 
 extension Logger {
-  nonisolated(unsafe) static let shared = Logger()
+  nonisolated(unsafe)
+  fileprivate static let shared = Logger()
   
-  func setLogger(_ logger: LoggerType) {
-    external = logger
+  static func setLogger(_ logger: LoggerType) {
+    Logger.shared.external = logger
   }
 }
 
@@ -41,7 +42,7 @@ func logWarning(
   Logger.shared.logWarning(
     """
       \(message()).             \
-      Source: \(file):\(line).
+      Source: \(file):\(line)
     """
   )
 }
