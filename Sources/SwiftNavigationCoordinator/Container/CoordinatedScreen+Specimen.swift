@@ -73,6 +73,10 @@ struct _CoordinatedScreen_Specimen<
       specimenNavigator: coordinator.specimenNavigator,
       destinationContent: contentBuilder
     )
+    .animation(
+      .easeInOut,
+      value: specimenNavigator.destination
+    )
     .onRemoveFromParent(
       perform: { [weak coordinator] in
         coordinator?.finish()
