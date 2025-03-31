@@ -15,7 +15,6 @@ extension CoordinatedScreen {
   /// * pass `build view` requrests to the coordinator;
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `ModalNavigator`;
-  /// * send `coordinator.finish` when the view is removed from view hierarchy.
   public static func base<
     CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType
   >(

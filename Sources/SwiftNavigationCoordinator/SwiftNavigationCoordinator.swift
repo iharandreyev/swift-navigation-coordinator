@@ -6,5 +6,5 @@
 //
 
 public func setLogger(_ logger: LoggerType) {
-  Logger.shared.setLogger(logger)
+  Logger.setLogger(logger)
 }

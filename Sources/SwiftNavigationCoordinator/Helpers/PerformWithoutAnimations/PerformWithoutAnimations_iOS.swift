@@ -29,14 +29,14 @@ private func withoutAnimations_old(
 ) {
   // Delays are doubled, since any lesser values yilded StackPath glitches
   Task {
-    GlobalUIState.shared.isDisabled = true
+    UIDisable.setUiDisabled(true)
     try await Task.sleep(for: .defaultAnimation() * 2)
     UIView.setAnimationsEnabled(false)
     try await Task.sleep(for: .frame * 2)
     job()
     try await Task.sleep(for: .frame * 2)
     UIView.setAnimationsEnabled(true)
-    GlobalUIState.shared.isDisabled = false
+    UIDisable.setUiDisabled(false)
   }
 }
 

@@ -15,7 +15,6 @@ extension CoordinatedScreen {
   /// * pass `build tab view` requrests to the coordinator;
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
-  /// * send `coordinator.finish` when the view is removed from view hierarchy;
   public static func tabbed<
     CoordinatorType: LabelledSpecimenCoordinatorType
   >(
@@ -31,7 +30,6 @@ extension CoordinatedScreen {
   /// * pass `build tab view` requrests to the coordinator;
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
-  /// * send `coordinator.finish` when the view is removed from view hierarchy;
   public static func tabbed<
     CoordinatorType: LabelledSpecimenCoordinatorType
   >(

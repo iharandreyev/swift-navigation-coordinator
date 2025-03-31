@@ -20,7 +20,10 @@ extension CoordinatorChildSearch {
   ) -> Child {
     guard let someChild = children[AnyDestination(destination)] else {
       fatalError(
-        "Child for destination `\(ShortDescription(destination))` is not found in the children list",
+        """
+          Child for destination `\(ShortDescription(destination))` is not found in the children list  \
+          Source: \(file):\(line)
+        """,
         file: file,
         line: line
       )
@@ -28,9 +31,10 @@ extension CoordinatorChildSearch {
     guard let child = someChild as? Child else {
       fatalError(
         """
-          Type mismatch! \
+          Type mismatch!                                    \
           Expected `\(ShortDescription(someChild))` to be 
-          of type `\(ShortDescription(Child.self))`
+          of type `\(ShortDescription(Child.self))`         \
+          Source: \(file):\(line)
         """,
         file: file,
         line: line

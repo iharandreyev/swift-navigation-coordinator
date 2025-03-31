@@ -15,7 +15,6 @@ extension CoordinatedScreen {
   /// * pass `build root view` requrest to the coordinator;
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations pushed into coordinator's `StackNavigator`;
-  /// * send `coordinator.finish` when the view is removed from view hierarchy;
   public static func stackRoot<
     CoordinatorType: ScreenCoordinatorType & StackCoordinatorType
   >(
