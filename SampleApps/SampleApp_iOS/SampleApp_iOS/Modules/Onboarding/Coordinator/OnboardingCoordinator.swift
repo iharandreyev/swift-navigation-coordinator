@@ -59,7 +59,10 @@ final class OnboardingCoordinator<
   func initialScreen() -> some View {
     factory.createStepScreen(
       for: OnboardingStep.allCases[0],
-      onNext: showNextStep
+      onNext: showNextStep,
+      onShowInfo: { [weak self] in
+        self?.showInfo()
+      }
     )
     .onRemoveFromHierarchy(finish: self)
   }
@@ -68,7 +71,11 @@ final class OnboardingCoordinator<
     switch destination {
     case let .step(step):
       factory.createStepScreen(
-        for: step, onNext: showNextStep
+        for: step,
+        onNext: showNextStep,
+        onShowInfo: { [weak self] in
+          self?.showInfo()
+        }
       )
       .onRemoveFromParent { [weak self] in
         self?.destinationDidDismiss(destination)

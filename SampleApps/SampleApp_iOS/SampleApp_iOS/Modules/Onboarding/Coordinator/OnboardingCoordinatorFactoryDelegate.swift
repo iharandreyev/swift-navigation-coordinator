@@ -14,7 +14,8 @@ protocol OnboardingCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateTyp
   
   func createStepScreen(
     for step: OnboardingStep,
-    onNext: @escaping () -> Void
+    onNext: @escaping () -> Void,
+    onShowInfo: @escaping () -> Void
   ) -> StepScreenType
   
   func createInfoCoordinator(
@@ -25,9 +26,14 @@ protocol OnboardingCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateTyp
 struct OnboardingCoordinatorFactoryDelegate: OnboardingCoordinatorFactoryDelegateType {
   func createStepScreen(
     for step: OnboardingStep,
-    onNext: @escaping () -> Void
+    onNext: @escaping () -> Void,
+    onShowInfo: @escaping () -> Void
   ) -> some View {
-    Text("TBD")
+    OnboardingStepScreen(
+      step: step,
+      onNext: onNext,
+      onShowInfo: onShowInfo
+    )
   }
   
   func createInfoCoordinator(
