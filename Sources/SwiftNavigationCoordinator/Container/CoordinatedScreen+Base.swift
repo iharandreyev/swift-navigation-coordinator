@@ -12,7 +12,6 @@ extension CoordinatedScreen {
   ///
   /// The view configures infrastructure to:
   /// * pass `build view` requrests to the coordinator;
-  /// * send `coordinator.finish` when the view is removed from view hierarchy.
   public static func base<
     CoordinatorType: ScreenCoordinatorType
   >(
