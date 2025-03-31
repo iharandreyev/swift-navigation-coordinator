@@ -10,7 +10,7 @@ import SUIOnRemoveFromParent
 
 #warning("TODO: Extend support to WatchOS, macOS and TvOS")
 @available(iOS 16, *)
-public extension CoordinatedScreen {
+extension CoordinatedScreen {
   /// Creates a container view that interfaces with a specimen coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces `SpecimenNavigator` and is intended to present `TabView`.
   ///
@@ -19,7 +19,9 @@ public extension CoordinatedScreen {
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func tabbed<CoordinatorType: LabelledSpecimenCoordinatorType>(
+  public static func tabbed<
+    CoordinatorType: LabelledSpecimenCoordinatorType
+  >(
     coordinator: CoordinatorType
   ) -> some View where CoordinatorType.DestinationType: CaseIterable, CoordinatorType.DestinationType.AllCases: RandomAccessCollection {
     _CoordinatedScreen_Tabbed(coordinator: coordinator)
@@ -33,7 +35,9 @@ public extension CoordinatedScreen {
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func tabbed<CoordinatorType: LabelledSpecimenCoordinatorType>(
+  public static func tabbed<
+    CoordinatorType: LabelledSpecimenCoordinatorType
+  >(
     coordinator: CoordinatorType,
     tabs: [CoordinatorType.DestinationType]
   ) -> some View {
@@ -50,7 +54,7 @@ struct _CoordinatedScreen_Tabbed<
   private let specimenNavigator: SpecimenNavigator<CoordinatorType.DestinationType>
   
   private let tabs: [CoordinatorType.DestinationType]
-
+  
   init(
     coordinator: CoordinatorType
   ) where CoordinatorType.DestinationType: CaseIterable, CoordinatorType.DestinationType.AllCases: RandomAccessCollection {
