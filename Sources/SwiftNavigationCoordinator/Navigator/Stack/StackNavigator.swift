@@ -5,9 +5,7 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
 #warning("TODO: Implement async methods to 1. wait for animation complete; 2. test methods that disable animations")
-@available(iOS 16, *)
 @MainActor
 public final class StackNavigator<
   DestinationType: ScreenDestinationType

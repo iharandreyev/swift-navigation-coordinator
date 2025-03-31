@@ -8,8 +8,6 @@
 import Perception
 import SwiftUI
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
-@available(iOS 16, *)
 public struct SpecimenContainer<
   DestinationType: ScreenDestinationType,
   DestinationContent: View

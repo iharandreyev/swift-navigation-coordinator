@@ -8,10 +8,8 @@
 import Perception
 import SwiftUI
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
 #warning("TODO: Add async implementations to process animations properly")
 /// An observable object used to manage presentation of one of many destinations.
-@available(iOS 16, *)
 @MainActor
 @Perceptible
 public final class SpecimenNavigator<

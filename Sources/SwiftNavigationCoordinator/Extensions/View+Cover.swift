@@ -7,23 +7,25 @@
 
 import SwiftUI
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
 extension View {
-  #if os(iOS)
-  
   @inline(__always)
-  @ViewBuilder
-  func cover<Item: Identifiable, Content: View>(
+  public func cover<Item: Identifiable, Content: View>(
     item: Binding<Item?>,
     onDismiss: (() -> Void)? = nil,
     @ViewBuilder content: @escaping (Item) -> Content
   ) -> some View {
-    fullScreenCover(
-      item: item,
-      onDismiss: onDismiss,
-      content: content
-    )
+    #if os(macOS)
+      return sheet(
+        item: item,
+        onDismiss: onDismiss,
+        content: content
+      )
+    #else
+      return fullScreenCover(
+        item: item,
+        onDismiss: onDismiss,
+        content: content
+      )
+    #endif
   }
-  
-  #endif
 }

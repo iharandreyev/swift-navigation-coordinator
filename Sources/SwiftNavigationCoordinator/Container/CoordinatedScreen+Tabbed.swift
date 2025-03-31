@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
-@available(iOS 16, *)
 extension CoordinatedScreen {
   /// Creates a container view that interfaces with a specimen coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces `SpecimenNavigator` and is intended to present `TabView`.
@@ -44,8 +42,6 @@ extension CoordinatedScreen {
   }
 }
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
-@available(iOS 16, *)
 struct _CoordinatedScreen_Tabbed<
   CoordinatorType: LabelledSpecimenCoordinatorType
 >: View {

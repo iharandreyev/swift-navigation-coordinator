@@ -8,11 +8,9 @@
 import Perception
 import SwiftUI
 
-#warning("TODO: Extend support to WatchOS, macOS and TvOS")
 /// An observable object used to manage stack presentation.
 ///
 /// This object is necessary to keep `NavigationPath` bindings consistent and in sync.
-@available(iOS 16, *)
 @MainActor
 @Perceptible
 final class StackState {

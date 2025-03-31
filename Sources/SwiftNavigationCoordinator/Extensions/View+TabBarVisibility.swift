@@ -5,6 +5,10 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
+#warning("TODO: Investigate whether tab bar is applicable for watchOS or tvOS")
+
+#if os(iOS)
+
 import SwiftUI
 
 private struct SetTabBarVisibilityOnAppearViewModifier: ViewModifier {
@@ -52,3 +56,5 @@ extension View {
       .setTabBarVisibilityOnAppear(.hidden)
   }
 }
+
+#endif

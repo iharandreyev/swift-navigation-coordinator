@@ -5,14 +5,12 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
+#if os(iOS)
+
 import Foundation
 import SwiftUI
-
-#if os(iOS)
 import UIKit
-#endif
 
-@available(iOS, introduced: 16)
 @MainActor
 func withoutAnimations_iOS(
   perform job: @MainActor @escaping () -> Void
@@ -55,3 +53,5 @@ private func withoutAnimations_new(
     try withTransaction(noAnimationTransaction, job)
   }
 }
+
+#endif
