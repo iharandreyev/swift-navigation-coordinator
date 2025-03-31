@@ -20,11 +20,16 @@ struct App: SwiftUI.App {
       specimenNavigator: SpecimenNavigator<AppDestination>(initialDestination: .appInit),
       factory: AppCoordinatorFactoryDelegate()
     )
+    
+    appDelegate.onHandleDeeplink = { [unowned coordinator] deeplink in
+      coordinator.handleDeeplink(deeplink)
+    }
   }
   
   var body: some Scene {
     WindowGroup {
       AppRoot(coordinator: coordinator)
     }
+    .environment(\.urlOpener, UIApplicationURLOpener())
   }
 }
