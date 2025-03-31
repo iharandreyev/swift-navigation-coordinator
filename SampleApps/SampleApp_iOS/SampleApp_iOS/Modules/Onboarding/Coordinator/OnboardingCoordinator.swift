@@ -46,8 +46,7 @@ final class OnboardingCoordinator<
   }
   
   func destinationDidDismiss(_ destination: OnboardingDestination) {
-    #warning("TODO: Use some sort of logger here")
-    print("OnboardingCoordinator: Did dismiss \(destination)")
+    logMessage("OnboardingCoordinator: Did dismiss \(destination)")
     revertToPreviousStep()
   }
   

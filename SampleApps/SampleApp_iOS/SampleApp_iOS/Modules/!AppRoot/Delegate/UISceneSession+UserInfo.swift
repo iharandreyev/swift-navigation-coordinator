@@ -21,14 +21,12 @@ extension UISceneSession {
     forKey key: SceneSessionInfoKey
   ) -> T? {
     guard let rawValue = userInfo?[key.rawValue] else {
-      #warning("TODO: Use some sort of logger here")
-      print("`\(self)` does not contain info for key `\(key)`")
+      logWarning("`\(self)` does not contain info for key `\(key)`")
       return nil
     }
     
     guard let value = rawValue as? T else {
-      #warning("TODO: Use some sort of logger here")
-      print("`\(rawValue)` is not of type `\(T.self)`")
+      logWarning("`\(rawValue)` is not of type `\(T.self)`")
       return nil
     }
     
