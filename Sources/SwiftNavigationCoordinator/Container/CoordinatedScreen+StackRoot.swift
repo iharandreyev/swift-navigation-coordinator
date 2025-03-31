@@ -5,7 +5,6 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
-import Perception
 import SwiftUI
 
 extension CoordinatedScreen {
