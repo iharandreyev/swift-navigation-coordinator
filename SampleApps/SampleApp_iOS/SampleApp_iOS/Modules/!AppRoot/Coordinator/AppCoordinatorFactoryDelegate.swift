@@ -37,6 +37,7 @@ struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
     OnboardingCoordinator(
       stackNavigator: StackNavigator(),
       modalNavigator: ModalNavigator(),
+      factory: OnboardingCoordinatorFactoryDelegate(),
       onFinish: onFinish
     )
   }
@@ -45,34 +46,6 @@ struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
     MainCoordinator(
       specimenNavigator: SpecimenNavigator(initialDestination: MainCoordinator.DestinationType())
     )
-  }
-}
-
-private final class OnboardingCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
-  struct DestinationType: ScreenDestinationType, ModalDestinationContentType {
-    let id = "static-id"
-  }
-  
-  let stackNavigator: StackNavigator<DestinationType>
-  let modalNavigator: ModalNavigator<DestinationType>
-  
-  init(
-    stackNavigator: StackNavigator<DestinationType>,
-    modalNavigator: ModalNavigator<DestinationType>,
-    onFinish: @escaping () -> Void
-  ) {
-    self.stackNavigator = stackNavigator
-    self.modalNavigator = modalNavigator
-    
-    super.init(onFinish: onFinish)
-  }
-
-  func initialScreen() -> some View {
-    Text("TBD")
-  }
-  
-  func screen(for destination: DestinationType) -> some View {
-    Text("TBD")
   }
 }
 
