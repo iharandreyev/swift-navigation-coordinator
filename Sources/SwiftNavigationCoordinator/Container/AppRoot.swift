@@ -20,6 +20,6 @@ public struct AppRoot<
     CoordinatedScreen.specimen(
       coordinator: coordinator
     )
-    .withGlobalUIState()
+    .disableUiWhenAnimationsAreDisabled()
   }
 }
