@@ -95,9 +95,5 @@ struct _CoordinatedScreen_Tabbed<
         }
       }
     )
-    .animation(
-      .easeInOut,
-      value: specimenNavigator.destination
-    )
   }
 }
