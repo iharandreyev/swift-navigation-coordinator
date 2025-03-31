@@ -32,12 +32,21 @@ public final class ModalNavigator<
   }
   
   fileprivate func setBoundDestination(
-    _ newValue: ModalDestination<DestinationType>?
+    _ newValue: ModalDestination<DestinationType>?,
+    file: StaticString,
+    line: UInt
   ) {
     // SwiftUI can only dismiss the destination via binding
     // If some concrete value is passed, then something went horribly wrong
     guard newValue == nil else {
-      logWarning("Binding is trying to mutate \(self) with non-nil destination, which is prohibited")
+      logWarning(
+        """
+          Binding is trying to mutate \(ShortDescription(self))
+          with non-nil destination, which is prohibited
+        """,
+        file: file,
+        line: line
+      )
       return
     }
     
@@ -49,13 +58,20 @@ extension Perception.Bindable {
   @MainActor
   public func destination<
     Destination: ModalDestinationContentType
-  >() -> Binding<ModalDestination<Destination>?> where Value == ModalNavigator<Destination> {
+  >(
+    file: StaticString = #file,
+    line: UInt = #line
+  ) -> Binding<ModalDestination<Destination>?> where Value == ModalNavigator<Destination> {
     Binding<ModalDestination<Destination>?>(
-      get:  { [unowned wrappedValue] () -> ModalDestination<Destination>? in
+      get: { [unowned wrappedValue] () -> ModalDestination<Destination>? in
         wrappedValue.destination
       },
       set: { [unowned wrappedValue] (expectedNil) in
-        wrappedValue.setBoundDestination(expectedNil)
+        wrappedValue.setBoundDestination(
+          expectedNil,
+          file: file,
+          line: line
+        )
       }
     )
   }
