@@ -5,40 +5,47 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
-@MainActor
-public protocol SpecimenNavigatorType<DestinationType> {
-  associatedtype DestinationType: ScreenDestinationType
-  
-  var state: SpecimenState { get }
+import Perception
+import SwiftUI
 
-  var currentDestination: AnyDestination { get }
-  
-  func replaceDestination(with destination: DestinationType)
-}
-
+#warning("TODO: Extend support to WatchOS, macOS and TvOS")
+#warning("TODO: Add async implementations to process animations properly")
+/// An observable object used to manage presentation of one of many destinations.
+@available(iOS 16, *)
 @MainActor
-public struct SpecimenNavigator<
+@Perceptible
+public final class SpecimenNavigator<
   DestinationType: ScreenDestinationType
->: SpecimenNavigatorType {
-  public let state: SpecimenState
+> {
+  fileprivate(set) public var destination: DestinationType
 
-  public init(
-    state: SpecimenState
-  ) {
-    self.state = state
-  }
-  
   public init(
     initialDestination: DestinationType
   ) {
-    self.state = SpecimenState(initial: initialDestination)
-  }
-  
-  public var currentDestination: AnyDestination {
-    state._destination
+    self.destination = initialDestination
   }
 
   public func replaceDestination(with destination: DestinationType) {
-    state.replaceDestination(with: destination)
+    self.destination = destination
+  }
+  
+  fileprivate func setBoundDestination(_ newValue: DestinationType) {
+    self.destination = newValue
+  }
+}
+
+extension Perception.Bindable {
+  @MainActor
+  public func destination<
+    Destination: ScreenDestinationType
+  >() -> Binding<Destination> where Value == SpecimenNavigator<Destination> {
+    Binding<Destination>(
+      get:  { [unowned wrappedValue] () -> Destination in
+        wrappedValue.destination
+      },
+      set: { [unowned wrappedValue] (newValue) in
+        wrappedValue.setBoundDestination(newValue)
+      }
+    )
   }
 }
