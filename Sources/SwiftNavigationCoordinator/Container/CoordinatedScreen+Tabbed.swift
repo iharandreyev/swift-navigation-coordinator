@@ -22,7 +22,7 @@ public extension CoordinatedScreen {
   static func tabbed<CoordinatorType: LabelledSpecimenCoordinatorType>(
     coordinator: CoordinatorType
   ) -> some View where CoordinatorType.DestinationType: CaseIterable, CoordinatorType.DestinationType.AllCases: RandomAccessCollection {
-    CoordinatedScreen_Tabbed(coordinator: coordinator)
+    _CoordinatedScreen_Tabbed(coordinator: coordinator)
   }
   
   /// Creates a container view that interfaces with a specimen coordinator.
@@ -37,13 +37,13 @@ public extension CoordinatedScreen {
     coordinator: CoordinatorType,
     tabs: [CoordinatorType.DestinationType]
   ) -> some View {
-    CoordinatedScreen_Tabbed(coordinator: coordinator, tabs: tabs)
+    _CoordinatedScreen_Tabbed(coordinator: coordinator, tabs: tabs)
   }
 }
 
 #warning("TODO: Extend support to WatchOS, macOS and TvOS")
 @available(iOS 16, *)
-public struct CoordinatedScreen_Tabbed<
+struct _CoordinatedScreen_Tabbed<
   CoordinatorType: LabelledSpecimenCoordinatorType
 >: View {
   private let coordinator: CoordinatorType
@@ -69,7 +69,7 @@ public struct CoordinatedScreen_Tabbed<
     self.tabs = tabs
   }
   
-  public var body: some View {
+  var body: some View {
     SpecimenContainer(
       specimenNavigator: specimenNavigator,
       destinationContent: { destination in

@@ -21,7 +21,7 @@ public extension CoordinatedScreen {
     coordinator: CoordinatorType,
     @ViewBuilder content: @escaping (Binding<CoordinatorType.DestinationType>) -> Content
   ) -> some View {
-    CoordinatedScreen_Specimen(
+    _CoordinatedScreen_Specimen(
       coordinator: coordinator,
       content: content
     )
@@ -37,7 +37,7 @@ public extension CoordinatedScreen {
   static func specimen<CoordinatorType: SpecimenCoordinatorType>(
     coordinator: CoordinatorType
   ) -> some View {
-    CoordinatedScreen_Specimen(
+    _CoordinatedScreen_Specimen(
       coordinator: coordinator,
       content: { [unowned coordinator] destination in
         coordinator.screen(
@@ -50,7 +50,7 @@ public extension CoordinatedScreen {
 
 #warning("TODO: Extend support to WatchOS, macOS and TvOS")
 @available(iOS 16, *)
-public struct CoordinatedScreen_Specimen<
+struct _CoordinatedScreen_Specimen<
   CoordinatorType: SpecimenCoordinatorType,
   Content: View
 >: View {
@@ -68,7 +68,7 @@ public struct CoordinatedScreen_Specimen<
     self.contentBuilder = content
   }
   
-  public var body: some View {
+  var body: some View {
     SpecimenContainer(
       specimenNavigator: coordinator.specimenNavigator,
       destinationContent: contentBuilder
