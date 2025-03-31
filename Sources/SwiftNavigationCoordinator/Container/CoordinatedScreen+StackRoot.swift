@@ -39,50 +39,13 @@ struct _CoordinatedScreen_StackRoot<
   }
   
   var body: some View {
-    _NavigationView(
-      for: CoordinatorType.DestinationType.self,
-      stackState: coordinator.stackNavigator.state,
+    StackContainer(
+      stackNavigator: coordinator.stackNavigator,
       rootContent: { [unowned coordinator] in
         coordinator.initialScreen()
       },
       destinationContent: { [weak coordinator] destination in
         coordinator?.screen(for: destination)
-      }
-    )
-  }
-}
-
-private struct _NavigationView<
-  Destination: ScreenDestinationType,
-  RootContent: View,
-  DestinationContent: View
->: ObservingView {
-  @Perception.Bindable
-  private var stackState: StackState
-  
-  private let rootContent: () -> RootContent
-  private let destinationContent: (Destination) -> DestinationContent
-  
-  init(
-    for destinationType: Destination.Type,
-    stackState: StackState,
-    rootContent: @escaping () -> RootContent,
-    destinationContent: @escaping (Destination) -> DestinationContent
-  ) {
-    self.stackState = stackState
-    self.rootContent = rootContent
-    self.destinationContent = destinationContent
-  }
-  
-  var content: some View {
-    NavigationStack(
-      path: $stackState.path(),
-      root: {
-        rootContent()
-          .navigationDestination(
-            for: Destination.self,
-            destination: destinationContent
-          )
       }
     )
   }
