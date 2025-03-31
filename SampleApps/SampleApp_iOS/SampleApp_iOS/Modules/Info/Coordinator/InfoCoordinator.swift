@@ -38,6 +38,7 @@ final class InfoCoordinator<
         self?.showLastScreen()
       }
     )
+    .onRemoveFromHierarchy(finish: self)
   }
 
   func screen(for destination: DestinationType) -> some View {
