@@ -41,30 +41,8 @@ struct OnboardingCoordinatorFactoryDelegate: OnboardingCoordinatorFactoryDelegat
   ) -> some ScreenCoordinatorType & StackCoordinatorType {
     InfoCoordinator(
       stackNavigator: StackNavigator(),
+      factory: InfoCoordinatorFactoryDelegate(),
       onFinish: onFinish
     )
-  }
-}
-
-private final class InfoCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType {
-  struct DestinationType: ScreenDestinationType { }
-  
-  let stackNavigator: StackNavigator<DestinationType>
-  
-  init(
-    stackNavigator: StackNavigator<DestinationType>,
-    onFinish: @escaping () -> Void
-  ) {
-    self.stackNavigator = stackNavigator
-    
-    super.init(onFinish: onFinish)
-  }
-  
-  func initialScreen() -> some View {
-    Text("TBD")
-  }
-  
-  func screen(for destination: DestinationType) -> some View {
-    Text("TBD")
   }
 }
