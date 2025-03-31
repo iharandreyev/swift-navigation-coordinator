@@ -10,14 +10,17 @@ import SUIOnRemoveFromParent
 
 #warning("TODO: Extend support to WatchOS, macOS and TvOS")
 @available(iOS 16, *)
-public extension CoordinatedScreen {
+extension CoordinatedScreen {
   /// Creates a container view that interfaces with a specimen coordinator.
   /// Use this factory method for cases when the managing coordinator interfaces `SpecimenNavigator`.
   ///
   /// The view configures infrastructure to:
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func specimen<CoordinatorType: SpecimenCoordinatorType, Content: View>(
+  public static func specimen<
+    CoordinatorType: SpecimenCoordinatorType,
+    Content: View
+  >(
     coordinator: CoordinatorType,
     @ViewBuilder content: @escaping (Binding<CoordinatorType.DestinationType>) -> Content
   ) -> some View {
@@ -34,7 +37,9 @@ public extension CoordinatedScreen {
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   /// * send `coordinator.finish` when the view is removed from view hierarchy;
-  static func specimen<CoordinatorType: SpecimenCoordinatorType>(
+  public static func specimen<
+    CoordinatorType: SpecimenCoordinatorType
+  >(
     coordinator: CoordinatorType
   ) -> some View {
     _CoordinatedScreen_Specimen(
