@@ -80,6 +80,13 @@ final class MainCoordinator<
       specimenNavigator.replaceDestination(with: .usecases)
       return .done
       
+    case
+      Deeplink.showUsecasesAndModalCover,
+      Deeplink.showUsecasesAndModalSheet:
+      
+      specimenNavigator.replaceDestination(with: .usecases)
+      return .partial
+      
     default:
       return .impossible
     }
