@@ -25,12 +25,12 @@ struct InfoCoordinatorFactoryDelegate: InfoCoordinatorFactoryDelegateType {
   func createFirstScreen(
     onContinue: @escaping () -> Void
   ) -> some View {
-    Text("TBD")
+    InfoFirstScreen(onContinue: onContinue)
   }
   
   func createLastScreen(
     onDone: @escaping () -> Void
   ) -> some View {
-    Text("TBD")
+    InfoLastScreen(onDone: onDone)
   }
 }
