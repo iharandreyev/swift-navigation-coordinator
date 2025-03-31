@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SUIOnRemoveFromParent
 
 #warning("TODO: Extend support to WatchOS, macOS and TvOS")
 @available(iOS 16, *)
@@ -100,10 +99,6 @@ struct _CoordinatedScreen_Tabbed<
       .easeInOut,
       value: specimenNavigator.destination
     )
-    .onRemoveFromParent(
-      perform: { [weak coordinator] in
-        coordinator?.finish()
-      }
-    )
+    .onRemoveFromHierarchy(finish: coordinator)
   }
 }

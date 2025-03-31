@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SUIOnRemoveFromParent
 
 extension CoordinatedScreen {
   /// Creates a container view that interfaces with a single screen coordinator.
@@ -37,8 +36,6 @@ struct _CoordinatedScreen_Base<
   var body: some View {
     coordinator
       .initialScreen()
-      .onRemoveFromParent{ [weak coordinator] in
-        coordinator?.finish()
-      }
+      .onRemoveFromHierarchy(finish: coordinator)
   }
 }

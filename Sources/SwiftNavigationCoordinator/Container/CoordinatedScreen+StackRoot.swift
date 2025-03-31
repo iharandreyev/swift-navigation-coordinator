@@ -7,7 +7,6 @@
 
 import Perception
 import SwiftUI
-import SUIOnRemoveFromParent
 
 extension CoordinatedScreen {
   /// Creates a container view that interfaces with a stack coordinator.
@@ -48,5 +47,6 @@ struct _CoordinatedScreen_StackRoot<
         coordinator?.screen(for: destination)
       }
     )
+    .onRemoveFromHierarchy(finish: coordinator)
   }
 }
