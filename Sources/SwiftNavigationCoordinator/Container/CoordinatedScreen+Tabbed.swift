@@ -99,6 +99,5 @@ struct _CoordinatedScreen_Tabbed<
       .easeInOut,
       value: specimenNavigator.destination
     )
-    .onRemoveFromHierarchy(finish: coordinator)
   }
 }

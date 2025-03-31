@@ -81,6 +81,5 @@ struct _CoordinatedScreen_Specimen<
       .easeInOut,
       value: specimenNavigator.destination
     )
-    .onRemoveFromHierarchy(finish: coordinator)
   }
 }

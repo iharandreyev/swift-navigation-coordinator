@@ -34,8 +34,6 @@ struct _CoordinatedScreen_Base<
   }
   
   var body: some View {
-    coordinator
-      .initialScreen()
-      .onRemoveFromHierarchy(finish: coordinator)
+    coordinator.initialScreen()
   }
 }
