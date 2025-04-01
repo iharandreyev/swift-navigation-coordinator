@@ -21,10 +21,14 @@ final class NavigationQueue {
   // Had to use completion handler due to a bug in Swift compiler: https://github.com/swiftlang/swift/issues/74382
   func scheduleUiUpdate(
     _ update: @escaping @MainActor () -> Void,
-    completion: @escaping @MainActor (Bool) -> Void
+    completion: @escaping @MainActor (Bool) -> Void,
+    file: StaticString = #file,
+    line: UInt = #line
   ) {
-    let item = NavigationQueueItem(job: update, completion: completion)
+    let item = NavigationQueueItem(job: update, completion: completion, file: file, line: line)
     queue.append(item)
+    
+    logMessage("NavigationQueue: Did enqueue \(item)")
     
     guard !isResolvingQueue else { return }
     resolveQueue()
@@ -39,18 +43,30 @@ final class NavigationQueue {
     isResolvingQueue = true
     
     let next = queue.removeFirst()
+    
+    logMessage("NavigationQueue: Did dequeue \(next)")
+    
     next.job()
 
-    DispatchQueue.main.asyncAfter(deadline: .now() + Duration.defaultAnimation().milliseconds / 1000) { [unowned self] in
+    let delay = Duration.defaultAnimation().milliseconds / 1000 * 2
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [unowned self] in
       next.completion(true)
+      logMessage("NavigationQueue: Did complete \(next)")
       resolveQueue()
     }
   }
 }
 
-private struct NavigationQueueItem {
+private struct NavigationQueueItem: CustomStringConvertible {
   let job: () -> Void
   let completion: (Bool) -> Void
+  let file: StaticString
+  let line: UInt
+  
+  var description: String {
+    "Operation scheduled at \(file):\(line)"
+  }
 }
 
 extension Duration {

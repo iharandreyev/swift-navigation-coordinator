@@ -22,11 +22,11 @@ public final class ModalNavigator<
   public func presentDestination(
     _ destination: ModalDestination<DestinationType>
   ) {
-    self.destination = destination
+    setDestination(destination)
   }
   
   public func dismissDestination() {
-    self.destination = nil
+    setDestination(nil)
   }
   
   fileprivate func setBoundDestination(
@@ -48,7 +48,17 @@ public final class ModalNavigator<
       return
     }
     
-    self.destination = nil
+    setDestination(nil)
+  }
+  
+  private func setDestination(_ destination: ModalDestination<DestinationType>?) {
+    NavigationQueue.shared.scheduleUiUpdate(
+      { [weak self] in
+        guard let self else { return }
+        self.destination = destination
+        
+      }, completion: { _ in }
+    )
   }
 }
 

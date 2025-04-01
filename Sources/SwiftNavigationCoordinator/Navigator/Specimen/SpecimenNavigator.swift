@@ -24,11 +24,21 @@ public final class SpecimenNavigator<
   }
 
   public func replaceDestination(with destination: DestinationType) {
-    self.destination = destination
+    setDestination(destination)
   }
   
   fileprivate func setBoundDestination(_ newValue: DestinationType) {
-    self.destination = newValue
+    setDestination(newValue)
+  }
+  
+  private func setDestination(_ destination: DestinationType) {
+    NavigationQueue.shared.scheduleUiUpdate(
+      { [weak self] in
+        guard let self else { return }
+        self.destination = destination
+        
+      }, completion: { _ in }
+    )
   }
 }
 
