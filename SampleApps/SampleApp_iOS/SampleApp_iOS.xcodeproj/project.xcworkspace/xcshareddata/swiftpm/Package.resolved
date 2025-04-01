@@ -1,5 +1,5 @@
 {
-  "originHash" : "434552b7203d79a86ff31858661d7a4e11b9b91fb34cfd2d69fb346605dabccc",
+  "originHash" : "ff2048572003ea3003b7a67f351d2f369e6ed7eb4ccab70d301935b036bd9350",
   "pins" : [
     {
       "identity" : "swift-case-paths",
@@ -44,6 +44,15 @@
       "state" : {
         "revision" : "db6bc9dbfed001f21e6728fd36413d9342c235b4",
         "version" : "2.3.0"
+      }
+    },
+    {
+      "identity" : "swift-navigation-coordinator",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/iharandreyev/swift-navigation-coordinator",
+      "state" : {
+        "revision" : "2daa2f0d206928c500df8920680cfa6371fb3df6",
+        "version" : "0.1.0"
       }
     },
     {
