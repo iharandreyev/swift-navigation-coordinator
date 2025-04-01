@@ -41,27 +41,34 @@ struct DeeplinkTests {
   
   @Test
   func app_handles_showUsecasesAndModalSheet() async throws {
+    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
+    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
+    
+    let mainNavigator = SpecimenNavigator(
+      initialDestination: MainTab.usecases
+    )
+    let main = MainCoordinator(
+      specimenNavigator: mainNavigator,
+      factory: MainCoordinatorFactoryDelegateMock(
+        createUsecasesCoordinator: { _ in usecases }
+      )
+    )
+    
     let rootNavigator = SpecimenNavigator(
       initialDestination: AppDestination.main
     )
     let root = AppCoordinator(
       specimenNavigator: rootNavigator,
-      factory: AppCoordinatorFactoryDelegateMockMinimal()
+      factory: AppCoordinatorFactoryDelegateMock(
+        createMainCoordinator: { _ in main }
+      )
     )
     
-    let mainNavigator = SpecimenNavigator(
-      initialDestination: MainTab.deeplinks
-    )
-    let main = MainCoordinator(
-      specimenNavigator: mainNavigator,
-      factory: MainCoordinatorFactoryDelegateMock()
-    )
-    
-    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
-    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
-    
-    root.addChild(main, as: AppDestination.main)
-    main.addChild(usecases, as: MainTab.usecases)
+    // Simulate view presentation
+    _ = root.screenContent(for: .main)
+    _ = main.screenContent(for: .usecases)
+    mainNavigator.replaceDestination(with: .deeplinks)
+    _ = main.screenContent(for: .deeplinks)
     
     #expect(root.handleDeeplink(Deeplink.showUsecasesAndModalSheet))
     #expect(mainNavigator.destination == .usecases)
@@ -70,27 +77,34 @@ struct DeeplinkTests {
   
   @Test
   func app_handles_showUsecasesAndModalCover() async throws {
-    let rootNavigator = SpecimenNavigator(
-      initialDestination: AppDestination.main
-    )
-    let root = AppCoordinator(
-      specimenNavigator: rootNavigator,
-      factory: AppCoordinatorFactoryDelegateMockMinimal()
-    )
+    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
+    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
     
     let mainNavigator = SpecimenNavigator(
       initialDestination: MainTab.deeplinks
     )
     let main = MainCoordinator(
       specimenNavigator: mainNavigator,
-      factory: MainCoordinatorFactoryDelegateMock()
+      factory: MainCoordinatorFactoryDelegateMock(
+        createUsecasesCoordinator: { _ in usecases }
+      )
     )
     
-    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
-    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
+    let rootNavigator = SpecimenNavigator(
+      initialDestination: AppDestination.main
+    )
+    let root = AppCoordinator(
+      specimenNavigator: rootNavigator,
+      factory: AppCoordinatorFactoryDelegateMock(
+        createMainCoordinator: { _ in main }
+      )
+    )
     
-    root.addChild(main, as: AppDestination.main)
-    main.addChild(usecases, as: MainTab.usecases)
+    // Simulate view presentation
+    _ = root.screenContent(for: .main)
+    _ = main.screenContent(for: .usecases)
+    mainNavigator.replaceDestination(with: .deeplinks)
+    _ = main.screenContent(for: .deeplinks)
     
     #expect(root.handleDeeplink(Deeplink.showUsecasesAndModalCover))
     #expect(mainNavigator.destination == .usecases)
