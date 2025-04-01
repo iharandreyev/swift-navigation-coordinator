@@ -85,16 +85,20 @@ final class AppCoordinator<
   }
   
   private func initDidFinish() {
-    specimenNavigator.replaceDestination(with: .onboarding)
+    Task.detached { [specimenNavigator] in
+      await specimenNavigator.replaceDestination(with: .onboarding)
+    }
   }
 
   private func onboardingDidFinish() {
-    specimenNavigator.replaceDestination(with: .main)
+    Task.detached { [specimenNavigator] in
+      await specimenNavigator.replaceDestination(with: .main)
+    }
   }
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> ProcessDeeplinkResult {
+  ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case
       Deeplink.showUsecases,

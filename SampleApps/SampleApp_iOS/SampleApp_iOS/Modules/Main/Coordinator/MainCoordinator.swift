@@ -74,17 +74,17 @@ final class MainCoordinator<
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> ProcessDeeplinkResult {
+  ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecases:
-      specimenNavigator.replaceDestination(with: .usecases)
+      await specimenNavigator.replaceDestination(with: .usecases)
       return .done
       
     case
       Deeplink.showUsecasesAndModalCover,
       Deeplink.showUsecasesAndModalSheet:
       
-      specimenNavigator.replaceDestination(with: .usecases)
+      await specimenNavigator.replaceDestination(with: .usecases)
       return .partial
       
     default:

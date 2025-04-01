@@ -22,7 +22,11 @@ struct App: SwiftUI.App {
     )
     
     appDelegate.onHandleDeeplink = { [unowned coordinator] deeplink in
-      coordinator.handleDeeplink(deeplink)
+      Task.detached { [coordinator] in
+        await coordinator.handleDeeplink(deeplink)
+      }
+      #warning("TODO: Figure out what to do here")
+      return true
     }
   }
   

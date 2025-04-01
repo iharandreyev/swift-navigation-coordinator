@@ -58,6 +58,9 @@ struct AppCoordinatorTests {
     
     factory.simulate_createAppInitScreen_onFinish()
     
+    #warning("TODO: Inject clock")
+    try! await Task.sleep(for: .seconds(4))
+    
     #expect(navigator.destination == AppDestination.onboarding)
   }
   
@@ -68,6 +71,9 @@ struct AppCoordinatorTests {
     _ = sut.screen(for: .onboarding)
     
     factory.simulate_createOnboardingCoordinator_onFinish()
+    
+    #warning("TODO: Inject clock")
+    try! await Task.sleep(for: .seconds(4))
     
     #expect(navigator.destination == AppDestination.main)
   }
