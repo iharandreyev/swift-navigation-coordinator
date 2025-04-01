@@ -36,7 +36,7 @@ final class MainCoordinator<
     switch destination {
     case .usecases:
       CoordinatedScreen.stackRoot(
-        stackCoordinator: addChild(
+        modalCoordinator: addChild(
           childFactory: {
             factory.createUsecasesCoordinator()
           },
@@ -79,6 +79,13 @@ final class MainCoordinator<
     case Deeplink.showUsecases:
       specimenNavigator.replaceDestination(with: .usecases)
       return .done
+      
+    case
+      Deeplink.showUsecasesAndModalCover,
+      Deeplink.showUsecasesAndModalSheet:
+      
+      specimenNavigator.replaceDestination(with: .usecases)
+      return .partial
       
     default:
       return .impossible

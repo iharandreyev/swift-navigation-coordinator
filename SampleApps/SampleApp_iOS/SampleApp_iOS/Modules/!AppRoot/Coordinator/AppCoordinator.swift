@@ -97,7 +97,9 @@ final class AppCoordinator<
   ) -> ProcessDeeplinkResult {
     switch deeplink {
     case
-      Deeplink.showUsecases:
+      Deeplink.showUsecases,
+      Deeplink.showUsecasesAndModalCover,
+      Deeplink.showUsecasesAndModalSheet:
       
       guard specimenNavigator.destination == .main else {
         return .impossible

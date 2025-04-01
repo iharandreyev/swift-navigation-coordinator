@@ -10,8 +10,9 @@ import SwiftNavigationCoordinator
 enum Deeplink: String, DeeplinkEventType {
   static let scheme = "navc"
   
-  case showUsecases
-//  case showUsecasesAndShowModal
+  case showUsecases = "show-usecases"
+  case showUsecasesAndModalSheet = "show-usecases-and-modal-sheet"
+  case showUsecasesAndModalCover = "show-usecases-and-modal-cover"
 //  case showUsecasesPushAndShowModal
 }
 
