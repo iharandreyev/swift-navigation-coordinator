@@ -16,7 +16,7 @@ import SampleApp_iOS
 @MainActor
 struct DeeplinkTests {
   @Test
-  func canHandleDeeplink_onlyWhen_AppCoordinator_is_main() async throws {
+  func appCoordinator_canHandleDeeplink_onlyWhen_main() async throws {
     let navigator = SpecimenNavigator(
       initialDestination: AppDestination.appInit
     )
@@ -37,5 +37,63 @@ struct DeeplinkTests {
       navigator.replaceDestination(with: .main)
       #expect(sut.handleDeeplink($0) == true)
     }
+  }
+  
+  @Test
+  func app_handles_showUsecasesAndModalSheet() async throws {
+    let rootNavigator = SpecimenNavigator(
+      initialDestination: AppDestination.main
+    )
+    let root = AppCoordinator(
+      specimenNavigator: rootNavigator,
+      factory: AppCoordinatorFactoryDelegateMockMinimal()
+    )
+    
+    let mainNavigator = SpecimenNavigator(
+      initialDestination: MainTab.deeplinks
+    )
+    let main = MainCoordinator(
+      specimenNavigator: mainNavigator,
+      factory: MainCoordinatorFactoryDelegateMock()
+    )
+    
+    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
+    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
+    
+    root.addChild(main, as: AppDestination.main)
+    main.addChild(usecases, as: MainTab.usecases)
+    
+    #expect(root.handleDeeplink(Deeplink.showUsecasesAndModalSheet))
+    #expect(mainNavigator.destination == .usecases)
+    #expect(usecasesModalNavigator.destination == .sheet(.modalSheet))
+  }
+  
+  @Test
+  func app_handles_showUsecasesAndModalCover() async throws {
+    let rootNavigator = SpecimenNavigator(
+      initialDestination: AppDestination.main
+    )
+    let root = AppCoordinator(
+      specimenNavigator: rootNavigator,
+      factory: AppCoordinatorFactoryDelegateMockMinimal()
+    )
+    
+    let mainNavigator = SpecimenNavigator(
+      initialDestination: MainTab.deeplinks
+    )
+    let main = MainCoordinator(
+      specimenNavigator: mainNavigator,
+      factory: MainCoordinatorFactoryDelegateMock()
+    )
+    
+    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
+    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
+    
+    root.addChild(main, as: AppDestination.main)
+    main.addChild(usecases, as: MainTab.usecases)
+    
+    #expect(root.handleDeeplink(Deeplink.showUsecasesAndModalCover))
+    #expect(mainNavigator.destination == .usecases)
+    #expect(usecasesModalNavigator.destination == .cover(.modalCover))
   }
 }

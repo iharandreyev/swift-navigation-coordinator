@@ -52,7 +52,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   }
   
   private func showModalCover() {
-    modalNavigator.presentDestination(.cover(.modalSheet))
+    modalNavigator.presentDestination(.cover(.modalCover))
   }
   
   override func processDeeplink(
@@ -60,11 +60,11 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   ) -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecasesAndModalCover:
-      showModalSheet()
+      showModalCover()
       return .done
       
     case Deeplink.showUsecasesAndModalSheet:
-      showModalCover()
+      showModalSheet()
       return .done
       
     default:
