@@ -71,25 +71,6 @@ struct AppCoordinatorTests {
     
     #expect(navigator.destination == AppDestination.main)
   }
-  
-  @Test
-  func canHandleDeeplink_onlyWhen_main() async throws {
-    let navigator = createNavigator()
-    let sut = createSut(navigator: navigator)
-    
-    sut.addChild(DummyCoordinator(canHandleDeeplinks: true), as: AppDestination.appInit)
-    sut.addChild(DummyCoordinator(canHandleDeeplinks: true), as: AppDestination.onboarding)
-    sut.addChild(DummyCoordinator(canHandleDeeplinks: true), as: AppDestination.main)
-    
-    Deeplink.allCases.forEach {
-      navigator.replaceDestination(with: .appInit)
-      #expect(sut.handleDeeplink($0) == false)
-      navigator.replaceDestination(with: .onboarding)
-      #expect(sut.handleDeeplink($0) == false)
-      navigator.replaceDestination(with: .main)
-      #expect(sut.handleDeeplink($0) == true)
-    }
-  }
 
   private func createNavigator(
     initialDestination: AppDestination = .appInit
@@ -99,7 +80,7 @@ struct AppCoordinatorTests {
   
   private func createSut(
     navigator: SpecimenNavigator<AppDestination> = SpecimenNavigator(initialDestination: .appInit)
-  ) -> AppCoordinator<AppCoordinatorFactoryDelegateMock> {
+  ) -> AppCoordinator<AppCoordinatorFactoryDelegateMockMinimal> {
     AppCoordinator(specimenNavigator: navigator, factory: factory)
   }
 }

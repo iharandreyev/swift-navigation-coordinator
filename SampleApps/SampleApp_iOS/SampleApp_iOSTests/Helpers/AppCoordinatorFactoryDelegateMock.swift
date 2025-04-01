@@ -135,3 +135,5 @@ extension AppCoordinatorFactoryDelegateMock {
     )
   }
 }
+
+typealias AppCoordinatorFactoryDelegateMockMinimal = AppCoordinatorFactoryDelegateMock<DummyCoordinator, DummyCoordinator>
