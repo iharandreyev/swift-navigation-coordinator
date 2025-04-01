@@ -7,8 +7,7 @@
 
 import Foundation
 
-@MainActor
-final class NavigationQueue {
+actor NavigationQueue {
   // Fifo queue
   private var queue: [NavigationQueueItem] = []
   
@@ -21,20 +20,20 @@ final class NavigationQueue {
   // Had to use completion handler due to a bug in Swift compiler: https://github.com/swiftlang/swift/issues/74382
   func scheduleUiUpdate(
     _ update: @escaping @MainActor () -> Void,
-    completion: @escaping @MainActor (Bool) -> Void,
     file: StaticString = #file,
     line: UInt = #line
-  ) {
-    let item = NavigationQueueItem(job: update, completion: completion, file: file, line: line)
+  ) async {
+    let item = NavigationQueueItem(job: update, file: file, line: line)
     queue.append(item)
     
     logMessage("NavigationQueue: Did enqueue \(item)")
     
     guard !isResolvingQueue else { return }
-    resolveQueue()
+    await resolveQueue()
   }
   
-  private func resolveQueue() {
+  // Assume that task can never be cancelled
+  private func resolveQueue() async {
     guard !queue.isEmpty else {
       isResolvingQueue = false
       return
@@ -46,21 +45,16 @@ final class NavigationQueue {
     
     logMessage("NavigationQueue: Did dequeue \(next)")
     
-    next.job()
-
-    let delay = Duration.defaultAnimation().milliseconds / 1000 * 2
+    await next.job()
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [unowned self] in
-      next.completion(true)
-      logMessage("NavigationQueue: Did complete \(next)")
-      resolveQueue()
-    }
+    try! await Task.sleep(for: .defaultAnimation() * 2)
+    logMessage("NavigationQueue: Did complete \(next)")
+    await resolveQueue()
   }
 }
 
 private struct NavigationQueueItem: CustomStringConvertible {
-  let job: () -> Void
-  let completion: (Bool) -> Void
+  let job: @MainActor () -> Void
   let file: StaticString
   let line: UInt
   

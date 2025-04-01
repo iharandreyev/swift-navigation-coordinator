@@ -51,7 +51,7 @@ public final class DummyCoordinator:
   
   public override func processDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> ProcessDeeplinkResult {
+  ) async -> ProcessDeeplinkResult {
     canHandleDeeplinks ? .done : .impossible
   }
 }

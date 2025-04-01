@@ -16,17 +16,17 @@ public final class ModalNavigator<
   DestinationType: ModalDestinationContentType
 > {
   fileprivate(set) public var destination: ModalDestination<DestinationType>?
-
+  
   public init() { }
-
+  
   public func presentDestination(
     _ destination: ModalDestination<DestinationType>
-  ) {
-    setDestination(destination)
+  ) async {
+    await setDestination(destination)
   }
   
-  public func dismissDestination() {
-    setDestination(nil)
+  public func dismissDestination() async {
+    await setDestination(nil)
   }
   
   fileprivate func setBoundDestination(
@@ -48,17 +48,17 @@ public final class ModalNavigator<
       return
     }
     
-    setDestination(nil)
+    Task.detached { [unowned self] in
+      await setDestination(nil)
+    }
   }
   
-  private func setDestination(_ destination: ModalDestination<DestinationType>?) {
-    NavigationQueue.shared.scheduleUiUpdate(
-      { [weak self] in
-        guard let self else { return }
-        self.destination = destination
-        
-      }, completion: { _ in }
-    )
+  private func setDestination(_ destination: ModalDestination<DestinationType>?) async {
+    await NavigationQueue.shared.scheduleUiUpdate { [weak self] in
+      guard let self else { return }
+      self.destination = destination
+      
+    }
   }
 }
 

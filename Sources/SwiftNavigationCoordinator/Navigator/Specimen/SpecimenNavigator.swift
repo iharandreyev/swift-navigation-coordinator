@@ -23,22 +23,21 @@ public final class SpecimenNavigator<
     self.destination = initialDestination
   }
 
-  public func replaceDestination(with destination: DestinationType) {
-    setDestination(destination)
+  public func replaceDestination(with destination: DestinationType) async {
+    await setDestination(destination)
   }
   
   fileprivate func setBoundDestination(_ newValue: DestinationType) {
-    setDestination(newValue)
+    Task.detached { [unowned self] in
+      await setDestination(newValue)
+    }
   }
   
-  private func setDestination(_ destination: DestinationType) {
-    NavigationQueue.shared.scheduleUiUpdate(
-      { [weak self] in
-        guard let self else { return }
-        self.destination = destination
-        
-      }, completion: { _ in }
-    )
+  private func setDestination(_ destination: DestinationType) async {
+    await NavigationQueue.shared.scheduleUiUpdate { [weak self] in
+      guard let self else { return }
+      self.destination = destination
+    }
   }
 }
 

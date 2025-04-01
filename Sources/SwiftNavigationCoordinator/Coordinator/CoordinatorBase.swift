@@ -193,21 +193,21 @@ open class CoordinatorBase {
   
   open func processDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> ProcessDeeplinkResult {
+  ) async -> ProcessDeeplinkResult {
     .impossible
   }
   
   final public func handleDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> Bool {
-    switch processDeeplink(deeplink) {
+  ) async -> Bool {
+    switch await processDeeplink(deeplink) {
     case .impossible: return false
     case .partial: break
     case .done: return true
     }
     
     for child in children.values {
-      guard child.handleDeeplink(deeplink) else { continue }
+      guard await child.handleDeeplink(deeplink) else { continue }
       return true
     }
 
