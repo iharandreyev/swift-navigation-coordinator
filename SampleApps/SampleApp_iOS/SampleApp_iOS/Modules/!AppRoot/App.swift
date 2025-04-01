@@ -17,7 +17,7 @@ struct App: SwiftUI.App {
 
   init() {
     coordinator = AppCoordinator(
-      specimenNavigator: SpecimenNavigator<AppDestination>(initialDestination: .appInit),
+      specimenNavigator: SpecimenNavigator<AppDestination>(initialDestination: .main),
       factory: AppCoordinatorFactoryDelegate()
     )
     
