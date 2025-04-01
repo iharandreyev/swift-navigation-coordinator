@@ -80,7 +80,7 @@ struct AppCoordinatorTests {
   
   private func createSut(
     navigator: SpecimenNavigator<AppDestination> = SpecimenNavigator(initialDestination: .appInit)
-  ) -> AppCoordinator<AppCoordinatorFactoryDelegateMockMinimal> {
+  ) -> AppCoordinator<AppCoordinatorFactoryDelegateMockDummy> {
     AppCoordinator(specimenNavigator: navigator, factory: factory)
   }
 }

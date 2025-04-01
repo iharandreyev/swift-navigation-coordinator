@@ -22,7 +22,7 @@ struct DeeplinkTests {
     )
     let sut = AppCoordinator(
       specimenNavigator: navigator,
-      factory: AppCoordinatorFactoryDelegateMockMinimal()
+      factory: AppCoordinatorFactoryDelegateMockDummy()
     )
     
     sut.addChild(DummyCoordinator(canHandleDeeplinks: true), as: AppDestination.appInit)

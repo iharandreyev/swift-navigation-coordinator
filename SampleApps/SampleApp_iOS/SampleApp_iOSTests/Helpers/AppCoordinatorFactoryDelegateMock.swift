@@ -121,4 +121,4 @@ extension AppCoordinatorFactoryDelegateMock {
   }
 }
 
-typealias AppCoordinatorFactoryDelegateMockMinimal = AppCoordinatorFactoryDelegateMock<DummyCoordinator, DummyCoordinator>
+typealias AppCoordinatorFactoryDelegateMockDummy = AppCoordinatorFactoryDelegateMock<DummyCoordinator, DummyCoordinator>

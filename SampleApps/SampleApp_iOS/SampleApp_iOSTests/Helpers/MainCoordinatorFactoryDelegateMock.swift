@@ -79,4 +79,4 @@ extension MainCoordinatorFactoryDelegateMock {
   }
 }
 
-typealias MainCoordinatorDelegateMockMinimal = MainCoordinatorFactoryDelegateMock<DummyCoordinator, DummyCoordinator>
+typealias MainCoordinatorDelegateMockDummy = MainCoordinatorFactoryDelegateMock<DummyCoordinator, DummyCoordinator>
