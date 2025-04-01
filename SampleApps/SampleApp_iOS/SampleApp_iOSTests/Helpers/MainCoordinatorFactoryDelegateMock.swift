@@ -67,15 +67,16 @@ final class MainCoordinatorFactoryDelegateMock<
 
 extension MainCoordinatorFactoryDelegateMock {
   convenience init(
-    createUsecasesCoordinator: @escaping (Params_createUsecasesCoordinator) -> UsecasesCoordinatorType,
     createUsecasesCoordinator_invoked: ((Params_createUsecasesCoordinator) -> Void)? = nil,
     createDeeplinksCoordinator_invoked: ((Params_createDeeplinksCoordinator) -> Void)? = nil
-  ) where DeeplinksCoordinatorType == DummyCoordinator {
+  ) where UsecasesCoordinatorType == DummyCoordinator, DeeplinksCoordinatorType == DummyCoordinator {
     self.init(
-      createUsecasesCoordinator: createUsecasesCoordinator,
+      createUsecasesCoordinator: { _ in DummyCoordinator() },
       createUsecasesCoordinator_invoked: createUsecasesCoordinator_invoked,
       createDeeplinksCoordinator: { _ in DummyCoordinator() },
       createDeeplinksCoordinator_invoked: createDeeplinksCoordinator_invoked
     )
   }
 }
+
+typealias MainCoordinatorDelegateMockMinimal = MainCoordinatorFactoryDelegateMock<DummyCoordinator, DummyCoordinator>

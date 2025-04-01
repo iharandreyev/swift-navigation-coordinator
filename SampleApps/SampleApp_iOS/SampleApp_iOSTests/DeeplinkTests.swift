@@ -50,7 +50,8 @@ struct DeeplinkTests {
     let main = MainCoordinator(
       specimenNavigator: mainNavigator,
       factory: MainCoordinatorFactoryDelegateMock(
-        createUsecasesCoordinator: { _ in usecases }
+        createUsecasesCoordinator: { _ in usecases },
+        createDeeplinksCoordinator: { _ in DummyCoordinator() }
       )
     )
     
@@ -60,10 +61,12 @@ struct DeeplinkTests {
     let root = AppCoordinator(
       specimenNavigator: rootNavigator,
       factory: AppCoordinatorFactoryDelegateMock(
+        createOnboardingCoordinator: { _ in DummyCoordinator() },
         createMainCoordinator: { _ in main }
       )
     )
     
+    #warning("TODO: Figure out how to reduce this boilerplate")
     // Simulate view presentation
     _ = root.screenContent(for: .main)
     _ = main.screenContent(for: .usecases)
@@ -81,12 +84,13 @@ struct DeeplinkTests {
     let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
     
     let mainNavigator = SpecimenNavigator(
-      initialDestination: MainTab.deeplinks
+      initialDestination: MainTab.usecases
     )
     let main = MainCoordinator(
       specimenNavigator: mainNavigator,
       factory: MainCoordinatorFactoryDelegateMock(
-        createUsecasesCoordinator: { _ in usecases }
+        createUsecasesCoordinator: { _ in usecases },
+        createDeeplinksCoordinator: { _ in DummyCoordinator() }
       )
     )
     
@@ -96,10 +100,11 @@ struct DeeplinkTests {
     let root = AppCoordinator(
       specimenNavigator: rootNavigator,
       factory: AppCoordinatorFactoryDelegateMock(
+        createOnboardingCoordinator: { _ in DummyCoordinator() },
         createMainCoordinator: { _ in main }
       )
     )
-    
+
     // Simulate view presentation
     _ = root.screenContent(for: .main)
     _ = main.screenContent(for: .usecases)

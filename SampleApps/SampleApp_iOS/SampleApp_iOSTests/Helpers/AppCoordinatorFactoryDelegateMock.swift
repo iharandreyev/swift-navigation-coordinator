@@ -119,21 +119,6 @@ extension AppCoordinatorFactoryDelegateMock {
       createMainCoordinator_invoked: createMainCoordinator_invoked
     )
   }
-  
-  convenience init(
-    createAppInitScreen_invoked: ((Params_createAppInitScreen) -> Void)? = nil,
-    createOnboardingCoordinator_invoked: ((Params_createOnboardingCoordinator) -> Void)? = nil,
-    createMainCoordinator: @escaping (Params_createMainCoordinator) -> MainCoordinatorType,
-    createMainCoordinator_invoked: ((Params_createMainCoordinator) -> Void)? = nil
-  ) where OnboardingCoordinatorType == DummyCoordinator {
-    self.init(
-      createAppInitScreen_invoked: createAppInitScreen_invoked,
-      createOnboardingCoordinator: { _ in DummyCoordinator() },
-      createOnboardingCoordinator_invoked: createOnboardingCoordinator_invoked,
-      createMainCoordinator: createMainCoordinator,
-      createMainCoordinator_invoked: createMainCoordinator_invoked
-    )
-  }
 }
 
 typealias AppCoordinatorFactoryDelegateMockMinimal = AppCoordinatorFactoryDelegateMock<DummyCoordinator, DummyCoordinator>
