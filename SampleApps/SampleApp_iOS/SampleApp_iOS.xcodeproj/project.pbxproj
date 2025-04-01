@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		966EE51B2D9B32D400CF27A8 /* SwiftNavigationCoordinator in Frameworks */ = {isa = PBXBuildFile; productRef = 966EE51A2D9B32D400CF27A8 /* SwiftNavigationCoordinator */; };
+		96F903902D9B6437002BA803 /* SwiftNavigationCoordinator in Frameworks */ = {isa = PBXBuildFile; productRef = 96F9038F2D9B6437002BA803 /* SwiftNavigationCoordinator */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				966EE51B2D9B32D400CF27A8 /* SwiftNavigationCoordinator in Frameworks */,
+				96F903902D9B6437002BA803 /* SwiftNavigationCoordinator in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,7 +108,7 @@
 			);
 			name = SampleApp_iOS;
 			packageProductDependencies = (
-				966EE51A2D9B32D400CF27A8 /* SwiftNavigationCoordinator */,
+				96F9038F2D9B6437002BA803 /* SwiftNavigationCoordinator */,
 			);
 			productName = SampleApp_iOS;
 			productReference = 963B76A52D936B6C00ECEB6C /* SampleApp_iOS.app */;
@@ -166,7 +166,7 @@
 			mainGroup = 963B769C2D936B6C00ECEB6C;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				966EE5192D9B32D400CF27A8 /* XCRemoteSwiftPackageReference "swift-navigation-coordinator" */,
+				96F9038E2D9B6437002BA803 /* XCLocalSwiftPackageReference "../../../swift-navigation-coordinator" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 963B76A62D936B6C00ECEB6C /* Products */;
@@ -487,21 +487,16 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		966EE5192D9B32D400CF27A8 /* XCRemoteSwiftPackageReference "swift-navigation-coordinator" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/iharandreyev/swift-navigation-coordinator";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		96F9038E2D9B6437002BA803 /* XCLocalSwiftPackageReference "../../../swift-navigation-coordinator" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../../swift-navigation-coordinator";
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		966EE51A2D9B32D400CF27A8 /* SwiftNavigationCoordinator */ = {
+		96F9038F2D9B6437002BA803 /* SwiftNavigationCoordinator */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 966EE5192D9B32D400CF27A8 /* XCRemoteSwiftPackageReference "swift-navigation-coordinator" */;
 			productName = SwiftNavigationCoordinator;
 		};
 /* End XCSwiftPackageProductDependency section */
