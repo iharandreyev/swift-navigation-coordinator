@@ -24,6 +24,7 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-navigation", from: "2.3.0"),
     .package(url: "https://github.com/pointfreeco/swift-perception", from: "1.3.4"),
     .package(url: "https://github.com/iharandreyev/swift-ui-on-remove-from-parent", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-clocks", from: "1.0.6"),
   ],
   targets: [
     .target(
@@ -33,6 +34,7 @@ let package = Package(
         .product(name: "Perception", package: "swift-perception"),
         .product(name: "SwiftUINavigation", package: "swift-navigation"),
         .product(name: "SUIOnRemoveFromParent", package: "swift-ui-on-remove-from-parent"),
+        .product(name: "Clocks", package: "swift-clocks"),
       ]
     ),
     .testTarget(

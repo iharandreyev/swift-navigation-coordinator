@@ -1,5 +1,5 @@
 {
-  "originHash" : "e7ffe141892b831970f42950d91bd284fed968c4fbdd847c264189c963616495",
+  "originHash" : "bac3f055e96c509e8e59d58ce56ac494d058161c138b22e5fa8a7edd7ca10f40",
   "pins" : [
     {
       "identity" : "swift-case-paths",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "19b7263bacb9751f151ec0c93ec816fe1ef67c7b",
         "version" : "1.6.1"
+      }
+    },
+    {
+      "identity" : "swift-clocks",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-clocks",
+      "state" : {
+        "revision" : "cc46202b53476d64e824e0b6612da09d84ffde8e",
+        "version" : "1.0.6"
       }
     },
     {

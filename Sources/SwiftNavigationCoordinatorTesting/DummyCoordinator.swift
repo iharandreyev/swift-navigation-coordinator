@@ -56,12 +56,12 @@ public final class DummyCoordinator:
   }
 }
 
-public struct DummyDestination: ScreenDestinationType {
-  public init() { }
-}
-
-extension DummyDestination: ModalDestinationContentType {
-  public var id: String { "dummy-destination" }
+public struct DummyDestination: ModalDestinationContentType {
+  public let id: String
+  
+  public init(id: String = "dummy-destination") {
+    self.id = id
+  }
 }
 
 extension DummyDestination: CaseIterable {
