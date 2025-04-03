@@ -58,9 +58,11 @@ final class OnboardingCoordinator<
   func initialScreen() -> some View {
     factory.createStepScreen(
       for: OnboardingStep.allCases[0],
-      onNext: showNextStep,
-      onShowInfo: { [weak self] in
-        self?.showInfo()
+      onNext: { [unowned self] in
+        Task(operation: showNextStep)
+      },
+      onShowInfo: { [unowned self] in
+        Task(operation: showInfo)
       }
     )
     .onRemoveFromHierarchy(finish: self)
@@ -71,9 +73,11 @@ final class OnboardingCoordinator<
     case let .step(step):
       factory.createStepScreen(
         for: step,
-        onNext: showNextStep,
-        onShowInfo: { [weak self] in
-          self?.showInfo()
+        onNext: { [unowned self] in
+          Task(operation: showNextStep)
+        },
+        onShowInfo: { [unowned self] in
+          Task(operation: showInfo)
         }
       )
       .onRemoveFromParent { [weak self] in
@@ -85,7 +89,7 @@ final class OnboardingCoordinator<
           childFactory: {
             factory.createInfoCoordinator(
               onFinish: { [unowned self] in
-                self.infoDidFinish()
+                Task(operation: infoDidFinish)
               }
             )
           },
@@ -95,12 +99,12 @@ final class OnboardingCoordinator<
     }
   }
   
-  func showNextStep() {
+  func showNextStep() async {
     guard let nextStep = nextStep() else {
       return finish()
     }
     
-    stackNavigator.push(.step(nextStep))
+    await stackNavigator.push(.step(nextStep))
   }
   
   private func nextStep() -> OnboardingStep? {
@@ -109,11 +113,11 @@ final class OnboardingCoordinator<
     return OnboardingStep.allCases[currentStepIdx]
   }
   
-  private func showInfo() {
-    modalNavigator.presentDestination(.sheet(.info))
+  func showInfo() async {
+    await modalNavigator.presentDestination(.sheet(.info))
   }
   
-  private func infoDidFinish() {
-    modalNavigator.dismissDestination()
+  func infoDidFinish() async {
+    await modalNavigator.dismissDestination()
   }
 }

@@ -34,8 +34,8 @@ final class InfoCoordinator<
   
   func initialScreen() -> some View {
     factory.createFirstScreen(
-      onContinue: { [weak self] in
-        self?.showLastScreen()
+      onContinue: { [unowned self] in
+        Task(operation: showLastScreen)
       }
     )
     .onRemoveFromHierarchy(finish: self)
@@ -52,7 +52,7 @@ final class InfoCoordinator<
     }
   }
 
-  private func showLastScreen() {
-    stackNavigator.push(.last)
+  func showLastScreen() async {
+    await stackNavigator.push(.last)
   }
 }
