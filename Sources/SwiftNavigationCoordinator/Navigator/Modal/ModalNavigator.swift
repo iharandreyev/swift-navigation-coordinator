@@ -65,19 +65,16 @@ public final class ModalNavigator<
   }
   
   #warning("TODO: Investigate whether replacing destination does not break animation completion")
-  private func setDestination(_ newValue: ModalDestination<DestinationType>?) async {
-    switch (destination, newValue) {
-    case (.none, .none):
-      return
-    default:
-      await navigationQueue.schedule(
-        uiUpdate: { [weak self] in
-          guard let self else { return }
-          self.destination = newValue
-        },
-        animated: true
-      )
-    }
+  private func setDestination(_ destination: ModalDestination<DestinationType>?) async {
+    guard self.destination != destination else { return }
+    
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        self.destination = destination
+      },
+      animated: true
+    )
   }
 }
 
