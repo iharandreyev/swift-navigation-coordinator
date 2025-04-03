@@ -21,8 +21,8 @@ actor WithoutAnimations {
   }
   
   func run(
-    job: @MainActor @escaping () -> Void
+    _ job: @Sendable @escaping () -> Void
   ) async  {
-    await wrapped.run(job: job)
+    await wrapped.run(job)
   }
 }
