@@ -8,6 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
+// sourcery: AutoMockable
 protocol AppCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
   associatedtype AppInitScreenType: View
   associatedtype OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
