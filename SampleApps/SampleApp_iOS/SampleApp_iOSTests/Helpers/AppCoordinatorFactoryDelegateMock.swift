@@ -19,16 +19,16 @@ final class AppCoordinatorFactoryDelegateMock<
   MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
 >: AppCoordinatorFactoryDelegateType {
   struct Params_createAppInitScreen {
-    let onFinish: () -> Void
+    let onFinish: Callback<Void>
   }
   
   private(set) var createAppInitScreen_invocations: [Params_createAppInitScreen] = []
   var createAppInitScreen_count: Int { createAppInitScreen_invocations.count }
   private let createAppInitScreen_invoked: ((Params_createAppInitScreen) -> Void)?
-  private var createAppInitScreen_onFinish: (() -> Void)!
+  private var createAppInitScreen_onFinish: Callback<Void>!
   
   func createAppInitScreen(
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) -> DummyView {
     let params = Params_createAppInitScreen(
       onFinish: onFinish
@@ -41,23 +41,23 @@ final class AppCoordinatorFactoryDelegateMock<
     return DummyView()
   }
   
-  func simulate_createAppInitScreen_onFinish() {
-    createAppInitScreen_onFinish()
+  func simulate_createAppInitScreen_onFinish() async {
+    await createAppInitScreen_onFinish.execute()
   }
   
   struct Params_createOnboardingCoordinator {
-    let onFinish: () -> Void
+    let onFinish: Callback<Void>
   }
   
   private let injected_createOnboardingCoordinator: (Params_createOnboardingCoordinator) -> OnboardingCoordinatorType
   private(set) var createOnboardingCoordinator_invocations: [Params_createOnboardingCoordinator] = []
   var createOnboardingCoordinator_count: Int { createOnboardingCoordinator_invocations.count }
-  private var createOnboardingCoordinator_onFinish: (() -> Void)!
+  private var createOnboardingCoordinator_onFinish: Callback<Void>!
   
   private let createOnboardingCoordinator_invoked: ((Params_createOnboardingCoordinator) -> Void)?
   
   func createOnboardingCoordinator(
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) -> OnboardingCoordinatorType {
     let params = Params_createOnboardingCoordinator(
       onFinish: onFinish
@@ -70,8 +70,8 @@ final class AppCoordinatorFactoryDelegateMock<
     return injected_createOnboardingCoordinator(params)
   }
   
-  func simulate_createOnboardingCoordinator_onFinish() {
-    createOnboardingCoordinator_onFinish()
+  func simulate_createOnboardingCoordinator_onFinish() async {
+    await createOnboardingCoordinator_onFinish.execute()
   }
   
   struct Params_createMainCoordinator { }
