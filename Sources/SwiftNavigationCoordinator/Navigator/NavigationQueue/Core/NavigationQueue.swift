@@ -101,7 +101,9 @@ public actor NavigationQueue {
 }
 
 extension NavigationQueue {
-#if !canImport(XCTest)
+#if canImport(XCTest)
+  public static let shared = NavigationQueue(clock: ImmediateClock())
+#else
   public static let shared = NavigationQueue(clock: ContinuousClock())
 #endif
 }
