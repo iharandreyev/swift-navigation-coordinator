@@ -31,6 +31,7 @@ public final class DummyCoordinator:
     canHandleDeeplinks: Bool = false
   ) {
     self.canHandleDeeplinks = canHandleDeeplinks
+    super.init()
   }
   
   public func initialScreen() -> DummyView {
