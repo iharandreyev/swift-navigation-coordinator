@@ -5,7 +5,6 @@
 //  Created by Andreyeu, Ihar on 4/3/25.
 //
 
-import Clocks
 import Testing
 
 @testable
@@ -61,6 +60,6 @@ struct NavigationQueueTests {
   }
   
   func createSut() async -> NavigationQueue {
-    NavigationQueue(clock: ImmediateClock())
+    NavigationQueue.test()
   }
 }

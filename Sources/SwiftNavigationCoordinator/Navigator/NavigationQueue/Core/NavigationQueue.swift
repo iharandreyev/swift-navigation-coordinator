@@ -102,7 +102,7 @@ public actor NavigationQueue {
 
 extension NavigationQueue {
 #if canImport(XCTest)
-  public static let shared = NavigationQueue(clock: ImmediateClock())
+  public static let shared = test()
 #else
   public static let shared = NavigationQueue(clock: ContinuousClock())
 #endif
@@ -120,6 +120,10 @@ struct NavigationQueueItem {
 
 extension NavigationQueue {
   var queueLength: Int { queue.count }
+  
+  static func test() -> NavigationQueue {
+    NavigationQueue(clock: ImmediateClock())
+  }
 }
 
 #endif
