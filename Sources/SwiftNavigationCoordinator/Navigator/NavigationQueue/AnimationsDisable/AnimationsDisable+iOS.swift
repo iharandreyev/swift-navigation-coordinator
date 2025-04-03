@@ -22,7 +22,7 @@ actor AnimationsDisable_iOS {
   
   func runWithoutAnimations(
     job: @MainActor @escaping () -> Void
-  ) async  {
+  ) async {
     if #available(iOS 18, *) {
       await self.withoutAnimations_new(perform: job)
     } else {
@@ -51,7 +51,7 @@ actor AnimationsDisable_iOS {
     
     UIDisable.setUiDisabled(false)
   }
-
+  
   @available(iOS 18, *)
   @MainActor
   private func withoutAnimations_new(
@@ -59,7 +59,7 @@ actor AnimationsDisable_iOS {
   ) async  {
     var noAnimationTransaction = Transaction()
     noAnimationTransaction.disablesAnimations = true
-
+    
     // Job does not throw, so `withTransaction` must also not throw
     try! withTransaction(noAnimationTransaction, job)
   }
