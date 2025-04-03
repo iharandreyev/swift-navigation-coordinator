@@ -1,5 +1,5 @@
 {
-  "originHash" : "ff2048572003ea3003b7a67f351d2f369e6ed7eb4ccab70d301935b036bd9350",
+  "originHash" : "434552b7203d79a86ff31858661d7a4e11b9b91fb34cfd2d69fb346605dabccc",
   "pins" : [
     {
       "identity" : "swift-case-paths",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "19b7263bacb9751f151ec0c93ec816fe1ef67c7b",
         "version" : "1.6.1"
+      }
+    },
+    {
+      "identity" : "swift-clocks",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-clocks",
+      "state" : {
+        "revision" : "cc46202b53476d64e824e0b6612da09d84ffde8e",
+        "version" : "1.0.6"
       }
     },
     {
@@ -44,15 +53,6 @@
       "state" : {
         "revision" : "db6bc9dbfed001f21e6728fd36413d9342c235b4",
         "version" : "2.3.0"
-      }
-    },
-    {
-      "identity" : "swift-navigation-coordinator",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/iharandreyev/swift-navigation-coordinator",
-      "state" : {
-        "revision" : "2daa2f0d206928c500df8920680cfa6371fb3df6",
-        "version" : "0.1.0"
       }
     },
     {
