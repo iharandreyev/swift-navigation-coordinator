@@ -8,25 +8,34 @@
 import Perception
 import SwiftUI
 
-#warning("TODO: Implement async methods to wait for animation complete")
 /// An observable object used to manage optional modal presentation.
 @Perceptible
 @MainActor
 public final class ModalNavigator<
   DestinationType: ModalDestinationContentType
 > {
+  private let navigationQueue: NavigationQueue
+  
   fileprivate(set) public var destination: ModalDestination<DestinationType>?
-
-  public init() { }
-
-  public func presentDestination(
-    _ destination: ModalDestination<DestinationType>
+  
+  private init(
+    navigationQueue: NavigationQueue
   ) {
-    self.destination = destination
+    self.navigationQueue = navigationQueue
   }
   
-  public func dismissDestination() {
-    self.destination = nil
+  public convenience init() {
+    self.init(navigationQueue: .shared)
+  }
+  
+  public func presentDestination(
+    _ destination: ModalDestination<DestinationType>
+  ) async {
+    await setDestination(destination)
+  }
+  
+  public func dismissDestination() async {
+    await setDestination(nil)
   }
   
   fileprivate func setBoundDestination(
@@ -48,9 +57,41 @@ public final class ModalNavigator<
       return
     }
     
-    self.destination = nil
+    Task { [weak self] in
+      guard let self else { return }
+      
+      await setDestination(nil)
+    }
+  }
+  
+  #warning("TODO: Investigate whether replacing destination does not break animation completion")
+  private func setDestination(_ destination: ModalDestination<DestinationType>?) async {
+    guard self.destination != destination else { return }
+    
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        self.destination = destination
+      },
+      animated: true
+    )
   }
 }
+
+#if canImport(XCTest)
+
+extension ModalNavigator {
+  static func test(
+    destination: ModalDestination<DestinationType>? = nil,
+    navigationQueue: NavigationQueue = .test()
+  ) -> ModalNavigator {
+    let navigator = ModalNavigator(navigationQueue: navigationQueue)
+    navigator.destination = destination
+    return navigator
+  }
+}
+
+#endif
 
 extension Perception.Bindable {
   @MainActor
