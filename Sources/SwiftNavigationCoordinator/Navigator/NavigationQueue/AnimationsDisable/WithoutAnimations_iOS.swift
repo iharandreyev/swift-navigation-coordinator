@@ -1,5 +1,5 @@
 //
-//  AnimationsDisable_iOS.swift
+//  WithoutAnimations_iOS.swift
 //  swift-navigation-coordinator
 //
 //  Created by Andreyeu, Ihar on 4/3/25.
@@ -11,7 +11,7 @@ import Clocks
 import SwiftUI
 import UIKit
 
-actor AnimationsDisable_iOS {
+actor WithoutAnimations_iOS {
   let clock: AnyClock<Duration>
   
   init(
@@ -20,19 +20,19 @@ actor AnimationsDisable_iOS {
     self.clock = clock
   }
   
-  func runWithoutAnimations(
+  func run(
     job: @MainActor @escaping () -> Void
   ) async {
     if #available(iOS 18, *) {
-      await self.withoutAnimations_new(perform: job)
+      await self.run_new(perform: job)
     } else {
-      await withoutAnimations_old(perform: job)
+      await run_old(perform: job)
     }
   }
   
   @available(iOS, deprecated: 18, message: "Use Transaction-based solution for iOS 18+")
   @MainActor
-  private func withoutAnimations_old(
+  private func run_old(
     perform job: @MainActor @escaping () -> Void
   ) async  {
     let stepEndDelay = DelayDuration.frame
@@ -54,7 +54,7 @@ actor AnimationsDisable_iOS {
   
   @available(iOS 18, *)
   @MainActor
-  private func withoutAnimations_new(
+  private func run_new(
     perform job: @MainActor @escaping () -> Void
   ) async  {
     var noAnimationTransaction = Transaction()
