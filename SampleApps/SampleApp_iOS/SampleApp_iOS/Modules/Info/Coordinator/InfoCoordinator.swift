@@ -24,7 +24,7 @@ final class InfoCoordinator<
   init(
     stackNavigator: StackNavigator<DestinationType>,
     factory: FactoryDelegateType,
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) {
     self.stackNavigator = stackNavigator
     self.factory = factory
@@ -34,8 +34,8 @@ final class InfoCoordinator<
   
   func initialScreen() -> some View {
     factory.createFirstScreen(
-      onContinue: { [unowned self] in
-        Task(operation: showLastScreen)
+      onContinue: Callback { [unowned self] in
+        await showLastScreen()
       }
     )
     .onRemoveFromHierarchy(finish: self)
@@ -45,8 +45,8 @@ final class InfoCoordinator<
     switch destination {
     case .last:
       factory.createLastScreen(
-        onDone: { [weak self] in
-          self?.finish()
+        onDone: Callback { [weak self] in
+          await self?.finish()
         }
       )
     }

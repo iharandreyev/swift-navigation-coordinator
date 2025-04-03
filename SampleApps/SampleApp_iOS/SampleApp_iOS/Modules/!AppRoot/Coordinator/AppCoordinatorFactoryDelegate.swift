@@ -14,11 +14,11 @@ protocol AppCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
   associatedtype MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
   
   func createAppInitScreen(
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) -> AppInitScreenType
   
   func createOnboardingCoordinator(
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) -> OnboardingCoordinatorType
   
   func createMainCoordinator() -> MainCoordinatorType
@@ -26,13 +26,13 @@ protocol AppCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
 
 struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
   func createAppInitScreen(
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) -> some View {
-    AppInitScreen(onFinish: onFinish)
+    AppInitScreen(onFinish: onFinish.callAsFunction)
   }
   
   func createOnboardingCoordinator(
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) -> some ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType {
     OnboardingCoordinator(
       stackNavigator: StackNavigator(),

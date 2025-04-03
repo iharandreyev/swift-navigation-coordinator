@@ -37,8 +37,8 @@ final class AppCoordinator<
     switch destination {
     case .appInit:
       factory.createAppInitScreen(
-        onFinish: { [unowned self] in
-          Task(operation: initDidFinish)
+        onFinish: Callback { [unowned self] in
+          await initDidFinish()
         }
       )
     case .onboarding:
@@ -46,8 +46,8 @@ final class AppCoordinator<
         modalCoordinator: addChild(
           childFactory: {
             factory.createOnboardingCoordinator(
-              onFinish: { [unowned self] in
-                Task(operation: onboardingDidFinish)
+              onFinish: Callback { [unowned self] in
+                await onboardingDidFinish()
               }
             )
           },

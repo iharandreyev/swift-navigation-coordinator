@@ -11,16 +11,22 @@ open class CoordinatorBase {
   private(set) public var children: [AnyDestination: CoordinatorBase] = [:]
   
   private var id: AnyDestination?
-  private var onFinish: (() -> Void)?
+  private var onFinish: Callback<Void>?
 
   // MARK: - Init
   
   public init(
-    onFinish: (() -> Void)? = nil
+    onFinish: Callback<Void>? = nil
   ) {
     self.onFinish = onFinish
 
     logMessage("INIT: `\(ShortDescription(self))`")
+  }
+  
+  public convenience init(
+    onFinish: @Sendable @escaping () -> Void
+  ) {
+    self.init(onFinish: Callback(job: onFinish))
   }
   
   // MARK: - Deinit
@@ -159,7 +165,13 @@ open class CoordinatorBase {
   }
 
   public final func setOnFinish(
-    _ onFinish: @escaping () -> Void
+    _ onFinish: @Sendable @escaping () -> Void
+  ) {
+    self.onFinish = Callback(job: onFinish)
+  }
+  
+  public final func setOnFinish(
+    _ onFinish: Callback<Void>
   ) {
     self.onFinish = onFinish
   }

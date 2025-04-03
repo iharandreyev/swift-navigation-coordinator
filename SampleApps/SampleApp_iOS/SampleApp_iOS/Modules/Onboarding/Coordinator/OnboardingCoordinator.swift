@@ -36,7 +36,7 @@ final class OnboardingCoordinator<
     stackNavigator: StackNavigator<DestinationType>,
     modalNavigator: ModalNavigator<DestinationType>,
     factory: FactoryDelegateType,
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) {
     self.stackNavigator = stackNavigator
     self.modalNavigator = modalNavigator
@@ -58,11 +58,11 @@ final class OnboardingCoordinator<
   func initialScreen() -> some View {
     factory.createStepScreen(
       for: OnboardingStep.allCases[0],
-      onNext: { [unowned self] in
-        Task(operation: showNextStep)
+      onNext: Callback { [unowned self] in
+        await showNextStep()
       },
-      onShowInfo: { [unowned self] in
-        Task(operation: showInfo)
+      onShowInfo: Callback{ [unowned self] in
+        await showInfo()
       }
     )
     .onRemoveFromHierarchy(finish: self)
@@ -73,11 +73,11 @@ final class OnboardingCoordinator<
     case let .step(step):
       factory.createStepScreen(
         for: step,
-        onNext: { [unowned self] in
-          Task(operation: showNextStep)
+        onNext: Callback{ [unowned self] in
+          await showNextStep()
         },
-        onShowInfo: { [unowned self] in
-          Task(operation: showInfo)
+        onShowInfo: Callback{ [unowned self] in
+          await showInfo()
         }
       )
       .onRemoveFromParent { [weak self] in
@@ -88,8 +88,8 @@ final class OnboardingCoordinator<
         stackCoordinator: addChild(
           childFactory: {
             factory.createInfoCoordinator(
-              onFinish: { [unowned self] in
-                Task(operation: infoDidFinish)
+              onFinish: Callback { [unowned self] in
+                await infoDidFinish()
               }
             )
           },
