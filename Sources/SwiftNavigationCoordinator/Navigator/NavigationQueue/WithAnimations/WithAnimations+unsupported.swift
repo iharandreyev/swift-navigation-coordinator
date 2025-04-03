@@ -7,7 +7,17 @@
 
 #if !os(iOS)
 
+import Clocks
+
 actor WithAnimations_unsupported {
+  let clock: AnyClock<Duration>
+  
+  init(
+    clock: AnyClock<Duration>
+  ) {
+    self.clock = clock
+  }
+  
   func run(
     _ job: @MainActor @Sendable @escaping () -> Void
   ) async {
