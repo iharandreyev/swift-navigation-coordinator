@@ -56,7 +56,9 @@ struct AppCoordinatorTests {
     let sut = createSut(navigator: navigator)
     _ = sut.screen(for: .appInit)
     
-    await factory.simulate_createAppInitScreen_onFinish()
+    let callback = factory.createAppInitScreen_invocations.first!.onFinish
+    callback()
+    await callback.onCompleted()
     
     #expect(navigator.destination == AppDestination.onboarding)
   }
