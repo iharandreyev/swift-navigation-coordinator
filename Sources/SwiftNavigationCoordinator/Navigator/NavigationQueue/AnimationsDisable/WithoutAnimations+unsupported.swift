@@ -7,6 +7,8 @@
 
 #if !os(iOS)
 
+import Clocks
+
 actor WithoutAnimations_unsupported {
   let clock: AnyClock<Duration>
   
