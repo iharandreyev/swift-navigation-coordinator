@@ -19,7 +19,7 @@ actor WithoutAnimations_unsupported {
   }
   
   func run(
-    _ job: @Sendable @escaping () -> Void
+    _ job: @MainActor @Sendable @escaping () -> Void
   ) async {
     fatalError("Current platform is not yet supported!")
   }

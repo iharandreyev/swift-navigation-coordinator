@@ -21,7 +21,7 @@ actor WithoutAnimations_iOS {
   }
   
   func run(
-    _ job: @Sendable @escaping () -> Void
+    _ job: @MainActor @Sendable @escaping () -> Void
   ) async {
     if #available(iOS 18, *) {
       await run_new(job)
@@ -33,7 +33,7 @@ actor WithoutAnimations_iOS {
   @available(iOS, deprecated: 18, message: "Use Transaction-based solution for iOS 18+")
   @MainActor
   private func run_old(
-    _ job: @Sendable @escaping () -> Void
+    _ job: @MainActor @Sendable @escaping () -> Void
   ) async  {
     let stepEndDelay = DelayDuration.frame
     
@@ -55,7 +55,7 @@ actor WithoutAnimations_iOS {
   @available(iOS 18, *)
   @MainActor
   private func run_new(
-    _ job: @Sendable @escaping () -> Void
+    _ job: @MainActor @Sendable @escaping () -> Void
   ) async  {
     var noAnimationTransaction = Transaction()
     noAnimationTransaction.disablesAnimations = true
