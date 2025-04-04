@@ -15,16 +15,7 @@ import SampleApp_iOS
 
 @MainActor
 struct AppCoordinatorTests {
-  typealias AppCoordinatorFactoryDelegateMock = AppCoordinatorFactoryDelegateTypeMock<DummyView, DummyCoordinator, DummyCoordinator>
-  
-  let factory: AppCoordinatorFactoryDelegateMock
-  
-  init() {
-    factory = AppCoordinatorFactoryDelegateMock()
-    factory.createAppInitScreenOnFinishCallbackVoidReturnValue = DummyView()
-    factory.createOnboardingCoordinatorOnFinishCallbackVoidReturnValue = DummyCoordinator()
-    factory.createMainCoordinatorReturnValue = DummyCoordinator()
-  }
+  let factory = AppCoordinatorFactoryDelegateMock.create()
   
   init() {
     SwiftNavigationCoordinator.setEnvironment(.test)
@@ -97,7 +88,7 @@ struct AppCoordinatorTests {
   
   private func createSut(
     navigator: SpecimenNavigator<AppDestination> = SpecimenNavigator(initialDestination: .appInit)
-  ) -> AppCoordinator<AppCoordinatorFactoryDelegateMock> {
+  ) -> AppCoordinator<AppCoordinatorFactoryDelegateMock.Dummy> {
     AppCoordinator(specimenNavigator: navigator, factory: factory)
   }
 }

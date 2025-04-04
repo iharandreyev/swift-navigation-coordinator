@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		96DB96F02D9F3361004102F4 /* SwiftNavigationCoordinator in Frameworks */ = {isa = PBXBuildFile; productRef = 96DB96EF2D9F3361004102F4 /* SwiftNavigationCoordinator */; };
+		AD3FA3CF4E2A0A4A920226BB /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0315FE310CFD030D5787E2C /* AutoMockable.generated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +25,7 @@
 		963B76A52D936B6C00ECEB6C /* SampleApp_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		963B76B52D936B7100ECEB6C /* SampleApp_iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleApp_iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96635C5E2DA4FFC300965E93 /* SampleApp_iOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleApp_iOS.xctestplan; sourceTree = "<group>"; };
+		F0315FE310CFD030D5787E2C /* AutoMockable.generated.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -71,6 +73,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		14CB15793561D2D33B033D2F /* SampleApp_iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				91DCEAA8728DBC953BB880FA /* Sourcery */,
+			);
+			path = SampleApp_iOSTests;
+			sourceTree = "<group>";
+		};
+		3E683AF48A507183E8A4880D /* Sourcery */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Sourcery;
+			sourceTree = "<group>";
+		};
+		91DCEAA8728DBC953BB880FA /* Sourcery */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Sourcery;
+			sourceTree = "<group>";
+		};
 		963B769C2D936B6C00ECEB6C = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +102,9 @@
 				963B76A72D936B6C00ECEB6C /* SampleApp_iOS */,
 				963B76B82D936B7100ECEB6C /* SampleApp_iOSTests */,
 				963B76A62D936B6C00ECEB6C /* Products */,
+				14CB15793561D2D33B033D2F /* SampleApp_iOSTests */,
+				BD41BFECCC484F6068C50AFF /* SampleApp_iOSTests */,
+				FF524D90BBB2B80DBA371D18 /* SampleApp_iOSTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -88,6 +115,30 @@
 				963B76B52D936B7100ECEB6C /* SampleApp_iOSTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BD41BFECCC484F6068C50AFF /* SampleApp_iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				3E683AF48A507183E8A4880D /* Sourcery */,
+			);
+			path = SampleApp_iOSTests;
+			sourceTree = "<group>";
+		};
+		D99B815551C24290E8BF9ED0 /* Sourcery */ = {
+			isa = PBXGroup;
+			children = (
+				F0315FE310CFD030D5787E2C /* AutoMockable.generated.swift */,
+			);
+			path = Sourcery;
+			sourceTree = "<group>";
+		};
+		FF524D90BBB2B80DBA371D18 /* SampleApp_iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				D99B815551C24290E8BF9ED0 /* Sourcery */,
+			);
+			path = SampleApp_iOSTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -210,6 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD3FA3CF4E2A0A4A920226BB /* AutoMockable.generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
