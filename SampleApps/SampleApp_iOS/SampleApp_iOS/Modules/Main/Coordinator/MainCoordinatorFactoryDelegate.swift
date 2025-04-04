@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftNavigationCoordinator
 
+// sourcery: AutoMockable
 protocol MainCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
   associatedtype UsecasesCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
   associatedtype DeeplinksCoordinatorType: ScreenCoordinatorType
