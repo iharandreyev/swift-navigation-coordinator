@@ -35,7 +35,7 @@ actor WithAnimations_iOS {
   private func run_old(
     _ job: @MainActor @Sendable @escaping () -> Void
   ) async  {
-    await withCheckedContinuation { [clock] continuation in
+    await withCheckedContinuation { continuation in
       CATransaction.begin()
       CATransaction.setCompletionBlock {
         continuation.resume()
@@ -54,7 +54,7 @@ actor WithAnimations_iOS {
   private func run_new(
     _ job: @MainActor @Sendable @escaping () -> Void
   ) async  {
-    await withCheckedContinuation { [clock] continuation in
+    await withCheckedContinuation { continuation in
       var transaction = Transaction()
       transaction.addAnimationCompletion {
         continuation.resume()
