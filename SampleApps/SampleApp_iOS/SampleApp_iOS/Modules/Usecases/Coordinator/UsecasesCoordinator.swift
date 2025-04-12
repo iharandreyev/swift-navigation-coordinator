@@ -138,6 +138,17 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       await showModalSheet()
       return .done
       
+    case Deeplink.showUsecasesAndPushScreen:
+      await showPushedScreen()
+      return .done
+      
+    case
+      Deeplink.showMultiChildPathA,
+      Deeplink.showMultiChildPathB:
+      
+      await showMultiChildFlow()
+      return .partial
+      
     default:
       return .impossible
     }

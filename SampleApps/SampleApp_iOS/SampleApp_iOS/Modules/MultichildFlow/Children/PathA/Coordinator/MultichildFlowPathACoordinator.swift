@@ -53,6 +53,19 @@ final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorTyp
   func finishFlow() async {
     await handleChildEvent(MultiChildFlowPathAFinishEvent())
   }
+  
+  override func processDeeplink(
+    _ deeplink: any DeeplinkEventType
+  ) async -> ProcessDeeplinkResult {
+    switch deeplink {
+    case Deeplink.showMultiChildPathA:
+      print("Deeplink.showMultiChildPathA: DONE")
+      return .done
+      
+    default:
+      return .impossible
+    }
+  }
 }
 
 struct MultiChildFlowPathAFinishEvent: ChildEventType { }

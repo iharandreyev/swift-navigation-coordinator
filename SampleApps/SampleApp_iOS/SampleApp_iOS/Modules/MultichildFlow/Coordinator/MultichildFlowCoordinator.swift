@@ -88,31 +88,53 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
   }
 
   func showPathA() async {
+    let destination = DestinationType.pathA
+    
     addChild(
       childFactory: {
         MultiChildFlowPathACoordinator(stackNavigator: stackNavigator.scope())
       },
-      as: DestinationType.pathA
+      as: destination
     )
 
-    await stackNavigator.push(.pathA)
+    await stackNavigator.push(destination)
   }
 
   func showPathB() async {
+    let destination = DestinationType.pathB
+    
     addChild(
       childFactory: {
         MultiChildFlowPathBCoordinator(modalNavigator: ModalNavigator())
       },
-      as: DestinationType.pathB
+      as: destination
     )
 
-    await stackNavigator.push(.pathB)
+    await stackNavigator.push(destination)
   }
 
   func restart() async {
     await stackNavigator.popToRoot()
   }
 
+  override func processDeeplink(
+    _ deeplink: any DeeplinkEventType
+  ) async -> ProcessDeeplinkResult {
+    switch deeplink {
+      
+    case Deeplink.showMultiChildPathA:
+      await showPathA()
+      return .partial
+      
+    case Deeplink.showMultiChildPathB:
+      await showPathB()
+      return .partial
+      
+    default:
+      return .impossible
+    }
+  }
+  
   override func handleChildEvent(
     _ event: any ChildEventType,
     file: StaticString = #file,
