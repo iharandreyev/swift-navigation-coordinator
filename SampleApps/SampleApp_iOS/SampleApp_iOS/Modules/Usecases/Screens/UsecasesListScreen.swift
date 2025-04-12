@@ -11,6 +11,7 @@ struct UsecasesListScreen: View {
   let onShowModalSheet: () -> Void
   let onShowModalCover: () -> Void
   let onShowPushedScreen: () -> Void
+  let onShowMultiChildFlow: () -> Void
   
   var body: some View {
     List {
@@ -28,6 +29,11 @@ struct UsecasesListScreen: View {
         title: "Show pushed screen",
         onTap: onShowPushedScreen
       )
+      
+      ListItemButton(
+        title: "Show multi child flow",
+        onTap: onShowMultiChildFlow
+      )
     }
   }
 }
@@ -36,6 +42,7 @@ struct UsecasesListScreen: View {
   UsecasesListScreen(
     onShowModalSheet: {},
     onShowModalCover: {},
-    onShowPushedScreen: {}
+    onShowPushedScreen: {},
+    onShowMultiChildFlow: {}
   )
 }

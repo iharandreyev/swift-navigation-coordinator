@@ -12,11 +12,12 @@ enum UsecasesDestination: String, ModalDestinationContentType {
   case modalSheet
   case modalCover
   case pushedScreen
+  case multiChildFlow
   
   var id: String { rawValue }
 }
 
-final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
+final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType, CoordinatorChildSearch {
   typealias DestinationType = UsecasesDestination
   
   let stackNavigator: StackNavigator<DestinationType>
@@ -40,6 +41,9 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       },
       onShowPushedScreen: { [unowned self] in
         Task(operation: showPushedScreen)
+      },
+      onShowMultiChildFlow: { [unowned self] in
+        Task(operation: showMultiChildFlow)
       }
     )
   }
@@ -55,6 +59,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
         }
       )
       .id(destination)
+      
     case .modalCover:
       SomeScreen(
         name: "a modal",
@@ -64,6 +69,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
         }
       )
       .id(destination)
+
     case .pushedScreen:
       SomeScreen(
         name: "a pushed screen",
@@ -73,6 +79,15 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
         }
       )
       .id(destination)
+
+    case .multiChildFlow:
+      CoordinatedScreen
+        .stackPage(
+          stackCoordinator: child(
+            ofType: MultiChildFlowCoordinator.self,
+            for: destination
+          )
+        )
     }
   }
   
@@ -88,6 +103,21 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
     await stackNavigator.push(.pushedScreen)
   }
   
+  private func showMultiChildFlow() async {
+    let destination = DestinationType.multiChildFlow
+    
+    addChild(
+      childFactory: {
+        MultiChildFlowCoordinator(
+          stackNavigator: stackNavigator.scope()
+        )
+      },
+      as: destination
+    )
+    
+    await stackNavigator.push(destination)
+  }
+
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
   ) async -> ProcessDeeplinkResult {
