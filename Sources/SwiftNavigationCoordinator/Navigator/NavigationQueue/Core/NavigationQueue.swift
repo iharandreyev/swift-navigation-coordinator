@@ -11,8 +11,6 @@ import SwiftUI
 
 /// Used to throttle animation completions to avoid multiple transitions at the same time
 public actor NavigationQueue {
-  private let clock: AnyClock<Duration>
-  
   private let withoutAnimations: WithoutAnimations
   private let withAnimations: WithAnimations
   
@@ -22,9 +20,8 @@ public actor NavigationQueue {
   init<ClockType: Clock<Duration>>(
     clock: ClockType
   ) {
-    self.clock = AnyClock(clock)
     self.withoutAnimations = WithoutAnimations(clock: clock)
-    self.withAnimations = WithAnimations()
+    self.withAnimations = WithAnimations(clock: clock)
   }
 
   public func schedule(

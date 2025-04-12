@@ -7,10 +7,19 @@
 
 #if os(iOS)
 
+import Clocks
 import SwiftUI
 import UIKit
 
 actor WithAnimations_iOS {
+  let clock: AnyClock<Duration>
+  
+  init(
+    clock: AnyClock<Duration>
+  ) {
+    self.clock = clock
+  }
+  
   func run(
     _ job: @MainActor @Sendable @escaping () -> Void
   ) async {
@@ -26,14 +35,18 @@ actor WithAnimations_iOS {
   private func run_old(
     _ job: @MainActor @Sendable @escaping () -> Void
   ) async  {
-    await withCheckedContinuation { continuation in
+    await withCheckedContinuation { [clock] continuation in
       CATransaction.begin()
       CATransaction.setCompletionBlock {
         continuation.resume()
       }
+      
       job()
+      
       CATransaction.commit()
     }
+    
+    await clock.trySleep(for: DelayDuration.frame)
   }
   
   @available(iOS 18, *)
@@ -41,7 +54,7 @@ actor WithAnimations_iOS {
   private func run_new(
     _ job: @MainActor @Sendable @escaping () -> Void
   ) async  {
-    await withCheckedContinuation { continuation in
+    await withCheckedContinuation { [clock] continuation in
       var transaction = Transaction()
       transaction.addAnimationCompletion {
         continuation.resume()
@@ -51,6 +64,8 @@ actor WithAnimations_iOS {
         job()
       }
     }
+    
+    await clock.trySleep(for: DelayDuration.frame)
   }
 }
 
