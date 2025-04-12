@@ -57,9 +57,14 @@ final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorTyp
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
   ) async -> ProcessDeeplinkResult {
+    #warning("TODO: Ensure coordinator is in the correct state prior to firing navigation logic")
     switch deeplink {
     case Deeplink.showMultiChildPathA:
       print("Deeplink.showMultiChildPathA: DONE")
+      return .done
+      
+    case Deeplink.showMultiChildPathAFinish:
+      await proceedToFinishFlow()
       return .done
       
     default:

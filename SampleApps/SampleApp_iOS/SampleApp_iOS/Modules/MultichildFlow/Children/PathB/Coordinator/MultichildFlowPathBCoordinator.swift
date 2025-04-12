@@ -55,15 +55,21 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
   }
   
   func finishFlow() async {
+    await modalNavigator.dismissDestination()
     await handleChildEvent(MultiChildFlowPathBFinishEvent())
   }
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
   ) async -> ProcessDeeplinkResult {
+    #warning("TODO: Ensure coordinator is in the correct state prior to firing navigation logic")
     switch deeplink {
     case Deeplink.showMultiChildPathB:
       print("Deeplink.showMultiChildPathB: DONE")
+      return .done
+      
+    case Deeplink.showMultiChildPathBFinish:
+      await proceedToFinishFlow()
       return .done
       
     default:

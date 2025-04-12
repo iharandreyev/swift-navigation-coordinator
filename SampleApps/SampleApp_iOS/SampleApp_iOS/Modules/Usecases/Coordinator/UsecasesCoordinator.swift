@@ -129,6 +129,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
   ) async -> ProcessDeeplinkResult {
+    #warning("TODO: Ensure coordinator is in the correct state prior to firing navigation logic")
     switch deeplink {
     case Deeplink.showUsecasesAndModalCover:
       await showModalCover()
@@ -144,7 +145,9 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       
     case
       Deeplink.showMultiChildPathA,
-      Deeplink.showMultiChildPathB:
+      Deeplink.showMultiChildPathAFinish,
+      Deeplink.showMultiChildPathB,
+      Deeplink.showMultiChildPathBFinish:
       
       await showMultiChildFlow()
       return .partial
