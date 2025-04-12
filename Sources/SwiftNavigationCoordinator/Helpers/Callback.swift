@@ -40,6 +40,8 @@ public final class Callback<Params: Sendable>: Sendable {
     line: UInt = #line,
     column: UInt = #column
   ) async {
+    Environment.assert(.test)
+    
     await createCompletionIfNeeded()
     do {
       try await completion.value?.value

@@ -6,7 +6,6 @@
 //
 
 import Clocks
-import SwiftUI
 
 actor WithAnimations {
   let clock: AnyClock<Duration>
@@ -22,9 +21,8 @@ actor WithAnimations {
   }
 
   func run(
-    _ job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation
-  ) async {
-    await wrapped.run(job, animation: animation)
+    _ job: @MainActor @Sendable @escaping () -> Void
+  ) async  {
+    await wrapped.run(job)
   }
 }

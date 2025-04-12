@@ -12,6 +12,11 @@ import Perception
 import SwiftNavigationCoordinator
 
 struct StackNavigatorTests {
+  init() {
+    #warning("TODO: Looks like bad design, since `Environment.current` is updated for everything")
+    setEnvironment(.test)
+  }
+  
   @Test
   func stackNavigator_pushesSingleDestination() async throws {
     await assertSut(
@@ -178,7 +183,8 @@ struct StackNavigatorTests {
     let child: Sut<TestChildDestination> = await parent.scope()
     
     #expect(await child.isValid)
-    #expect(await child.stack.isEmpty)
+    #expect(await child.parent == parent)
+    #expect(await parent.child == child)
   }
   
   @MainActor
@@ -194,6 +200,69 @@ struct StackNavigatorTests {
     
     #expect(parent.stack == [.first, .second])
     #expect(!child.isValid)
+    #expect(await child.parent == nil)
+    #expect(await parent.child == nil)
+  }
+  
+  @MainActor
+  @Test
+  func stackNavigator_scoped_popsToRoot() async throws {
+    let parent = Sut<TestDestination>.test(destinations: [.first, .second, .third])
+
+    let child1: Sut<TestChildDestination> = parent.scope()
+    await child1.push(.firstCh)
+    await child1.push(.secondCh)
+    
+    let child2: Sut<TestDestination> = child1.scope()
+    await child2.push(.first)
+    
+    let child3: Sut<TestDestination> = child2.scope()
+    await child3.push(.second)
+    
+    #expect(parent.child == child1)
+    #expect(child1.parent == parent)
+    #expect(child1.child == child2)
+    #expect(child2.parent == child1)
+    #expect(child2.child == child3)
+    #expect(child3.parent == child2)
+    #expect(child3.child == nil)
+    
+    await child2.popToRoot()
+    
+    #expect(parent.child == nil)
+    #expect(parent.stack == [])
+    #expect(child1.parent == nil)
+    #expect(child1.child == nil)
+    #expect(child1.stack == [])
+    #expect(child2.parent == nil)
+    #expect(child2.child == nil)
+    #expect(child2.stack == [])
+    #expect(child3.parent == nil)
+    #expect(child3.child == nil)
+    #expect(child3.stack == [])
+  }
+  
+  @MainActor
+  @Test
+  func stackNavigator_invalidate_updatesHierarchyProperly() async throws {
+    let parent = Sut<TestDestination>.test(destinations: [])
+    let child1: Sut<TestChildDestination> = parent.scope()
+    let child2: Sut<TestChildDestination> = child1.scope()
+    let child3: Sut<TestChildDestination> = child2.scope()
+    
+    child1.testInvalidate()
+    
+    #expect(parent.isValid)
+    #expect(parent.child == nil)
+    #expect(!child1.isValid)
+    #expect(child1.parent == nil)
+    #expect(child1.child == nil)
+    #expect(!child2.isValid)
+    #expect(child2.parent == nil)
+    #expect(child2.child == nil)
+    #expect(!child3.isValid)
+    #expect(child3.parent == nil)
+    #expect(child3.child == nil)
   }
 }
 

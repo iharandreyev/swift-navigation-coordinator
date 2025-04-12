@@ -23,7 +23,7 @@ public final class SpecimenNavigator<
   ) {
     self.init(
       initialDestination: initialDestination,
-      navigationQueue: .shared
+      navigationQueue: Environment.navigationQueue
     )
   }
   
@@ -37,31 +37,25 @@ public final class SpecimenNavigator<
   
   public func replaceDestination(
     with destination: DestinationType,
-    animation: Animation? = .default
+    animated: Bool = true
   ) async {
-    await setDestination(
-      destination,
-      animation: animation
-    )
+    await setDestination(destination, animated: animated)
   }
   
   fileprivate func setBoundDestination(
     _ newValue: DestinationType,
-    animation: Animation?
+    animated: Bool
   ) {
     Task { [weak self] in
       guard let self else { return }
       
-      await setDestination(
-        newValue,
-        animation: animation
-      )
+      await setDestination(newValue, animated: animated)
     }
   }
   
   private func setDestination(
     _ destination: DestinationType,
-    animation: Animation?
+    animated: Bool
   ) async {
     guard self.destination != destination else { return }
     
@@ -70,7 +64,7 @@ public final class SpecimenNavigator<
         guard let self else { return }
         self.destination = destination
       },
-      animation: animation
+      animated: true
     )
   }
 }
@@ -82,9 +76,14 @@ import Clocks
 extension SpecimenNavigator {
   static func test(
     destination: DestinationType,
-    navigationQueue: NavigationQueue = .test()
+    navigationQueue: NavigationQueue = Environment.navigationQueue
   ) -> SpecimenNavigator {
-    SpecimenNavigator(initialDestination: destination, navigationQueue: navigationQueue)
+    Environment.assert(.test)
+    
+    return SpecimenNavigator(
+      initialDestination: destination,
+      navigationQueue: navigationQueue
+    )
   }
 }
 
@@ -95,14 +94,14 @@ extension Perception.Bindable {
   public func destination<
     Destination: ScreenDestinationType
   >(
-    updateAnimation: Animation? = .default
+    animated: Bool = true
   ) -> Binding<Destination> where Value == SpecimenNavigator<Destination> {
     Binding<Destination>(
       get:  { [unowned wrappedValue] () -> Destination in
         wrappedValue.destination
       },
       set: { [unowned wrappedValue] (newValue) in
-        wrappedValue.setBoundDestination(newValue, animation: updateAnimation)
+        wrappedValue.setBoundDestination(newValue, animated: animated)
       }
     )
   }
