@@ -14,6 +14,7 @@ final class AnyStackNavigator: StackStateDelegate {
   private let _setChild: (AnyStackNavigator?) -> Void
   private let _getStack: () -> [AnyDestination]
   private let _setStack: ([AnyDestination]) -> Void
+  private let _performInvalidate: () -> Void
   private let _onUserDidChangeStack: (StackUserInteraction) -> Void
   
   fileprivate let id: ObjectIdentifier
@@ -48,7 +49,12 @@ final class AnyStackNavigator: StackStateDelegate {
     _getStack = { [unowned wrapped] in wrapped.getStack() }
     _setStack =  { [unowned wrapped] in wrapped.setStack($0) }
     _onUserDidChangeStack = { [unowned wrapped] in wrapped.userDidChangeStack(with: $0) }
+    _performInvalidate = { [unowned wrapped] in wrapped.performInvalidate() }
     id = ObjectIdentifier(wrapped)
+  }
+  
+  func invalidate() {
+    _performInvalidate()
   }
   
   func userDidChangeStack(

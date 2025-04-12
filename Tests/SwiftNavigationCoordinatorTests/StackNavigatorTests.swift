@@ -200,6 +200,9 @@ struct StackNavigatorTests {
     
     #expect(parent.stack == [.first, .second])
     #expect(!child.isValid)
+    #expect(await child.parent == nil)
+    #expect(await parent.child == nil)
+  }
   
   @MainActor
   @Test
@@ -237,6 +240,29 @@ struct StackNavigatorTests {
     #expect(child3.parent == nil)
     #expect(child3.child == nil)
     #expect(child3.stack == [])
+  }
+  
+  @MainActor
+  @Test
+  func stackNavigator_invalidate_updatesHierarchyProperly() async throws {
+    let parent = Sut<TestDestination>.test(destinations: [])
+    let child1: Sut<TestChildDestination> = parent.scope()
+    let child2: Sut<TestChildDestination> = child1.scope()
+    let child3: Sut<TestChildDestination> = child2.scope()
+    
+    child1.testInvalidate()
+    
+    #expect(parent.isValid)
+    #expect(parent.child == nil)
+    #expect(!child1.isValid)
+    #expect(child1.parent == nil)
+    #expect(child1.child == nil)
+    #expect(!child2.isValid)
+    #expect(child2.parent == nil)
+    #expect(child2.child == nil)
+    #expect(!child3.isValid)
+    #expect(child3.parent == nil)
+    #expect(child3.child == nil)
   }
 }
 

@@ -305,8 +305,15 @@ public final class StackNavigator<
   var isValid: Bool = true
   
   private func invalidate() {
+    let child = child
+    let parent = parent
+    
     isValid = false
-    parent = nil
+    self.parent = nil
+    self.child = nil
+    
+    parent?.child = nil
+    child?.invalidate()
   }
   
   @inline(__always)
@@ -410,6 +417,12 @@ extension StackNavigator {
       }
     }
   }
+  
+  func performInvalidate(_ invocationPoint: String = #file) {
+    assert(invocationPoint.contains("AnyStackNavigator"))
+    
+    invalidate()
+  }
 }
 
 #if canImport(XCTest)
@@ -435,6 +448,10 @@ extension StackNavigator {
     
     navigator.invalidate()
     return navigator
+  }
+  
+  func testInvalidate() {
+    invalidate()
   }
 }
 
