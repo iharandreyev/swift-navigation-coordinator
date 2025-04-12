@@ -5,8 +5,6 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
-import SwiftUI
-
 @MainActor
 public final class StackNavigator<
   DestinationType: ScreenDestinationType
@@ -37,7 +35,7 @@ public final class StackNavigator<
   public convenience init() {
     self.init(
       state: StackState(),
-      navigationQueue: .shared
+      navigationQueue: Environment.navigationQueue
     )
   }
   
@@ -45,7 +43,7 @@ public final class StackNavigator<
   
   public func push(
     _ destination: DestinationType,
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -64,13 +62,13 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animation: animation
+      animated: animated
     )
   }
   
   public func replaceLast(
     with destination: DestinationType,
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -100,7 +98,7 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animation: animation
+      animated: animated
     )
     
     await navigationQueue.schedule(
@@ -113,13 +111,13 @@ public final class StackNavigator<
         self.stack.removeLast(2)
         self.stack.append(destination)
       },
-      animation: nil
+      animated: false
     )
   }
   
   public func replaceStack(
     with destination: DestinationType,
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -138,7 +136,7 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animation: animation
+      animated: animated
     )
     
     await navigationQueue.schedule(
@@ -150,14 +148,14 @@ public final class StackNavigator<
         
         self.stack = [destination]
       },
-      animation: nil
+      animated: false
     )
   }
   
   // MARK: - Pop
   
   public func pop(
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -185,13 +183,13 @@ public final class StackNavigator<
         state.removeLast()
         stack.removeLast()
       },
-      animation: animation
+      animated: animated
     )
   }
   
   public func popToDestination(
     _ destination: DestinationType,
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -223,12 +221,12 @@ public final class StackNavigator<
         state.removeLast(itemsToRemove)
         stack.removeLast(itemsToRemove)
       },
-      animation: animation
+      animated: animated
     )
   }
   
   public func popToRoot(
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -247,7 +245,7 @@ public final class StackNavigator<
         state.removeLast(stack.count)
         stack = []
       },
-      animation: animation
+      animated: animated
     )
   }
   
@@ -353,9 +351,11 @@ private protocol AnyStackNavigator: AnyObject, StackStateDelegate {
 extension StackNavigator {
   static func test(
     destinations: [DestinationType],
-    navigationQueue: NavigationQueue = .test(),
+    navigationQueue: NavigationQueue = Environment.navigationQueue,
     isValid: Bool = true
   ) -> StackNavigator {
+    Environment.assert(.test)
+    
     let state = StackState()
     let navigator = StackNavigator(state: state, navigationQueue: navigationQueue)
     

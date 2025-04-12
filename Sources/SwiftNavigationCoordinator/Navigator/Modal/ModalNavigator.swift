@@ -25,31 +25,25 @@ public final class ModalNavigator<
   }
   
   public convenience init() {
-    self.init(navigationQueue: .shared)
+    self.init(navigationQueue: Environment.navigationQueue)
   }
   
   public func presentDestination(
     _ destination: ModalDestination<DestinationType>,
-    animation: Animation? = .default
+    animated: Bool = true
   ) async {
-    await setDestination(
-      destination,
-      animation: animation
-    )
+    await setDestination(destination, animated: animated)
   }
   
   public func dismissDestination(
-    animation: Animation? = .default
+    animated: Bool = true
   ) async {
-    await setDestination(
-      nil,
-      animation: animation
-    )
+    await setDestination(nil, animated: animated)
   }
   
   fileprivate func setBoundDestination(
     _ newValue: ModalDestination<DestinationType>?,
-    animation: Animation?,
+    animated: Bool,
     file: StaticString,
     line: UInt
   ) {
@@ -70,17 +64,14 @@ public final class ModalNavigator<
     Task { [weak self] in
       guard let self else { return }
       
-      await setDestination(
-        nil,
-        animation: animation
-      )
+      await setDestination(newValue, animated: animated)
     }
   }
   
   #warning("TODO: Investigate whether replacing destination does not break animation completion")
   private func setDestination(
     _ destination: ModalDestination<DestinationType>?,
-    animation: Animation?
+    animated: Bool
   ) async {
     guard self.destination != destination else { return }
     
@@ -89,7 +80,7 @@ public final class ModalNavigator<
         guard let self else { return }
         self.destination = destination
       },
-      animation: animation
+      animated: animated
     )
   }
 }
@@ -99,8 +90,10 @@ public final class ModalNavigator<
 extension ModalNavigator {
   static func test(
     destination: ModalDestination<DestinationType>? = nil,
-    navigationQueue: NavigationQueue = .test()
+    navigationQueue: NavigationQueue = Environment.navigationQueue
   ) -> ModalNavigator {
+    Environment.assert(.test)
+    
     let navigator = ModalNavigator(navigationQueue: navigationQueue)
     navigator.destination = destination
     return navigator
@@ -114,7 +107,7 @@ extension Perception.Bindable {
   public func destination<
     Destination: ModalDestinationContentType
   >(
-    updateAnimation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) -> Binding<ModalDestination<Destination>?> where Value == ModalNavigator<Destination> {
@@ -125,7 +118,7 @@ extension Perception.Bindable {
       set: { [unowned wrappedValue] (expectedNil) in
         wrappedValue.setBoundDestination(
           expectedNil,
-          animation: updateAnimation,
+          animated: animated,
           file: file,
           line: line
         )
