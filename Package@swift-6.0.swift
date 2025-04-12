@@ -41,6 +41,7 @@ let package = Package(
       name: "SwiftNavigationCoordinatorTests",
       dependencies: [
         "SwiftNavigationCoordinator",
+        "SwiftNavigationCoordinatorTesting",
       ]
     ),
     .target(
