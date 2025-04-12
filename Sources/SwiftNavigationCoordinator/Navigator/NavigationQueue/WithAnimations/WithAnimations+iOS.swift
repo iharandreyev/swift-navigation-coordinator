@@ -41,7 +41,9 @@ actor WithAnimations_iOS {
         continuation.resume()
       }
       
-      job()
+      withAnimation(.default) {
+        job()
+      }
       
       CATransaction.commit()
     }
@@ -59,7 +61,8 @@ actor WithAnimations_iOS {
       transaction.addAnimationCompletion {
         continuation.resume()
       }
-      
+      transaction.animation = .default
+
       withTransaction(transaction) {
         job()
       }
