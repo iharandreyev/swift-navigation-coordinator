@@ -77,7 +77,7 @@ public final class ModalNavigator<
     }
   }
   
-#warning("TODO: Investigate whether replacing destination does not break animation completion")
+  #warning("TODO: Investigate whether replacing destination does not break animation completion")
   private func setDestination(
     _ destination: ModalDestination<DestinationType>?,
     animation: Animation?
