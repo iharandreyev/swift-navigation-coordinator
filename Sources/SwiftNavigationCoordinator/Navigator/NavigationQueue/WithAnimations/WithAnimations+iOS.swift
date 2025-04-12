@@ -11,6 +11,7 @@ import Clocks
 import SwiftUI
 import UIKit
 
+#warning("TODO: Fix delays")
 actor WithAnimations_iOS {
   let clock: AnyClock<Duration>
   
@@ -38,6 +39,7 @@ actor WithAnimations_iOS {
     await withCheckedContinuation { [clock] continuation in
       CATransaction.begin()
       CATransaction.setCompletionBlock {
+        // This completion is invoked too early
         continuation.resume()
       }
       
@@ -59,6 +61,7 @@ actor WithAnimations_iOS {
     await withCheckedContinuation { [clock] continuation in
       var transaction = Transaction()
       transaction.addAnimationCompletion {
+        // This completion is invoked too early
         continuation.resume()
       }
       transaction.animation = .default
