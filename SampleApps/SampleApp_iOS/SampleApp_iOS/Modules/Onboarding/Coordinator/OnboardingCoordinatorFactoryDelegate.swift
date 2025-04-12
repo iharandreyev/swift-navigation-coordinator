@@ -14,30 +14,30 @@ protocol OnboardingCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateTyp
   
   func createStepScreen(
     for step: OnboardingStep,
-    onNext: @escaping () -> Void,
-    onShowInfo: @escaping () -> Void
+    onNext: Callback<Void>,
+    onShowInfo: Callback<Void>
   ) -> StepScreenType
   
   func createInfoCoordinator(
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) -> InfoCoordinatorType
 }
 
 struct OnboardingCoordinatorFactoryDelegate: OnboardingCoordinatorFactoryDelegateType {
   func createStepScreen(
     for step: OnboardingStep,
-    onNext: @escaping () -> Void,
-    onShowInfo: @escaping () -> Void
+    onNext: Callback<Void>,
+    onShowInfo: Callback<Void>
   ) -> some View {
     OnboardingStepScreen(
       step: step,
-      onNext: onNext,
-      onShowInfo: onShowInfo
+      onNext: onNext.callAsFunction,
+      onShowInfo: onShowInfo.callAsFunction
     )
   }
   
   func createInfoCoordinator(
-    onFinish: @escaping () -> Void
+    onFinish: Callback<Void>
   ) -> some ScreenCoordinatorType & StackCoordinatorType {
     InfoCoordinator(
       stackNavigator: StackNavigator(),

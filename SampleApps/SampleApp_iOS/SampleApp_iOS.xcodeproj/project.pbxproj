@@ -23,6 +23,7 @@
 /* Begin PBXFileReference section */
 		963B76A52D936B6C00ECEB6C /* SampleApp_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		963B76B52D936B7100ECEB6C /* SampleApp_iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleApp_iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		96635C5E2DA4FFC300965E93 /* SampleApp_iOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleApp_iOS.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -73,6 +74,7 @@
 		963B769C2D936B6C00ECEB6C = {
 			isa = PBXGroup;
 			children = (
+				96635C5E2DA4FFC300965E93 /* SampleApp_iOS.xctestplan */,
 				963B76A72D936B6C00ECEB6C /* SampleApp_iOS */,
 				963B76B82D936B7100ECEB6C /* SampleApp_iOSTests */,
 				963B76A62D936B6C00ECEB6C /* Products */,

@@ -37,8 +37,8 @@ final class AppCoordinator<
     switch destination {
     case .appInit:
       factory.createAppInitScreen(
-        onFinish: { [weak self] in
-          self?.initDidFinish()
+        onFinish: Callback { [unowned self] in
+          await initDidFinish()
         }
       )
     case .onboarding:
@@ -46,8 +46,8 @@ final class AppCoordinator<
         modalCoordinator: addChild(
           childFactory: {
             factory.createOnboardingCoordinator(
-              onFinish: { [weak self] in
-                self?.onboardingDidFinish()
+              onFinish: Callback { [unowned self] in
+                await onboardingDidFinish()
               }
             )
           },
@@ -84,12 +84,12 @@ final class AppCoordinator<
     }
   }
   
-  private func initDidFinish() {
-    specimenNavigator.replaceDestination(with: .onboarding)
+  func initDidFinish() async {
+    await specimenNavigator.replaceDestination(with: .onboarding)
   }
 
-  private func onboardingDidFinish() {
-    specimenNavigator.replaceDestination(with: .main)
+  func onboardingDidFinish() async {
+    await specimenNavigator.replaceDestination(with: .main)
   }
   
   override func processDeeplink(

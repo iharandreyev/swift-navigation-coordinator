@@ -25,17 +25,17 @@ struct DeeplinkTests {
       factory: AppCoordinatorFactoryDelegateMockDummy()
     )
     
-    sut.addChild(DummyCoordinator(canHandleDeeplinks: true), as: AppDestination.appInit)
-    sut.addChild(DummyCoordinator(canHandleDeeplinks: true), as: AppDestination.onboarding)
-    sut.addChild(DummyCoordinator(canHandleDeeplinks: true), as: AppDestination.main)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.appInit)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.onboarding)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.main)
     
-    Deeplink.allCases.forEach {
-      navigator.replaceDestination(with: .appInit)
-      #expect(sut.handleDeeplink($0) == false)
-      navigator.replaceDestination(with: .onboarding)
-      #expect(sut.handleDeeplink($0) == false)
-      navigator.replaceDestination(with: .main)
-      #expect(sut.handleDeeplink($0) == true)
+    for deeplink in Deeplink.allCases {
+      await navigator.replaceDestination(with: .appInit)
+      #expect(await sut.handleDeeplink(deeplink) == false)
+      await navigator.replaceDestination(with: .onboarding)
+      #expect(await sut.handleDeeplink(deeplink) == false)
+      await navigator.replaceDestination(with: .main)
+      #expect(await sut.handleDeeplink(deeplink) == true)
     }
   }
   
@@ -70,10 +70,10 @@ struct DeeplinkTests {
     // Simulate view presentation
     _ = root.screenContent(for: .main)
     _ = main.screenContent(for: .usecases)
-    mainNavigator.replaceDestination(with: .deeplinks)
+    await mainNavigator.replaceDestination(with: .deeplinks)
     _ = main.screenContent(for: .deeplinks)
     
-    #expect(root.handleDeeplink(Deeplink.showUsecasesAndModalSheet))
+    #expect(await root.handleDeeplink(Deeplink.showUsecasesAndModalSheet))
     #expect(mainNavigator.destination == .usecases)
     #expect(usecasesModalNavigator.destination == .sheet(.modalSheet))
   }
@@ -108,10 +108,10 @@ struct DeeplinkTests {
     // Simulate view presentation
     _ = root.screenContent(for: .main)
     _ = main.screenContent(for: .usecases)
-    mainNavigator.replaceDestination(with: .deeplinks)
+    await mainNavigator.replaceDestination(with: .deeplinks)
     _ = main.screenContent(for: .deeplinks)
     
-    #expect(root.handleDeeplink(Deeplink.showUsecasesAndModalCover))
+    #expect(await root.handleDeeplink(Deeplink.showUsecasesAndModalCover))
     #expect(mainNavigator.destination == .usecases)
     #expect(usecasesModalNavigator.destination == .cover(.modalCover))
   }

@@ -24,7 +24,7 @@ final class MainCoordinatorFactoryDelegateMock<
   private(set) var createUsecasesCoordinator_invocations: [Params_createUsecasesCoordinator] = []
   var createUsecasesCoordinator_count: Int { createUsecasesCoordinator_invocations.count }
   private let createUsecasesCoordinator_invoked: ((Params_createUsecasesCoordinator) -> Void)?
-  private var createUsecasesCoordinator_onFinish: (() -> Void)!
+  private var createUsecasesCoordinator_onFinish: Callback<Void>!
   
   func createUsecasesCoordinator() -> UsecasesCoordinatorType {
     let params = Params_createUsecasesCoordinator()
@@ -41,7 +41,7 @@ final class MainCoordinatorFactoryDelegateMock<
   private(set) var createDeeplinksCoordinator_invocations: [Params_createDeeplinksCoordinator] = []
   var createDeeplinksCoordinator_count: Int { createDeeplinksCoordinator_invocations.count }
   private let createDeeplinksCoordinator_invoked: ((Params_createDeeplinksCoordinator) -> Void)?
-  private var createDeeplinksCoordinator_onFinish: (() -> Void)!
+  private var createDeeplinksCoordinator_onFinish: Callback<Void>!
   
   func createDeeplinksCoordinator() -> DeeplinksCoordinatorType {
     let params = Params_createDeeplinksCoordinator()
