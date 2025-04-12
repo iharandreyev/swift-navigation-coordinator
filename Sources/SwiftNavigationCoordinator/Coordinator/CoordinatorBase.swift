@@ -23,12 +23,6 @@ open class CoordinatorBase {
     logMessage("INIT: `\(ShortDescription(self))`")
   }
   
-  public convenience init(
-    onFinish: @Sendable @escaping () -> Void
-  ) {
-    self.init(onFinish: Callback(job: onFinish))
-  }
-  
   // MARK: - Deinit
   
   deinit {
@@ -162,12 +156,6 @@ open class CoordinatorBase {
     )
     
     logMessage("FINISH: \(ShortDescription(self))")
-  }
-
-  public final func setOnFinish(
-    _ onFinish: @Sendable @escaping () -> Void
-  ) {
-    self.onFinish = Callback(job: onFinish)
   }
   
   public final func setOnFinish(
