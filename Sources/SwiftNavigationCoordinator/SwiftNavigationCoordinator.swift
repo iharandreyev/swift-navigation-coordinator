@@ -8,3 +8,7 @@
 public func setLogger(_ logger: LoggerType) {
   Logger.setLogger(logger)
 }
+
+public func setEnvironment(_ newValue: Environment) {
+  Environment.setEnvironment(newValue)
+}

@@ -46,6 +46,12 @@ final class StackState {
     _path.removeLast(numOfItemsToRemove)
   }
   
+  func removeAll() {
+    guard !isEmpty else { return }
+    
+    _path.removeLast(count)
+  }
+  
   fileprivate func setBoundPath(
     _ newValue: NavigationPath,
     file: StaticString,

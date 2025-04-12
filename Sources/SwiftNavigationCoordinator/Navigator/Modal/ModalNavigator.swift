@@ -8,29 +8,42 @@
 import Perception
 import SwiftUI
 
-#warning("TODO: Implement async methods to wait for animation complete")
 /// An observable object used to manage optional modal presentation.
 @Perceptible
 @MainActor
 public final class ModalNavigator<
   DestinationType: ModalDestinationContentType
 > {
+  private let navigationQueue: NavigationQueue
+  
   fileprivate(set) public var destination: ModalDestination<DestinationType>?
-
-  public init() { }
-
-  public func presentDestination(
-    _ destination: ModalDestination<DestinationType>
+  
+  private init(
+    navigationQueue: NavigationQueue
   ) {
-    self.destination = destination
+    self.navigationQueue = navigationQueue
   }
   
-  public func dismissDestination() {
-    self.destination = nil
+  public convenience init() {
+    self.init(navigationQueue: Environment.navigationQueue)
+  }
+  
+  public func presentDestination(
+    _ destination: ModalDestination<DestinationType>,
+    animated: Bool = true
+  ) async {
+    await setDestination(destination, animated: animated)
+  }
+  
+  public func dismissDestination(
+    animated: Bool = true
+  ) async {
+    await setDestination(nil, animated: animated)
   }
   
   fileprivate func setBoundDestination(
     _ newValue: ModalDestination<DestinationType>?,
+    animated: Bool,
     file: StaticString,
     line: UInt
   ) {
@@ -48,15 +61,53 @@ public final class ModalNavigator<
       return
     }
     
-    self.destination = nil
+    Task { [weak self] in
+      guard let self else { return }
+      
+      await setDestination(newValue, animated: animated)
+    }
+  }
+  
+  #warning("TODO: Investigate whether replacing destination does not break animation completion")
+  private func setDestination(
+    _ destination: ModalDestination<DestinationType>?,
+    animated: Bool
+  ) async {
+    guard self.destination != destination else { return }
+    
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        self.destination = destination
+      },
+      animated: animated
+    )
   }
 }
+
+#if canImport(XCTest)
+
+extension ModalNavigator {
+  static func test(
+    destination: ModalDestination<DestinationType>? = nil,
+    navigationQueue: NavigationQueue = Environment.navigationQueue
+  ) -> ModalNavigator {
+    Environment.assert(.test)
+    
+    let navigator = ModalNavigator(navigationQueue: navigationQueue)
+    navigator.destination = destination
+    return navigator
+  }
+}
+
+#endif
 
 extension Perception.Bindable {
   @MainActor
   public func destination<
     Destination: ModalDestinationContentType
   >(
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) -> Binding<ModalDestination<Destination>?> where Value == ModalNavigator<Destination> {
@@ -67,6 +118,7 @@ extension Perception.Bindable {
       set: { [unowned wrappedValue] (expectedNil) in
         wrappedValue.setBoundDestination(
           expectedNil,
+          animated: animated,
           file: file,
           line: line
         )

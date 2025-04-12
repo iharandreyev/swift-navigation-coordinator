@@ -35,11 +35,18 @@ extension View {
   
   @inline(__always)
   public func onRemoveFromHierarchy(
-    finish coordinator: CoordinatorBase
+    finish coordinator: CoordinatorBase,
+    file: StaticString = #file,
+    line: UInt = #line
   ) -> some View {
     self.onRemoveFromParent(
       perform: { [weak coordinator] in
-        coordinator?.finish()
+        guard let coordinator else { return }
+        guard !coordinator.isFinished else { return }
+
+        Task {
+          await coordinator.finish(file: file, line: line)
+        }
       }
     )
   }

@@ -2,6 +2,6 @@
 //  SwiftNavigationCoordinatorTestingTests.swift
 //  swift-navigation-coordinator
 //
-//  Created by Andreyeu, Ihar on 3/26/25.
+//  Created by Andreyeu, Ihar on 4/12/25.
 //
 
