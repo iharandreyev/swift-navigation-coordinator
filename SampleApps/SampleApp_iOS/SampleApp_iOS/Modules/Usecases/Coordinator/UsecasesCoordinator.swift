@@ -42,8 +42,24 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   
   func screen(for destination: DestinationType) -> some View {
     switch destination {
-    case .modalSheet, .modalCover:
-      ModalScreen()
+    case .modalSheet:
+      SomeScreen(
+        name: "a modal",
+        description: "a screen that is presented as a modal sheet",
+        content: {
+          DismissButton()
+        }
+      )
+      .id(destination)
+    case .modalCover:
+      SomeScreen(
+        name: "a modal",
+        description: "a screen that is presented as a full screen cover",
+        content: {
+          DismissButton()
+        }
+      )
+      .id(destination)
     }
   }
   
