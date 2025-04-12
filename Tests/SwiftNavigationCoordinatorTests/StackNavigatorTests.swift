@@ -199,6 +199,43 @@ struct StackNavigatorTests {
     
     #expect(parent.stack == [.first, .second])
     #expect(!child.isValid)
+  
+  @MainActor
+  @Test
+  func stackNavigator_scoped_popsToRoot() async throws {
+    let parent = Sut<TestDestination>.test(destinations: [.first, .second, .third])
+
+    let child1: Sut<TestChildDestination> = parent.scope()
+    await child1.push(.firstCh)
+    await child1.push(.secondCh)
+    
+    let child2: Sut<TestDestination> = child1.scope()
+    await child2.push(.first)
+    
+    let child3: Sut<TestDestination> = child2.scope()
+    await child3.push(.second)
+    
+    #expect(parent.child == child1)
+    #expect(child1.parent == parent)
+    #expect(child1.child == child2)
+    #expect(child2.parent == child1)
+    #expect(child2.child == child3)
+    #expect(child3.parent == child2)
+    #expect(child3.child == nil)
+    
+    await child2.popToRoot()
+    
+    #expect(parent.child == nil)
+    #expect(parent.stack == [])
+    #expect(child1.parent == nil)
+    #expect(child1.child == nil)
+    #expect(child1.stack == [])
+    #expect(child2.parent == nil)
+    #expect(child2.child == nil)
+    #expect(child2.stack == [])
+    #expect(child3.parent == nil)
+    #expect(child3.child == nil)
+    #expect(child3.stack == [])
   }
 }
 
