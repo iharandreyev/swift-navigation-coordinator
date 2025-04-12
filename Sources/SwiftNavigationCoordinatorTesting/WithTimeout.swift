@@ -5,8 +5,10 @@
 //  Created by Andreyeu, Ihar on 4/3/25.
 //
 
+#if canImport(IssueReporting)
+
+import IssueReporting
 import SwiftNavigationCoordinator
-import Testing
 
 /// Used to limit wait time for async methods with no respect whether they can be cancelled or not.
 ///
@@ -16,16 +18,22 @@ import Testing
 public func withTimeout<Out: Sendable>(
   _ timeout: Duration,
   perform job: @Sendable @escaping () async throws -> Out,
-  function: StaticString = #function,
-  sourceLocation: Testing.SourceLocation = #_sourceLocation
+  fileID: StaticString = #fileID,
+  filePath: StaticString = #filePath,
+  line: UInt = #line,
+  column: UInt = #column,
+  function: StaticString = #function
 ) async throws -> Out {
   try await _withTimeout(
     timeout,
     perform: {
       try await job()
     },
-    function: function,
-    sourceLocation: sourceLocation
+    fileID: fileID,
+    filePath: filePath,
+    line: line,
+    column: column,
+    function: function
   )
 }
 
@@ -36,8 +44,11 @@ public func withTimeout<Out: Sendable>(
 public func withTimeout(
   _ timeout: Duration,
   perform job: @Sendable @escaping () async throws -> Void,
-  function: StaticString = #function,
-  sourceLocation: Testing.SourceLocation = #_sourceLocation
+  fileID: StaticString = #fileID,
+  filePath: StaticString = #filePath,
+  line: UInt = #line,
+  column: UInt = #column,
+  function: StaticString = #function
 ) async throws {
   do {
     try await _withTimeout(
@@ -45,8 +56,11 @@ public func withTimeout(
       perform: {
         try await job()
       },
-      function: function,
-      sourceLocation: sourceLocation
+      fileID: fileID,
+      filePath: filePath,
+      line: line,
+      column: column,
+      function: function
     )
   } catch _ as TimeoutError {
     return
@@ -58,8 +72,11 @@ public func withTimeout(
 private func _withTimeout<Out: Sendable>(
   _ timeout: Duration,
   perform job: @Sendable @escaping () async throws -> Out,
-  function: StaticString,
-  sourceLocation: Testing.SourceLocation
+  fileID: StaticString,
+  filePath: StaticString,
+  line: UInt,
+  column: UInt,
+  function: StaticString
 ) async throws -> Out {
   let result = MutableValue<TimeoutableResult<Out>?>(value: nil)
   
@@ -107,7 +124,13 @@ private func _withTimeout<Out: Sendable>(
       timeout: timeout,
       function: function
     )
-    Issue.record("\(error)", sourceLocation: sourceLocation)
+    reportIssue(
+      error,
+      fileID: fileID,
+      filePath: filePath,
+      line: line,
+      column: column
+    )
     throw error
   }
 }
@@ -126,3 +149,5 @@ private struct TimeoutError: Error, CustomStringConvertible {
     "\(function) timed out after \(timeout)"
   }
 }
+
+#endif
