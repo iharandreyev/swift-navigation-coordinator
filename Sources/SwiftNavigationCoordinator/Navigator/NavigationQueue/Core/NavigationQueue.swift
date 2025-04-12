@@ -26,22 +26,33 @@ public actor NavigationQueue {
 
   public func schedule(
     uiUpdate job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation? = .default
+    animation: Animation? = .default,
+    function: StaticString = #function
   ) async  {
     if queue.isEmpty {
-      await enqueueFirst(job, animation: animation)
+      await enqueueFirst(
+        job,
+        animation: animation,
+        function: function
+      )
     } else {
-      await enqueueNext(job, animation: animation)
+      await enqueueNext(
+        job,
+        animation: animation,
+        function: function
+      )
     }
   }
   
   private func enqueueFirst(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation?
+    animation: Animation?,
+    function: StaticString
   ) async {
     enqueue(
       job,
-      animation: animation
+      animation: animation,
+      function: function
     )
     
     await resolveQueue()
@@ -49,7 +60,8 @@ public actor NavigationQueue {
   
   private func enqueueNext(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation?
+    animation: Animation?,
+    function: StaticString
   ) async  {
     await withCheckedContinuation { continuation in
       enqueue(
@@ -57,7 +69,8 @@ public actor NavigationQueue {
         animation: animation,
         completion: {
           continuation.resume()
-        }
+        },
+        function: function
       )
     }
   }
@@ -65,12 +78,14 @@ public actor NavigationQueue {
   private func enqueue(
     _ job: @MainActor @Sendable @escaping () -> Void,
     animation: Animation?,
-    completion: NavigationQueueItem.Completion? = nil
+    completion: NavigationQueueItem.Completion? = nil,
+    function: StaticString
   )  {
     let item = NavigationQueueItem(
       job: job,
       animation: animation,
-      completion: completion
+      completion: completion,
+      function: function
     )
     queue.append(item)
     
@@ -105,12 +120,26 @@ extension NavigationQueue {
 #endif
 }
 
-struct NavigationQueueItem {
+struct NavigationQueueItem: CustomStringConvertible {
   fileprivate typealias Completion = @MainActor @Sendable () -> Void
   
-  private(set) fileprivate var job: @MainActor @Sendable () -> Void
-  private(set) fileprivate var animation: Animation?
-  private(set) fileprivate var completion: Completion?
+  fileprivate let job: @MainActor @Sendable () -> Void
+  fileprivate let animation: Animation?
+  fileprivate let completion: Completion?
+
+  let description: String
+
+  fileprivate init(
+    job: @MainActor @Sendable @escaping () -> Void,
+    animation: Animation?,
+    completion: Completion? = nil,
+    function: StaticString
+  ) {
+    self.job = job
+    self.animation = animation
+    self.completion = completion
+    self.description = "\(function)"
+  }
 }
 
 #if canImport(XCTest)
