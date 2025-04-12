@@ -7,7 +7,7 @@
 
 public protocol DeeplinkEventType: Sendable { }
 
-public enum ProcessDeeplinkResult {
+public enum ProcessDeeplinkResult: Sendable {
   case impossible
   case partial
   case done
