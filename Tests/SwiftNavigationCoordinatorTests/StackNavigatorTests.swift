@@ -183,7 +183,8 @@ struct StackNavigatorTests {
     let child: Sut<TestChildDestination> = await parent.scope()
     
     #expect(await child.isValid)
-    #expect(await child.stack.isEmpty)
+    #expect(await child.parent == parent)
+    #expect(await parent.child == child)
   }
   
   @MainActor
