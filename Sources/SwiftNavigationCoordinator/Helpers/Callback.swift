@@ -5,18 +5,14 @@
 //  Created by Andreyeu, Ihar on 4/4/25.
 //
 
-#if canImport(XCTest)
-import Testing
-#endif
+import IssueReporting
 
 public final class Callback<Params: Sendable>: Sendable {
   private typealias Completion = @Sendable () -> Void
   
   private let job: @Sendable (Params) async -> Void
 
-#if canImport(XCTest)
   private let completion: MutableValue<Task<Void, any Error>?> = MutableValue(value: nil)
-#endif
   
   public init(
     job: @Sendable @escaping (Params) async -> Void
@@ -31,24 +27,32 @@ public final class Callback<Params: Sendable>: Sendable {
   }
   
   public func execute(_ params: Params) async {
-#if canImport(XCTest)
     await createCompletionIfNeeded()
-#endif
     await job(params)
-#if canImport(XCTest)
     await resolveCompletion()
-#endif
   }
   
-#if canImport(XCTest)
-  func onCompleted(sourceLocation: Testing.SourceLocation = #_sourceLocation) async {
+  //  Had to make this public since #if canImport(Testing) does not work
+  //  https://forums.swift.org/t/xcode-not-respecting-canimport-xctest/46826
+  public func onCompleted(
+    fileID: StaticString = #fileID,
+    filePath: StaticString = #filePath,
+    line: UInt = #line,
+    column: UInt = #column
+  ) async {
     await createCompletionIfNeeded()
     do {
       try await completion.value?.value
     } catch _ as CancellationError {
       return
     } catch {
-      Issue.record(error, sourceLocation: sourceLocation)
+      reportIssue(
+        error,
+        fileID: fileID,
+        filePath: filePath,
+        line: line,
+        column: column
+      )
     }
   }
 
@@ -68,7 +72,6 @@ public final class Callback<Params: Sendable>: Sendable {
       try await Task.sleep(for: .seconds(86400)) // a day
     }
   }
-#endif
 }
 
 extension Callback where Params == Void {
