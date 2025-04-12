@@ -29,17 +29,27 @@ public final class ModalNavigator<
   }
   
   public func presentDestination(
-    _ destination: ModalDestination<DestinationType>
+    _ destination: ModalDestination<DestinationType>,
+    animation: Animation? = .default
   ) async {
-    await setDestination(destination)
+    await setDestination(
+      destination,
+      animation: animation
+    )
   }
   
-  public func dismissDestination() async {
-    await setDestination(nil)
+  public func dismissDestination(
+    animation: Animation? = .default
+  ) async {
+    await setDestination(
+      nil,
+      animation: animation
+    )
   }
   
   fileprivate func setBoundDestination(
     _ newValue: ModalDestination<DestinationType>?,
+    animation: Animation?,
     file: StaticString,
     line: UInt
   ) {
@@ -60,12 +70,18 @@ public final class ModalNavigator<
     Task { [weak self] in
       guard let self else { return }
       
-      await setDestination(nil)
+      await setDestination(
+        nil,
+        animation: animation
+      )
     }
   }
   
-  #warning("TODO: Investigate whether replacing destination does not break animation completion")
-  private func setDestination(_ destination: ModalDestination<DestinationType>?) async {
+#warning("TODO: Investigate whether replacing destination does not break animation completion")
+  private func setDestination(
+    _ destination: ModalDestination<DestinationType>?,
+    animation: Animation?
+  ) async {
     guard self.destination != destination else { return }
     
     await navigationQueue.schedule(
@@ -73,7 +89,7 @@ public final class ModalNavigator<
         guard let self else { return }
         self.destination = destination
       },
-      animated: true
+      animation: animation
     )
   }
 }
@@ -98,6 +114,7 @@ extension Perception.Bindable {
   public func destination<
     Destination: ModalDestinationContentType
   >(
+    updateAnimation: Animation? = .default,
     file: StaticString = #file,
     line: UInt = #line
   ) -> Binding<ModalDestination<Destination>?> where Value == ModalNavigator<Destination> {
@@ -108,6 +125,7 @@ extension Perception.Bindable {
       set: { [unowned wrappedValue] (expectedNil) in
         wrappedValue.setBoundDestination(
           expectedNil,
+          animation: updateAnimation,
           file: file,
           line: line
         )
