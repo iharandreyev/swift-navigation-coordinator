@@ -35,34 +35,19 @@ public final class SpecimenNavigator<
     self.navigationQueue = navigationQueue
   }
   
-  public func replaceDestination(
-    with destination: DestinationType,
-    animation: Animation? = .default
-  ) async {
-    await setDestination(
-      destination,
-      animation: animation
-    )
+  public func replaceDestination(with destination: DestinationType) async {
+    await setDestination(destination)
   }
   
-  fileprivate func setBoundDestination(
-    _ newValue: DestinationType,
-    animation: Animation?
-  ) {
+  fileprivate func setBoundDestination(_ newValue: DestinationType) {
     Task { [weak self] in
       guard let self else { return }
       
-      await setDestination(
-        newValue,
-        animation: animation
-      )
+      await setDestination(newValue)
     }
   }
   
-  private func setDestination(
-    _ destination: DestinationType,
-    animation: Animation?
-  ) async {
+  private func setDestination(_ destination: DestinationType) async {
     guard self.destination != destination else { return }
     
     await navigationQueue.schedule(
@@ -70,7 +55,7 @@ public final class SpecimenNavigator<
         guard let self else { return }
         self.destination = destination
       },
-      animation: animation
+      animated: true
     )
   }
 }
@@ -94,15 +79,13 @@ extension Perception.Bindable {
   @MainActor
   public func destination<
     Destination: ScreenDestinationType
-  >(
-    updateAnimation: Animation? = .default
-  ) -> Binding<Destination> where Value == SpecimenNavigator<Destination> {
+  >() -> Binding<Destination> where Value == SpecimenNavigator<Destination> {
     Binding<Destination>(
       get:  { [unowned wrappedValue] () -> Destination in
         wrappedValue.destination
       },
       set: { [unowned wrappedValue] (newValue) in
-        wrappedValue.setBoundDestination(newValue, animation: updateAnimation)
+        wrappedValue.setBoundDestination(newValue)
       }
     )
   }

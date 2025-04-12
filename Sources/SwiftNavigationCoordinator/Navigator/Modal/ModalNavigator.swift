@@ -29,27 +29,17 @@ public final class ModalNavigator<
   }
   
   public func presentDestination(
-    _ destination: ModalDestination<DestinationType>,
-    animation: Animation? = .default
+    _ destination: ModalDestination<DestinationType>
   ) async {
-    await setDestination(
-      destination,
-      animation: animation
-    )
+    await setDestination(destination)
   }
   
-  public func dismissDestination(
-    animation: Animation? = .default
-  ) async {
-    await setDestination(
-      nil,
-      animation: animation
-    )
+  public func dismissDestination() async {
+    await setDestination(nil)
   }
   
   fileprivate func setBoundDestination(
     _ newValue: ModalDestination<DestinationType>?,
-    animation: Animation?,
     file: StaticString,
     line: UInt
   ) {
@@ -70,18 +60,12 @@ public final class ModalNavigator<
     Task { [weak self] in
       guard let self else { return }
       
-      await setDestination(
-        nil,
-        animation: animation
-      )
+      await setDestination(nil)
     }
   }
   
   #warning("TODO: Investigate whether replacing destination does not break animation completion")
-  private func setDestination(
-    _ destination: ModalDestination<DestinationType>?,
-    animation: Animation?
-  ) async {
+  private func setDestination(_ destination: ModalDestination<DestinationType>?) async {
     guard self.destination != destination else { return }
     
     await navigationQueue.schedule(
@@ -89,7 +73,7 @@ public final class ModalNavigator<
         guard let self else { return }
         self.destination = destination
       },
-      animation: animation
+      animated: true
     )
   }
 }
@@ -114,7 +98,6 @@ extension Perception.Bindable {
   public func destination<
     Destination: ModalDestinationContentType
   >(
-    updateAnimation: Animation? = .default,
     file: StaticString = #file,
     line: UInt = #line
   ) -> Binding<ModalDestination<Destination>?> where Value == ModalNavigator<Destination> {
@@ -125,7 +108,6 @@ extension Perception.Bindable {
       set: { [unowned wrappedValue] (expectedNil) in
         wrappedValue.setBoundDestination(
           expectedNil,
-          animation: updateAnimation,
           file: file,
           line: line
         )
