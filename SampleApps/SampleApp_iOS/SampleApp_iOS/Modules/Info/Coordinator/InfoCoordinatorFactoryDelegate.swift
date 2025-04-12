@@ -13,24 +13,24 @@ protocol InfoCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
   associatedtype LastScreenType: View
   
   func createFirstScreen(
-    onContinue: @escaping () -> Void
+    onContinue: Callback<Void>
   ) -> FirstScreenType
   
   func createLastScreen(
-    onDone: @escaping () -> Void
+    onDone: Callback<Void>
   ) -> LastScreenType
 }
 
 struct InfoCoordinatorFactoryDelegate: InfoCoordinatorFactoryDelegateType {
   func createFirstScreen(
-    onContinue: @escaping () -> Void
+    onContinue: Callback<Void>
   ) -> some View {
-    InfoFirstScreen(onContinue: onContinue)
+    InfoFirstScreen(onContinue: onContinue.callAsFunction)
   }
   
   func createLastScreen(
-    onDone: @escaping () -> Void
+    onDone: Callback<Void>
   ) -> some View {
-    InfoLastScreen(onDone: onDone)
+    InfoLastScreen(onDone: onDone.callAsFunction)
   }
 }

@@ -32,10 +32,10 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   func initialScreen() -> some View {
     UsecasesListScreen(
       onShowModalSheet: { [unowned self] in
-        showModalSheet()
+        Task(operation: showModalSheet)
       },
       onShowModalCover: { [unowned self] in
-        showModalCover()
+        Task(operation: showModalCover)
       }
     )
   }
@@ -47,24 +47,24 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
     }
   }
   
-  private func showModalSheet() {
-    modalNavigator.presentDestination(.sheet(.modalSheet))
+  private func showModalSheet() async {
+    await modalNavigator.presentDestination(.sheet(.modalSheet))
   }
   
-  private func showModalCover() {
-    modalNavigator.presentDestination(.cover(.modalCover))
+  private func showModalCover() async {
+    await modalNavigator.presentDestination(.cover(.modalCover))
   }
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> ProcessDeeplinkResult {
+  ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecasesAndModalCover:
-      showModalCover()
+      await showModalCover()
       return .done
       
     case Deeplink.showUsecasesAndModalSheet:
-      showModalSheet()
+      await showModalSheet()
       return .done
       
     default:
