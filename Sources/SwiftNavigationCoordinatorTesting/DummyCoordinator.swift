@@ -25,12 +25,25 @@ public final class DummyCoordinator:
   public let modalNavigator = ModalNavigator<DestinationType>()
   public let specimenNavigator = SpecimenNavigator<DestinationType>(initialDestination: DestinationType())
   
-  public let canHandleDeeplinks: Bool
+  public var onProcessDeeplink: (any DeeplinkEventType) async -> ProcessDeeplinkResult
   
   public init(
-    canHandleDeeplinks: Bool = false
+    onProcessDeeplink: @escaping (any DeeplinkEventType) async -> ProcessDeeplinkResult,
+    onFinish: Callback<Void>? = nil
   ) {
-    self.canHandleDeeplinks = canHandleDeeplinks
+    self.onProcessDeeplink = onProcessDeeplink
+    
+    super.init(onFinish: onFinish)
+  }
+  
+  public convenience init(
+    processDeeplinkResult: ProcessDeeplinkResult = .impossible,
+    onFinish: Callback<Void>? = nil
+  ) {
+    self.init(
+      onProcessDeeplink: { _ in processDeeplinkResult },
+      onFinish: onFinish
+    )
   }
   
   public func initialScreen() -> DummyView {
@@ -52,7 +65,7 @@ public final class DummyCoordinator:
   public override func processDeeplink(
     _ deeplink: any DeeplinkEventType
   ) async -> ProcessDeeplinkResult {
-    canHandleDeeplinks ? .done : .impossible
+    await onProcessDeeplink(deeplink)
   }
 }
 
