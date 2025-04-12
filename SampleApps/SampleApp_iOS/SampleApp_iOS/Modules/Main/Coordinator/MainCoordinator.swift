@@ -82,7 +82,12 @@ final class MainCoordinator<
       
     case
       Deeplink.showUsecasesAndModalCover,
-      Deeplink.showUsecasesAndModalSheet:
+      Deeplink.showUsecasesAndModalSheet,
+      Deeplink.showUsecasesAndPushScreen,
+      Deeplink.showMultiChildPathA,
+      Deeplink.showMultiChildPathAFinish,
+      Deeplink.showMultiChildPathB,
+      Deeplink.showMultiChildPathBFinish:
       
       await specimenNavigator.replaceDestination(with: .usecases)
       return .partial

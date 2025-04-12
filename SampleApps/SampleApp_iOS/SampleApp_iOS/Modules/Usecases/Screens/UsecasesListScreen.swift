@@ -10,6 +10,8 @@ import SwiftUI
 struct UsecasesListScreen: View {
   let onShowModalSheet: () -> Void
   let onShowModalCover: () -> Void
+  let onShowPushedScreen: () -> Void
+  let onShowMultiChildFlow: () -> Void
   
   var body: some View {
     List {
@@ -22,6 +24,16 @@ struct UsecasesListScreen: View {
         title: "Show modal cover",
         onTap: onShowModalCover
       )
+      
+      ListItemButton(
+        title: "Show pushed screen",
+        onTap: onShowPushedScreen
+      )
+      
+      ListItemButton(
+        title: "Show multi child flow",
+        onTap: onShowMultiChildFlow
+      )
     }
   }
 }
@@ -29,6 +41,8 @@ struct UsecasesListScreen: View {
 #Preview {
   UsecasesListScreen(
     onShowModalSheet: {},
-    onShowModalCover: {}
+    onShowModalCover: {},
+    onShowPushedScreen: {},
+    onShowMultiChildFlow: {}
   )
 }
