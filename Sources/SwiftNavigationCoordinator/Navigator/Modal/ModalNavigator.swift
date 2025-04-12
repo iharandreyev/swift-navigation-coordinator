@@ -29,17 +29,21 @@ public final class ModalNavigator<
   }
   
   public func presentDestination(
-    _ destination: ModalDestination<DestinationType>
+    _ destination: ModalDestination<DestinationType>,
+    animated: Bool = true
   ) async {
-    await setDestination(destination)
+    await setDestination(destination, animated: animated)
   }
   
-  public func dismissDestination() async {
-    await setDestination(nil)
+  public func dismissDestination(
+    animated: Bool = true
+  ) async {
+    await setDestination(nil, animated: animated)
   }
   
   fileprivate func setBoundDestination(
     _ newValue: ModalDestination<DestinationType>?,
+    animated: Bool,
     file: StaticString,
     line: UInt
   ) {
@@ -60,12 +64,15 @@ public final class ModalNavigator<
     Task { [weak self] in
       guard let self else { return }
       
-      await setDestination(nil)
+      await setDestination(newValue, animated: animated)
     }
   }
   
   #warning("TODO: Investigate whether replacing destination does not break animation completion")
-  private func setDestination(_ destination: ModalDestination<DestinationType>?) async {
+  private func setDestination(
+    _ destination: ModalDestination<DestinationType>?,
+    animated: Bool
+  ) async {
     guard self.destination != destination else { return }
     
     await navigationQueue.schedule(
@@ -73,7 +80,7 @@ public final class ModalNavigator<
         guard let self else { return }
         self.destination = destination
       },
-      animated: true
+      animated: animated
     )
   }
 }
@@ -98,6 +105,7 @@ extension Perception.Bindable {
   public func destination<
     Destination: ModalDestinationContentType
   >(
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) -> Binding<ModalDestination<Destination>?> where Value == ModalNavigator<Destination> {
@@ -108,6 +116,7 @@ extension Perception.Bindable {
       set: { [unowned wrappedValue] (expectedNil) in
         wrappedValue.setBoundDestination(
           expectedNil,
+          animated: animated,
           file: file,
           line: line
         )

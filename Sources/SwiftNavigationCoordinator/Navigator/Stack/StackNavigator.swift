@@ -43,6 +43,7 @@ public final class StackNavigator<
   
   public func push(
     _ destination: DestinationType,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -61,12 +62,13 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animated: true
+      animated: animated
     )
   }
   
   public func replaceLast(
     with destination: DestinationType,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -96,7 +98,7 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animated: true
+      animated: animated
     )
     
     await navigationQueue.schedule(
@@ -115,6 +117,7 @@ public final class StackNavigator<
   
   public func replaceStack(
     with destination: DestinationType,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -133,7 +136,7 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animated: true
+      animated: animated
     )
     
     await navigationQueue.schedule(
@@ -152,6 +155,7 @@ public final class StackNavigator<
   // MARK: - Pop
   
   public func pop(
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -179,12 +183,13 @@ public final class StackNavigator<
         state.removeLast()
         stack.removeLast()
       },
-      animated: true
+      animated: animated
     )
   }
   
   public func popToDestination(
     _ destination: DestinationType,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -216,11 +221,12 @@ public final class StackNavigator<
         state.removeLast(itemsToRemove)
         stack.removeLast(itemsToRemove)
       },
-      animated: true
+      animated: animated
     )
   }
   
   public func popToRoot(
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -239,7 +245,7 @@ public final class StackNavigator<
         state.removeLast(stack.count)
         stack = []
       },
-      animated: true
+      animated: animated
     )
   }
   
