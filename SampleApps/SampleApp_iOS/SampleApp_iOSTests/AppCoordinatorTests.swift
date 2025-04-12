@@ -15,7 +15,7 @@ import SampleApp_iOS
 
 @MainActor
 struct AppCoordinatorTests {
-  let factory = AppCoordinatorFactoryDelegateMock()
+  let factory = AppCoordinatorFactoryDelegateMock.create()
   
   init() {
     SwiftNavigationCoordinator.setEnvironment(.test)
@@ -27,9 +27,9 @@ struct AppCoordinatorTests {
     
     _ = sut.screen(for: .appInit)
     
-    #expect(factory.createAppInitScreen_count == 1)
-    #expect(factory.createOnboardingCoordinator_count == 0)
-    #expect(factory.createMainCoordinator_count == 0)
+    #expect(factory.createAppInitScreenOnFinishCallbackVoidCallsCount == 1)
+    #expect(factory.createOnboardingCoordinatorOnFinishCallbackVoidCallsCount == 0)
+    #expect(factory.createMainCoordinatorCallsCount == 0)
   }
   
   @Test
@@ -38,9 +38,9 @@ struct AppCoordinatorTests {
     
     _ = sut.screen(for: .onboarding)
     
-    #expect(factory.createAppInitScreen_count == 0)
-    #expect(factory.createOnboardingCoordinator_count == 1)
-    #expect(factory.createMainCoordinator_count == 0)
+    #expect(factory.createAppInitScreenOnFinishCallbackVoidCallsCount == 0)
+    #expect(factory.createOnboardingCoordinatorOnFinishCallbackVoidCallsCount == 1)
+    #expect(factory.createMainCoordinatorCallsCount == 0)
   }
   
   @Test
@@ -49,9 +49,9 @@ struct AppCoordinatorTests {
     
     _ = sut.screen(for: .main)
     
-    #expect(factory.createAppInitScreen_count == 0)
-    #expect(factory.createOnboardingCoordinator_count == 0)
-    #expect(factory.createMainCoordinator_count == 1)
+    #expect(factory.createAppInitScreenOnFinishCallbackVoidCallsCount == 0)
+    #expect(factory.createOnboardingCoordinatorOnFinishCallbackVoidCallsCount == 0)
+    #expect(factory.createMainCoordinatorCallsCount == 1)
   }
 
   @Test
@@ -60,9 +60,9 @@ struct AppCoordinatorTests {
     let sut = createSut(navigator: navigator)
     _ = sut.screen(for: .appInit)
     
-    let callback = factory.createAppInitScreen_invocations.first!.onFinish
-    callback()
-    await callback.onCompleted()
+    let finishAppInit = factory.createAppInitScreenOnFinishCallbackVoidReceivedInvocations.first!
+    finishAppInit()
+    await finishAppInit.onCompleted()
     
     #expect(navigator.destination == AppDestination.onboarding)
   }
@@ -73,8 +73,10 @@ struct AppCoordinatorTests {
     let sut = createSut(navigator: navigator)
     _ = sut.screen(for: .onboarding)
     
-    await factory.simulate_createOnboardingCoordinator_onFinish()
-    
+    let finishOnboarding = factory.createOnboardingCoordinatorOnFinishCallbackVoidReceivedInvocations.first!
+    finishOnboarding()
+    await finishOnboarding.onCompleted()
+
     #expect(navigator.destination == AppDestination.main)
   }
 
@@ -86,7 +88,7 @@ struct AppCoordinatorTests {
   
   private func createSut(
     navigator: SpecimenNavigator<AppDestination> = SpecimenNavigator(initialDestination: .appInit)
-  ) -> AppCoordinator<AppCoordinatorFactoryDelegateMockDummy> {
+  ) -> AppCoordinator<AppCoordinatorFactoryDelegateMock.Dummy> {
     AppCoordinator(specimenNavigator: navigator, factory: factory)
   }
 }

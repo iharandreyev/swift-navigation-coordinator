@@ -2,123 +2,73 @@
 //  AppCoordinatorFactoryDelegateMock.swift
 //  SampleApp_iOS
 //
-//  Created by Andreyeu, Ihar on 4/1/25.
+//  Created by Andreyeu, Ihar on 4/4/25.
 //
 
 import SwiftNavigationCoordinator
 import SwiftNavigationCoordinatorTesting
-import SwiftUI
 
-@testable
-import SampleApp_iOS
-
-#warning("TODO: Implement macro for this")
-@MainActor
-final class AppCoordinatorFactoryDelegateMock<
-  OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType,
-  MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
->: AppCoordinatorFactoryDelegateType {
-  struct Params_createAppInitScreen {
-    let onFinish: Callback<Void>
+#warning("TODO: Move into stencil template")
+enum AppCoordinatorFactoryDelegateMock {
+  typealias Dummy = AppCoordinatorFactoryDelegateTypeMock<DummyView, DummyCoordinator, DummyCoordinator>
+  typealias DummyOnboarding<
+    MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
+  > = AppCoordinatorFactoryDelegateTypeMock<DummyView, MainCoordinatorType, DummyCoordinator>
+  typealias DummyMain<
+    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  > = AppCoordinatorFactoryDelegateTypeMock<DummyView, DummyCoordinator, OnboardingCoordinatorType>
+  typealias Full<
+    MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType,
+    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  > = AppCoordinatorFactoryDelegateTypeMock<DummyView, MainCoordinatorType, OnboardingCoordinatorType>
+  
+  @MainActor
+  static func create() -> Dummy {
+    let factory = Dummy()
+    factory.createAppInitScreenOnFinishCallbackVoidReturnValue = DummyView()
+    factory.createOnboardingCoordinatorOnFinishCallbackVoidReturnValue = DummyCoordinator()
+    factory.createMainCoordinatorReturnValue = DummyCoordinator()
+    return factory
   }
   
-  private(set) var createAppInitScreen_invocations: [Params_createAppInitScreen] = []
-  var createAppInitScreen_count: Int { createAppInitScreen_invocations.count }
-  private let createAppInitScreen_invoked: ((Params_createAppInitScreen) -> Void)?
-  private var createAppInitScreen_onFinish: Callback<Void>!
-  
-  func createAppInitScreen(
-    onFinish: Callback<Void>
-  ) -> DummyView {
-    let params = Params_createAppInitScreen(
-      onFinish: onFinish
-    )
-    
-    createAppInitScreen_onFinish = onFinish
-    createAppInitScreen_invocations.append(params)
-    createAppInitScreen_invoked?(params)
-    
-    return DummyView()
+  @MainActor
+  static func create<
+    MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
+  >(
+    mainCoordinator: MainCoordinatorType
+  ) -> DummyOnboarding<MainCoordinatorType> {
+    let factory = DummyOnboarding<MainCoordinatorType>()
+    factory.createAppInitScreenOnFinishCallbackVoidReturnValue = DummyView()
+    factory.createOnboardingCoordinatorOnFinishCallbackVoidReturnValue = DummyCoordinator()
+    factory.createMainCoordinatorReturnValue = mainCoordinator
+    return factory
   }
   
-  func simulate_createAppInitScreen_onFinish() async {
-    await createAppInitScreen_onFinish.execute()
+  @MainActor
+  static func create<
+    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  >(
+    onboardingCoordinator: OnboardingCoordinatorType
+  ) -> DummyMain<OnboardingCoordinatorType> {
+    let factory = DummyMain<OnboardingCoordinatorType>()
+    factory.createAppInitScreenOnFinishCallbackVoidReturnValue = DummyView()
+    factory.createOnboardingCoordinatorOnFinishCallbackVoidReturnValue = onboardingCoordinator
+    factory.createMainCoordinatorReturnValue = DummyCoordinator()
+    return factory
   }
   
-  struct Params_createOnboardingCoordinator {
-    let onFinish: Callback<Void>
-  }
-  
-  private let injected_createOnboardingCoordinator: (Params_createOnboardingCoordinator) -> OnboardingCoordinatorType
-  private(set) var createOnboardingCoordinator_invocations: [Params_createOnboardingCoordinator] = []
-  var createOnboardingCoordinator_count: Int { createOnboardingCoordinator_invocations.count }
-  private var createOnboardingCoordinator_onFinish: Callback<Void>!
-  
-  private let createOnboardingCoordinator_invoked: ((Params_createOnboardingCoordinator) -> Void)?
-  
-  func createOnboardingCoordinator(
-    onFinish: Callback<Void>
-  ) -> OnboardingCoordinatorType {
-    let params = Params_createOnboardingCoordinator(
-      onFinish: onFinish
-    )
-    
-    createOnboardingCoordinator_onFinish = onFinish
-    createOnboardingCoordinator_invocations.append(params)
-    createOnboardingCoordinator_invoked?(params)
-    
-    return injected_createOnboardingCoordinator(params)
-  }
-  
-  func simulate_createOnboardingCoordinator_onFinish() async {
-    await createOnboardingCoordinator_onFinish.execute()
-  }
-  
-  struct Params_createMainCoordinator { }
-  
-  private let injected_createMainCoordinator: (Params_createMainCoordinator) -> MainCoordinatorType
-  private(set) var createMainCoordinator_invocations: [Params_createMainCoordinator] = []
-  var createMainCoordinator_count: Int { createMainCoordinator_invocations.count }
-  private let createMainCoordinator_invoked: ((Params_createMainCoordinator) -> Void)?
-
-  func createMainCoordinator() -> MainCoordinatorType {
-    let params = Params_createMainCoordinator()
-    
-    createMainCoordinator_invocations.append(params)
-    createMainCoordinator_invoked?(params)
-    
-    return injected_createMainCoordinator(params)
-  }
-  
-  init(
-    createAppInitScreen_invoked: ((Params_createAppInitScreen) -> Void)? = nil,
-    createOnboardingCoordinator: @escaping (Params_createOnboardingCoordinator) -> OnboardingCoordinatorType,
-    createOnboardingCoordinator_invoked: ((Params_createOnboardingCoordinator) -> Void)? = nil,
-    createMainCoordinator: @escaping (Params_createMainCoordinator) -> MainCoordinatorType,
-    createMainCoordinator_invoked: ((Params_createMainCoordinator) -> Void)? = nil
-  ) {
-    self.createAppInitScreen_invoked = createAppInitScreen_invoked
-    self.injected_createOnboardingCoordinator = createOnboardingCoordinator
-    self.createOnboardingCoordinator_invoked = createOnboardingCoordinator_invoked
-    self.injected_createMainCoordinator = createMainCoordinator
-    self.createMainCoordinator_invoked = createMainCoordinator_invoked
+  @MainActor
+  static func create<
+    MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType,
+    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  >(
+    mainCoordinator: MainCoordinatorType,
+    onboardingCoordinator: OnboardingCoordinatorType
+  ) -> Full<MainCoordinatorType, OnboardingCoordinatorType> {
+    let factory = Full<MainCoordinatorType, OnboardingCoordinatorType>()
+    factory.createAppInitScreenOnFinishCallbackVoidReturnValue = DummyView()
+    factory.createOnboardingCoordinatorOnFinishCallbackVoidReturnValue = onboardingCoordinator
+    factory.createMainCoordinatorReturnValue = mainCoordinator
+    return factory
   }
 }
-
-extension AppCoordinatorFactoryDelegateMock {
-  convenience init(
-    createAppInitScreen_invoked: ((Params_createAppInitScreen) -> Void)? = nil,
-    createOnboardingCoordinator_invoked: ((Params_createOnboardingCoordinator) -> Void)? = nil,
-    createMainCoordinator_invoked: ((Params_createMainCoordinator) -> Void)? = nil
-  ) where OnboardingCoordinatorType == DummyCoordinator, MainCoordinatorType == DummyCoordinator {
-    self.init(
-      createAppInitScreen_invoked: createAppInitScreen_invoked,
-      createOnboardingCoordinator: { _ in DummyCoordinator() },
-      createOnboardingCoordinator_invoked: createOnboardingCoordinator_invoked,
-      createMainCoordinator: { _ in DummyCoordinator() },
-      createMainCoordinator_invoked: createMainCoordinator_invoked
-    )
-  }
-}
-
-typealias AppCoordinatorFactoryDelegateMockDummy = AppCoordinatorFactoryDelegateMock<DummyCoordinator, DummyCoordinator>
