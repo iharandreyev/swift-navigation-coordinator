@@ -69,6 +69,7 @@ public final class StackNavigator<
     )
   }
   
+  @available(*, unavailable, message: "Not available until path items replacement issue is fixed")
   public func replaceLast(
     with destination: DestinationType,
     animated: Bool = true,
@@ -118,6 +119,7 @@ public final class StackNavigator<
     )
   }
   
+  @available(*, unavailable, message: "Not available until path items replacement issue is fixed")
   public func replaceStack(
     with destination: DestinationType,
     animated: Bool = true,
