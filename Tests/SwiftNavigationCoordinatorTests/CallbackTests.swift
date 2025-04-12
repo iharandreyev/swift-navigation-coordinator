@@ -13,6 +13,11 @@ import SwiftNavigationCoordinator
 
 #warning("Flaky tests. Do not finish within Timeout 100% of the time")
 struct CallbackTests {
+  init() {
+    #warning("TODO: Looks like bad design, since `Environment.current` is updated for everything")
+    setEnvironment(.test)
+  }
+  
   @Test
   func callback_invokesOnCompleted_whenObservedAfter_callAsFunction() async throws {
     try await withTimeout(Constants.timeout) {

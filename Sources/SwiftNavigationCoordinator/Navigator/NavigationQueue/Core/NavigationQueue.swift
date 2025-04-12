@@ -26,32 +26,24 @@ public actor NavigationQueue {
 
   public func schedule(
     uiUpdate job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation? = .default,
+    animated: Bool,
     function: StaticString = #function
   ) async  {
     if queue.isEmpty {
-      await enqueueFirst(
-        job,
-        animation: animation,
-        function: function
-      )
+      await enqueueFirst(job, animated: animated, function: function)
     } else {
-      await enqueueNext(
-        job,
-        animation: animation,
-        function: function
-      )
+      await enqueueNext(job, animated: animated, function: function)
     }
   }
   
   private func enqueueFirst(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation?,
+    animated: Bool,
     function: StaticString
   ) async {
     enqueue(
       job,
-      animation: animation,
+      animated: animated,
       function: function
     )
     
@@ -60,13 +52,13 @@ public actor NavigationQueue {
   
   private func enqueueNext(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation?,
+    animated: Bool,
     function: StaticString
   ) async  {
     await withCheckedContinuation { continuation in
       enqueue(
         job,
-        animation: animation,
+        animated: animated,
         completion: {
           continuation.resume()
         },
@@ -77,13 +69,13 @@ public actor NavigationQueue {
   
   private func enqueue(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation?,
+    animated: Bool,
     completion: NavigationQueueItem.Completion? = nil,
     function: StaticString
   )  {
     let item = NavigationQueueItem(
       job: job,
-      animation: animation,
+      animated: animated,
       completion: completion,
       function: function
     )
@@ -99,8 +91,8 @@ public actor NavigationQueue {
     
     logMessage("NavigationQueue: Did dequeue \(next)")
     
-    if let animation = next.animation {
-      await withAnimations.run(next.job, animation: animation)
+    if next.animated {
+      await withAnimations.run(next.job)
     } else {
       await withoutAnimations.run(next.job)
     }
@@ -113,30 +105,26 @@ public actor NavigationQueue {
 }
 
 extension NavigationQueue {
-#if canImport(XCTest)
-  public static let shared = test()
-#else
-  public static let shared = NavigationQueue(clock: ContinuousClock())
-#endif
+  public var shared: NavigationQueue { Environment.navigationQueue }
 }
 
 struct NavigationQueueItem: CustomStringConvertible {
   fileprivate typealias Completion = @MainActor @Sendable () -> Void
   
   fileprivate let job: @MainActor @Sendable () -> Void
-  fileprivate let animation: Animation?
+  fileprivate let animated: Bool
   fileprivate let completion: Completion?
 
   let description: String
 
   fileprivate init(
     job: @MainActor @Sendable @escaping () -> Void,
-    animation: Animation?,
+    animated: Bool,
     completion: Completion? = nil,
     function: StaticString
   ) {
     self.job = job
-    self.animation = animation
+    self.animated = animated
     self.completion = completion
     self.description = "\(function)"
   }
@@ -145,10 +133,9 @@ struct NavigationQueueItem: CustomStringConvertible {
 #if canImport(XCTest)
 
 extension NavigationQueue {
-  var queueLength: Int { queue.count }
-  
-  static func test() -> NavigationQueue {
-    NavigationQueue(clock: ImmediateClock())
+  var queueLength: Int {
+    Environment.assert(.test)
+    return queue.count
   }
 }
 

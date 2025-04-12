@@ -12,6 +12,8 @@ open class CoordinatorBase {
   
   private var id: AnyDestination?
   private var onFinish: Callback<Void>?
+  
+  private(set) var isFinished: Bool = false
 
   // MARK: - Init
   
@@ -148,12 +150,26 @@ open class CoordinatorBase {
     file: StaticString = #file,
     line: UInt = #line
   ) async {
+    guard !isFinished else {
+      return logWarning(
+        """
+          Trying to finish `\(ShortDescription(self))` that has already been finished \
+          This is a programming error
+        """,
+        file: file,
+        line: line
+      )
+    }
+    
     await onFinish?.execute()
     
     removeFromParent(
       file: file,
       line: line
     )
+    
+    isFinished = true
+    onFinish = nil
     
     logMessage("FINISH: \(ShortDescription(self))")
   }

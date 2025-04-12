@@ -17,6 +17,10 @@ import SampleApp_iOS
 struct AppCoordinatorTests {
   let factory = AppCoordinatorFactoryDelegateMock()
   
+  init() {
+    SwiftNavigationCoordinator.setEnvironment(.test)
+  }
+  
   @Test
   func screen_for_appInit_invokes_createAppInitScreen() {
     let sut = createSut(navigator: createNavigator())

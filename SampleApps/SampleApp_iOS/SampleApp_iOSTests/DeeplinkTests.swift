@@ -15,6 +15,10 @@ import SampleApp_iOS
 
 @MainActor
 struct DeeplinkTests {
+  init() {
+    SwiftNavigationCoordinator.setEnvironment(.test)
+  }
+  
   @Test
   func appCoordinator_canHandleDeeplink_onlyWhen_main() async throws {
     let navigator = SpecimenNavigator(

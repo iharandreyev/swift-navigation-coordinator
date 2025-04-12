@@ -5,12 +5,12 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
-import SwiftUI
-
 @MainActor
 public final class StackNavigator<
   DestinationType: ScreenDestinationType
->: AnyStackNavigator {
+> {
+  typealias DestinationType = DestinationType
+  
   let state: StackState
   
   private let navigationQueue: NavigationQueue
@@ -18,9 +18,10 @@ public final class StackNavigator<
   private(set)
   public var stack: [DestinationType] = []
   
-  // This property is used only for scoping, which is infrequent, so existential container is OK
-  fileprivate
-  weak var parent: (any AnyStackNavigator)?
+  private(set)
+  var parent: AnyStackNavigator?
+  private(set)
+  var child: AnyStackNavigator?
   
   // MARK: - Init
   
@@ -37,7 +38,7 @@ public final class StackNavigator<
   public convenience init() {
     self.init(
       state: StackState(),
-      navigationQueue: .shared
+      navigationQueue: Environment.navigationQueue
     )
   }
   
@@ -45,7 +46,7 @@ public final class StackNavigator<
   
   public func push(
     _ destination: DestinationType,
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -64,13 +65,13 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animation: animation
+      animated: animated
     )
   }
   
   public func replaceLast(
     with destination: DestinationType,
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -100,7 +101,7 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animation: animation
+      animated: animated
     )
     
     await navigationQueue.schedule(
@@ -113,13 +114,13 @@ public final class StackNavigator<
         self.stack.removeLast(2)
         self.stack.append(destination)
       },
-      animation: nil
+      animated: false
     )
   }
   
   public func replaceStack(
     with destination: DestinationType,
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -138,7 +139,7 @@ public final class StackNavigator<
         state.append(destination)
         stack.append(destination)
       },
-      animation: animation
+      animated: animated
     )
     
     await navigationQueue.schedule(
@@ -150,14 +151,14 @@ public final class StackNavigator<
         
         self.stack = [destination]
       },
-      animation: nil
+      animated: false
     )
   }
   
   // MARK: - Pop
   
   public func pop(
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -185,13 +186,13 @@ public final class StackNavigator<
         state.removeLast()
         stack.removeLast()
       },
-      animation: animation
+      animated: animated
     )
   }
   
   public func popToDestination(
     _ destination: DestinationType,
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -223,12 +224,12 @@ public final class StackNavigator<
         state.removeLast(itemsToRemove)
         stack.removeLast(itemsToRemove)
       },
-      animation: animation
+      animated: animated
     )
   }
   
   public func popToRoot(
-    animation: Animation? = .default,
+    animated: Bool = true,
     file: StaticString = #file,
     line: UInt = #line
   ) async {
@@ -244,11 +245,31 @@ public final class StackNavigator<
       uiUpdate: { [weak self] in
         guard let self else { return }
         
-        state.removeLast(stack.count)
+        state.removeAll()
         stack = []
       },
-      animation: animation
+      animated: animated
     )
+    
+    // Cleanup navigator hierarchy
+    var bottomChild = self.eraseToAnyStackNavigator()
+    while let child = bottomChild.child {
+      bottomChild = child
+    }
+    
+    while let parent = bottomChild.parent {
+      bottomChild.stack = []
+      bottomChild.child = nil
+      bottomChild.parent = nil
+      
+      bottomChild = parent
+    }
+
+    let topParent = bottomChild
+    
+    topParent.stack = []
+    topParent.child = nil
+    topParent.parent = nil
   }
   
   // MARK: - Scope
@@ -271,7 +292,10 @@ public final class StackNavigator<
       state: state,
       navigationQueue: navigationQueue
     )
-    child.parent = self
+    
+    child.parent = self.eraseToAnyStackNavigator()
+    self.child = child.eraseToAnyStackNavigator()
+    
     return child
   }
   
@@ -281,8 +305,15 @@ public final class StackNavigator<
   var isValid: Bool = true
   
   private func invalidate() {
+    let child = child
+    let parent = parent
+    
     isValid = false
-    parent = nil
+    self.parent = nil
+    self.child = nil
+    
+    parent?.child = nil
+    child?.invalidate()
   }
   
   @inline(__always)
@@ -344,8 +375,54 @@ extension StackNavigator: StackStateDelegate {
   }
 }
 
-private protocol AnyStackNavigator: AnyObject, StackStateDelegate {
-  var state: StackState { get }
+extension StackNavigator {
+  func getParent(_ invocationPoint: String = #file) -> AnyStackNavigator? {
+    assert(invocationPoint.contains("AnyStackNavigator"))
+    
+    return parent
+  }
+  
+  func setParent(_ newValue: AnyStackNavigator?, _ invocationPoint: String = #file) {
+    assert(invocationPoint.contains("AnyStackNavigator"))
+    
+    parent = newValue
+  }
+  
+  func getChild(_ invocationPoint: String = #file) -> AnyStackNavigator? {
+    assert(invocationPoint.contains("AnyStackNavigator"))
+    
+    return child
+  }
+  
+  func setChild(_ newValue: AnyStackNavigator?, _ invocationPoint: String = #file) {
+    assert(invocationPoint.contains("AnyStackNavigator"))
+    
+    child = newValue
+  }
+  
+  func getStack(_ invocationPoint: String = #file) -> [AnyDestination] {
+    assert(invocationPoint.contains("AnyStackNavigator"))
+    
+    return stack.map(AnyDestination.init)
+  }
+  
+  func setStack(_ newValue: [AnyDestination], _ invocationPoint: String = #file) {
+    assert(invocationPoint.contains("AnyStackNavigator"))
+    
+    if newValue.isEmpty {
+      stack = []
+    } else {
+      stack = newValue.map {
+        $0.wrapped as! DestinationType
+      }
+    }
+  }
+  
+  func performInvalidate(_ invocationPoint: String = #file) {
+    assert(invocationPoint.contains("AnyStackNavigator"))
+    
+    invalidate()
+  }
 }
 
 #if canImport(XCTest)
@@ -353,9 +430,11 @@ private protocol AnyStackNavigator: AnyObject, StackStateDelegate {
 extension StackNavigator {
   static func test(
     destinations: [DestinationType],
-    navigationQueue: NavigationQueue = .test(),
+    navigationQueue: NavigationQueue = Environment.navigationQueue,
     isValid: Bool = true
   ) -> StackNavigator {
+    Environment.assert(.test)
+    
     let state = StackState()
     let navigator = StackNavigator(state: state, navigationQueue: navigationQueue)
     
@@ -369,6 +448,10 @@ extension StackNavigator {
     
     navigator.invalidate()
     return navigator
+  }
+  
+  func testInvalidate() {
+    invalidate()
   }
 }
 
