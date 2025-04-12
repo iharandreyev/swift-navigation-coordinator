@@ -109,13 +109,21 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
     addChild(
       childFactory: {
         MultiChildFlowCoordinator(
-          stackNavigator: stackNavigator.scope()
+          stackNavigator: stackNavigator.scope(),
+          onFinish: Callback { [unowned self] in
+            await multiChildFlowDidFinish()
+          }
         )
       },
       as: destination
     )
     
     await stackNavigator.push(destination)
+  }
+
+
+  func multiChildFlowDidFinish() async {
+    await stackNavigator.popToRoot()
   }
 
   override func processDeeplink(
