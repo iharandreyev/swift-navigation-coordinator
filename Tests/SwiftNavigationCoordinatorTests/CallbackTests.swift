@@ -5,6 +5,7 @@
 //  Created by Andreyeu, Ihar on 4/4/25.
 //
 
+import SwiftNavigationCoordinatorTesting
 import Testing
 
 @testable
