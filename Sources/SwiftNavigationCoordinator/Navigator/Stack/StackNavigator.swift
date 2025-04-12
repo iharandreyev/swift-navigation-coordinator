@@ -35,7 +35,7 @@ public final class StackNavigator<
   public convenience init() {
     self.init(
       state: StackState(),
-      navigationQueue: .shared
+      navigationQueue: Environment.navigationQueue
     )
   }
   
@@ -351,9 +351,11 @@ private protocol AnyStackNavigator: AnyObject, StackStateDelegate {
 extension StackNavigator {
   static func test(
     destinations: [DestinationType],
-    navigationQueue: NavigationQueue = .test(),
+    navigationQueue: NavigationQueue = Environment.navigationQueue,
     isValid: Bool = true
   ) -> StackNavigator {
+    Environment.assert(.test)
+    
     let state = StackState()
     let navigator = StackNavigator(state: state, navigationQueue: navigationQueue)
     

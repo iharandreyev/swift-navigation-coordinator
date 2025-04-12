@@ -23,7 +23,7 @@ public final class SpecimenNavigator<
   ) {
     self.init(
       initialDestination: initialDestination,
-      navigationQueue: .shared
+      navigationQueue: Environment.navigationQueue
     )
   }
   
@@ -76,9 +76,14 @@ import Clocks
 extension SpecimenNavigator {
   static func test(
     destination: DestinationType,
-    navigationQueue: NavigationQueue = .test()
+    navigationQueue: NavigationQueue = Environment.navigationQueue
   ) -> SpecimenNavigator {
-    SpecimenNavigator(initialDestination: destination, navigationQueue: navigationQueue)
+    Environment.assert(.test)
+    
+    return SpecimenNavigator(
+      initialDestination: destination,
+      navigationQueue: navigationQueue
+    )
   }
 }
 

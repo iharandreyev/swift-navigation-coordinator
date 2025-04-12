@@ -12,6 +12,11 @@ import SwiftNavigationCoordinator
 import SwiftNavigationCoordinatorTesting
 
 struct SpecimenNavigatorTests {
+  init() {
+    #warning("TODO: Looks like bad design, since `Environment.current` is updated for everything")
+    setEnvironment(.test)
+  }
+  
   @Test
   func specimenNavigator_setDestination_finishes() async throws {
     try await withTimeout(.seconds(1)) {

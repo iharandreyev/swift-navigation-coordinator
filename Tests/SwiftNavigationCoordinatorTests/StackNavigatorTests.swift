@@ -12,6 +12,11 @@ import Perception
 import SwiftNavigationCoordinator
 
 struct StackNavigatorTests {
+  init() {
+    #warning("TODO: Looks like bad design, since `Environment.current` is updated for everything")
+    setEnvironment(.test)
+  }
+  
   @Test
   func stackNavigator_pushesSingleDestination() async throws {
     await assertSut(

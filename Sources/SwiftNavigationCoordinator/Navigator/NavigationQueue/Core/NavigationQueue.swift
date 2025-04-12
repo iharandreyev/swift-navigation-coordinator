@@ -105,11 +105,7 @@ public actor NavigationQueue {
 }
 
 extension NavigationQueue {
-#if canImport(XCTest)
-  public static let shared = test()
-#else
-  public static let shared = NavigationQueue(clock: ContinuousClock())
-#endif
+  public var shared: NavigationQueue { Environment.navigationQueue }
 }
 
 struct NavigationQueueItem: CustomStringConvertible {
@@ -137,10 +133,9 @@ struct NavigationQueueItem: CustomStringConvertible {
 #if canImport(XCTest)
 
 extension NavigationQueue {
-  var queueLength: Int { queue.count }
-  
-  static func test() -> NavigationQueue {
-    NavigationQueue(clock: ImmediateClock())
+  var queueLength: Int {
+    Environment.assert(.test)
+    return queue.count
   }
 }
 

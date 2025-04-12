@@ -25,7 +25,7 @@ public final class ModalNavigator<
   }
   
   public convenience init() {
-    self.init(navigationQueue: .shared)
+    self.init(navigationQueue: Environment.navigationQueue)
   }
   
   public func presentDestination(
@@ -90,8 +90,10 @@ public final class ModalNavigator<
 extension ModalNavigator {
   static func test(
     destination: ModalDestination<DestinationType>? = nil,
-    navigationQueue: NavigationQueue = .test()
+    navigationQueue: NavigationQueue = Environment.navigationQueue
   ) -> ModalNavigator {
+    Environment.assert(.test)
+    
     let navigator = ModalNavigator(navigationQueue: navigationQueue)
     navigator.destination = destination
     return navigator
