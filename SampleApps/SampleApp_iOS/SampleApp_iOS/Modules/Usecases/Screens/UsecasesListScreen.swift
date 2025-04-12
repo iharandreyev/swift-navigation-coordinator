@@ -10,6 +10,7 @@ import SwiftUI
 struct UsecasesListScreen: View {
   let onShowModalSheet: () -> Void
   let onShowModalCover: () -> Void
+  let onShowPushedScreen: () -> Void
   
   var body: some View {
     List {
@@ -22,6 +23,11 @@ struct UsecasesListScreen: View {
         title: "Show modal cover",
         onTap: onShowModalCover
       )
+      
+      ListItemButton(
+        title: "Show pushed screen",
+        onTap: onShowPushedScreen
+      )
     }
   }
 }
@@ -29,6 +35,7 @@ struct UsecasesListScreen: View {
 #Preview {
   UsecasesListScreen(
     onShowModalSheet: {},
-    onShowModalCover: {}
+    onShowModalCover: {},
+    onShowPushedScreen: {}
   )
 }

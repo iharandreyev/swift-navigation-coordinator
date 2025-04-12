@@ -11,6 +11,7 @@ import SwiftUI
 enum UsecasesDestination: String, ModalDestinationContentType {
   case modalSheet
   case modalCover
+  case pushedScreen
   
   var id: String { rawValue }
 }
@@ -36,6 +37,9 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       },
       onShowModalCover: { [unowned self] in
         Task(operation: showModalCover)
+      },
+      onShowPushedScreen: { [unowned self] in
+        Task(operation: showPushedScreen)
       }
     )
   }
@@ -60,6 +64,15 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
         }
       )
       .id(destination)
+    case .pushedScreen:
+      SomeScreen(
+        name: "a pushed screen",
+        description: "a screen that is pushed into stack",
+        content: {
+          DismissButton()
+        }
+      )
+      .id(destination)
     }
   }
   
@@ -69,6 +82,10 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   
   private func showModalCover() async {
     await modalNavigator.presentDestination(.cover(.modalCover))
+  }
+  
+  private func showPushedScreen() async {
+    await stackNavigator.push(.pushedScreen)
   }
   
   override func processDeeplink(
