@@ -153,13 +153,13 @@ open class CoordinatorBase {
   open func finish(
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
+    await onFinish?.execute()
+    
     removeFromParent(
       file: file,
       line: line
     )
-    
-    onFinish?()
     
     logMessage("FINISH: \(ShortDescription(self))")
   }
