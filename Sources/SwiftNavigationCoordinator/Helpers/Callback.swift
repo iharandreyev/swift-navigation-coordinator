@@ -32,7 +32,7 @@ public final class Callback<Params: Sendable>: Sendable {
     await resolveCompletion()
   }
   
-  //  Had to make this public since #if canImport(Testing) does not work
+  //  Had to make this public since #if canImport(Testing) does not work when importing stuff from another package
   //  https://forums.swift.org/t/xcode-not-respecting-canimport-xctest/46826
   public func onCompleted(
     fileID: StaticString = #fileID,

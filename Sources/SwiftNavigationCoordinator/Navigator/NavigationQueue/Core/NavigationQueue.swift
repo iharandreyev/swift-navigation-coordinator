@@ -11,8 +11,6 @@ import SwiftUI
 
 /// Used to throttle animation completions to avoid multiple transitions at the same time
 public actor NavigationQueue {
-  private let clock: AnyClock<Duration>
-  
   private let withoutAnimations: WithoutAnimations
   private let withAnimations: WithAnimations
   
@@ -22,29 +20,39 @@ public actor NavigationQueue {
   init<ClockType: Clock<Duration>>(
     clock: ClockType
   ) {
-    self.clock = AnyClock(clock)
     self.withoutAnimations = WithoutAnimations(clock: clock)
-    self.withAnimations = WithAnimations()
+    self.withAnimations = WithAnimations(clock: clock)
   }
 
   public func schedule(
     uiUpdate job: @MainActor @Sendable @escaping () -> Void,
-    animated: Bool
+    animation: Animation? = .default,
+    function: StaticString = #function
   ) async  {
     if queue.isEmpty {
-      await enqueueFirst(job, animated: animated)
+      await enqueueFirst(
+        job,
+        animation: animation,
+        function: function
+      )
     } else {
-      await enqueueNext(job, animated: animated)
+      await enqueueNext(
+        job,
+        animation: animation,
+        function: function
+      )
     }
   }
   
   private func enqueueFirst(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animated: Bool
+    animation: Animation?,
+    function: StaticString
   ) async {
     enqueue(
       job,
-      animated: animated
+      animation: animation,
+      function: function
     )
     
     await resolveQueue()
@@ -52,28 +60,32 @@ public actor NavigationQueue {
   
   private func enqueueNext(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animated: Bool
+    animation: Animation?,
+    function: StaticString
   ) async  {
     await withCheckedContinuation { continuation in
       enqueue(
         job,
-        animated: animated,
+        animation: animation,
         completion: {
           continuation.resume()
-        }
+        },
+        function: function
       )
     }
   }
   
   private func enqueue(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animated: Bool,
-    completion: NavigationQueueItem.Completion? = nil
+    animation: Animation?,
+    completion: NavigationQueueItem.Completion? = nil,
+    function: StaticString
   )  {
     let item = NavigationQueueItem(
       job: job,
-      animated: animated,
-      completion: completion
+      animation: animation,
+      completion: completion,
+      function: function
     )
     queue.append(item)
     
@@ -87,8 +99,8 @@ public actor NavigationQueue {
     
     logMessage("NavigationQueue: Did dequeue \(next)")
     
-    if next.animated {
-      await withAnimations.run(next.job)
+    if let animation = next.animation {
+      await withAnimations.run(next.job, animation: animation)
     } else {
       await withoutAnimations.run(next.job)
     }
@@ -108,12 +120,26 @@ extension NavigationQueue {
 #endif
 }
 
-struct NavigationQueueItem {
+struct NavigationQueueItem: CustomStringConvertible {
   fileprivate typealias Completion = @MainActor @Sendable () -> Void
   
-  private(set) fileprivate var job: @MainActor @Sendable () -> Void
-  private(set) fileprivate var animated: Bool
-  private(set) fileprivate var completion: Completion?
+  fileprivate let job: @MainActor @Sendable () -> Void
+  fileprivate let animation: Animation?
+  fileprivate let completion: Completion?
+
+  let description: String
+
+  fileprivate init(
+    job: @MainActor @Sendable @escaping () -> Void,
+    animation: Animation?,
+    completion: Completion? = nil,
+    function: StaticString
+  ) {
+    self.job = job
+    self.animation = animation
+    self.completion = completion
+    self.description = "\(function)"
+  }
 }
 
 #if canImport(XCTest)
