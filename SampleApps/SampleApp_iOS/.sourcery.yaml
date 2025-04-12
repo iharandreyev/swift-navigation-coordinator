@@ -1,0 +1,22 @@
+# READ MORE ABOUT configuration here https://merowing.info/Sourcery/usage.html
+# https://engineering.theblueground.com/how-we-saved-our-time-with-sourcery-in-ios/
+# https://github.com/bluegroundltd/ios_sourcery_demo/
+configurations:
+    # -- Blueground configuration --
+    - sources:
+        include:
+          - SampleApp_iOS
+          # - Sourcery # We need to read the FixturableCommonExamples.swift
+      templates:
+        - Sourcery
+      output:
+          path: SampleApp_iOSTests/Sourcery
+          link:
+            project: ./SampleApp_iOS.xcodeproj
+            target: SampleApp_iOSTests
+            group: SampleApp_iOSTests/Sourcery
+      args:
+        autoMockableTestableImports: 
+          - "SampleApp_iOS"
+        autoMockableImports:          
+          - "SwiftNavigationCoordinator"
