@@ -74,7 +74,7 @@ final class MainCoordinator<
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> ProcessDeeplinkResult {
+  ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecases:
       specimenNavigator.replaceDestination(with: .usecases)
