@@ -39,7 +39,9 @@ extension View {
   ) -> some View {
     self.onRemoveFromParent(
       perform: { [weak coordinator] in
-        coordinator?.finish()
+        Task {
+          await coordinator?.finish()
+        }
       }
     )
   }

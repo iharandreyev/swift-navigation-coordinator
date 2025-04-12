@@ -5,13 +5,16 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
-#warning("TODO: Implement async methods to 1. wait for animation complete; 2. test methods that disable animations")
+import SwiftUI
+
 @MainActor
 public final class StackNavigator<
   DestinationType: ScreenDestinationType
 >: AnyStackNavigator {
   let state: StackState
-
+  
+  private let navigationQueue: NavigationQueue
+  
   private(set)
   public var stack: [DestinationType] = []
   
@@ -22,23 +25,30 @@ public final class StackNavigator<
   // MARK: - Init
   
   private init(
-    state: StackState
+    state: StackState,
+    navigationQueue: NavigationQueue
   ) {
     self.state = state
+    self.navigationQueue = navigationQueue
+    
     state.delegate = self
   }
   
   public convenience init() {
-    self.init(state: StackState())
+    self.init(
+      state: StackState(),
+      navigationQueue: .shared
+    )
   }
   
   // MARK: - Push
   
   public func push(
     _ destination: DestinationType,
+    animation: Animation? = .default,
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
     guard canPerformOperation(
       "push(\(ShortDescription(destination)))",
       file: file,
@@ -47,15 +57,23 @@ public final class StackNavigator<
       return
     }
     
-    state.append(destination)
-    stack.append(destination)
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        
+        state.append(destination)
+        stack.append(destination)
+      },
+      animation: animation
+    )
   }
   
   public func replaceLast(
     with destination: DestinationType,
+    animation: Animation? = .default,
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
     guard canPerformOperation(
       "replaceLast(\(ShortDescription(destination)))",
       file: file,
@@ -74,25 +92,37 @@ public final class StackNavigator<
         line: line
       )
     }
-
-    state.append(destination)
     
-    withoutAnimations { [weak self, weak state] in
-      guard let self, let state else { return }
-      
-      state.removeLast(2)
-      state.append(destination)
-      
-      self.stack.removeLast()
-      self.stack.append(destination)
-    }
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        
+        state.append(destination)
+        stack.append(destination)
+      },
+      animation: animation
+    )
+    
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        
+        state.removeLast(2)
+        state.append(destination)
+        
+        self.stack.removeLast(2)
+        self.stack.append(destination)
+      },
+      animation: nil
+    )
   }
   
   public func replaceStack(
     with destination: DestinationType,
+    animation: Animation? = .default,
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
     guard canPerformOperation(
       "replaceStack(with: \(ShortDescription(destination)))",
       file: file,
@@ -100,25 +130,37 @@ public final class StackNavigator<
     ) else {
       return
     }
-
-    push(destination)
     
-    withoutAnimations { [weak self, weak state] in
-      guard let self, let state else { return }
-      
-      state.removeLast(state.count)
-      state.append(destination)
-      
-      self.stack = [destination]
-    }
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        
+        state.append(destination)
+        stack.append(destination)
+      },
+      animation: animation
+    )
+    
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        
+        state.removeLast(state.count)
+        state.append(destination)
+        
+        self.stack = [destination]
+      },
+      animation: nil
+    )
   }
   
   // MARK: - Pop
   
   public func pop(
+    animation: Animation? = .default,
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
     guard canPerformOperation(
       "pop",
       file: file,
@@ -136,15 +178,23 @@ public final class StackNavigator<
       )
     }
     
-    state.removeLast()
-    stack.removeLast()
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        
+        state.removeLast()
+        stack.removeLast()
+      },
+      animation: animation
+    )
   }
   
   public func popToDestination(
     _ destination: DestinationType,
+    animation: Animation? = .default,
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
     guard canPerformOperation(
       "popToDestination(\(ShortDescription(destination)))",
       file: file,
@@ -166,14 +216,22 @@ public final class StackNavigator<
     
     let itemsToRemove = stack.count - index - 1
     
-    state.removeLast(itemsToRemove)
-    stack.removeLast(itemsToRemove)
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        
+        state.removeLast(itemsToRemove)
+        stack.removeLast(itemsToRemove)
+      },
+      animation: animation
+    )
   }
   
   public func popToRoot(
+    animation: Animation? = .default,
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
     guard canPerformOperation(
       "popToRoot",
       file: file,
@@ -182,8 +240,15 @@ public final class StackNavigator<
       return
     }
     
-    state.removeLast(stack.count)
-    stack = []
+    await navigationQueue.schedule(
+      uiUpdate: { [weak self] in
+        guard let self else { return }
+        
+        state.removeLast(stack.count)
+        stack = []
+      },
+      animation: animation
+    )
   }
   
   // MARK: - Scope
@@ -203,7 +268,8 @@ public final class StackNavigator<
     }
     
     let child = StackNavigator<ChildDestinationType>(
-      state: state
+      state: state,
+      navigationQueue: navigationQueue
     )
     child.parent = self
     return child
@@ -238,9 +304,6 @@ public final class StackNavigator<
       return false
     }
     
-    #warning("TODO: Cover with tests and remove")
-    assert(state.count == stack.count)
-    
     return true
   }
 }
@@ -250,7 +313,7 @@ extension StackNavigator: StackStateDelegate {
     with interaction: StackUserInteraction
   ) {
     guard isValid else { return }
-
+    
     switch interaction {
     case .popToRoot:
       stack = []
@@ -284,3 +347,29 @@ extension StackNavigator: StackStateDelegate {
 private protocol AnyStackNavigator: AnyObject, StackStateDelegate {
   var state: StackState { get }
 }
+
+#if canImport(XCTest)
+
+extension StackNavigator {
+  static func test(
+    destinations: [DestinationType],
+    navigationQueue: NavigationQueue = .test(),
+    isValid: Bool = true
+  ) -> StackNavigator {
+    let state = StackState()
+    let navigator = StackNavigator(state: state, navigationQueue: navigationQueue)
+    
+    destinations.forEach {
+      state.append($0)
+    }
+    
+    navigator.stack = destinations
+    
+    guard !isValid else { return navigator }
+    
+    navigator.invalidate()
+    return navigator
+  }
+}
+
+#endif

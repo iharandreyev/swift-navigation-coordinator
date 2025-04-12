@@ -11,12 +11,12 @@ open class CoordinatorBase {
   private(set) public var children: [AnyDestination: CoordinatorBase] = [:]
   
   private var id: AnyDestination?
-  private var onFinish: (() -> Void)?
+  private var onFinish: Callback<Void>?
 
   // MARK: - Init
   
   public init(
-    onFinish: (() -> Void)? = nil
+    onFinish: Callback<Void>? = nil
   ) {
     self.onFinish = onFinish
 
@@ -147,19 +147,19 @@ open class CoordinatorBase {
   open func finish(
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
+    await onFinish?.execute()
+    
     removeFromParent(
       file: file,
       line: line
     )
     
-    onFinish?()
-    
     logMessage("FINISH: \(ShortDescription(self))")
   }
-
+  
   public final func setOnFinish(
-    _ onFinish: @escaping () -> Void
+    _ onFinish: Callback<Void>
   ) {
     self.onFinish = onFinish
   }
@@ -170,7 +170,7 @@ open class CoordinatorBase {
     _ event: any ChildEventType,
     file: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) async {
     guard let parent else {
       fatalError(
         """
@@ -182,7 +182,7 @@ open class CoordinatorBase {
       )
     }
     
-    return parent.handleChildEvent(
+    return await parent.handleChildEvent(
       event,
       file: file,
       line: line
@@ -193,21 +193,21 @@ open class CoordinatorBase {
   
   open func processDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> ProcessDeeplinkResult {
+  ) async -> ProcessDeeplinkResult {
     .impossible
   }
   
   final public func handleDeeplink(
     _ deeplink: any DeeplinkEventType
-  ) -> Bool {
-    switch processDeeplink(deeplink) {
+  ) async -> Bool {
+    switch await processDeeplink(deeplink) {
     case .impossible: return false
     case .partial: break
     case .done: return true
     }
     
     for child in children.values {
-      guard child.handleDeeplink(deeplink) else { continue }
+      guard await child.handleDeeplink(deeplink) else { continue }
       return true
     }
 
