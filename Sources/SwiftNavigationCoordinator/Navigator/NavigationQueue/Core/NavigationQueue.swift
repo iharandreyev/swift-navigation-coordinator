@@ -26,22 +26,22 @@ public actor NavigationQueue {
 
   public func schedule(
     uiUpdate job: @MainActor @Sendable @escaping () -> Void,
-    animated: Bool
+    animation: Animation? = .default
   ) async  {
     if queue.isEmpty {
-      await enqueueFirst(job, animated: animated)
+      await enqueueFirst(job, animation: animation)
     } else {
-      await enqueueNext(job, animated: animated)
+      await enqueueNext(job, animation: animation)
     }
   }
   
   private func enqueueFirst(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animated: Bool
+    animation: Animation?
   ) async {
     enqueue(
       job,
-      animated: animated
+      animation: animation
     )
     
     await resolveQueue()
@@ -49,12 +49,12 @@ public actor NavigationQueue {
   
   private func enqueueNext(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animated: Bool
+    animation: Animation?
   ) async  {
     await withCheckedContinuation { continuation in
       enqueue(
         job,
-        animated: animated,
+        animation: animation,
         completion: {
           continuation.resume()
         }
@@ -64,12 +64,12 @@ public actor NavigationQueue {
   
   private func enqueue(
     _ job: @MainActor @Sendable @escaping () -> Void,
-    animated: Bool,
+    animation: Animation?,
     completion: NavigationQueueItem.Completion? = nil
   )  {
     let item = NavigationQueueItem(
       job: job,
-      animated: animated,
+      animation: animation,
       completion: completion
     )
     queue.append(item)
@@ -84,8 +84,8 @@ public actor NavigationQueue {
     
     logMessage("NavigationQueue: Did dequeue \(next)")
     
-    if next.animated {
-      await withAnimations.run(next.job)
+    if let animation = next.animation {
+      await withAnimations.run(next.job, animation: animation)
     } else {
       await withoutAnimations.run(next.job)
     }
@@ -109,7 +109,7 @@ struct NavigationQueueItem {
   fileprivate typealias Completion = @MainActor @Sendable () -> Void
   
   private(set) fileprivate var job: @MainActor @Sendable () -> Void
-  private(set) fileprivate var animated: Bool
+  private(set) fileprivate var animation: Animation?
   private(set) fileprivate var completion: Completion?
 }
 

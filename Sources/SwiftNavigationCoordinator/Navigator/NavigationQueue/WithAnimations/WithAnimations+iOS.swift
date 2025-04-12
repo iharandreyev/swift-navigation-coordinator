@@ -21,27 +21,29 @@ actor WithAnimations_iOS {
   }
   
   func run(
-    _ job: @MainActor @Sendable @escaping () -> Void
+    _ job: @MainActor @Sendable @escaping () -> Void,
+    animation: Animation
   ) async {
     if #available(iOS 18, *) {
-      await run_new(job)
+      await run_new(job, animation: animation)
     } else {
-      await run_old(job)
+      await run_old(job, animation: animation)
     }
   }
   
   @available(iOS, deprecated: 18, message: "Use Transaction-based solution for iOS 18+")
   @MainActor
   private func run_old(
-    _ job: @MainActor @Sendable @escaping () -> Void
+    _ job: @MainActor @Sendable @escaping () -> Void,
+    animation: Animation
   ) async  {
-    await withCheckedContinuation { [clock] continuation in
+    await withCheckedContinuation { continuation in
       CATransaction.begin()
       CATransaction.setCompletionBlock {
         continuation.resume()
       }
       
-      withAnimation(.default) {
+      withAnimation(animation) {
         job()
       }
       
@@ -54,14 +56,15 @@ actor WithAnimations_iOS {
   @available(iOS 18, *)
   @MainActor
   private func run_new(
-    _ job: @MainActor @Sendable @escaping () -> Void
+    _ job: @MainActor @Sendable @escaping () -> Void,
+    animation: Animation
   ) async  {
-    await withCheckedContinuation { [clock] continuation in
+    await withCheckedContinuation { continuation in
       var transaction = Transaction()
       transaction.addAnimationCompletion {
         continuation.resume()
       }
-      transaction.animation = .default
+      transaction.animation = animation
 
       withTransaction(transaction) {
         job()
