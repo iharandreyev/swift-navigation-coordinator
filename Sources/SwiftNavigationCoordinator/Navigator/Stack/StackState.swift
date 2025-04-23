@@ -8,16 +8,24 @@
 import Perception
 import SwiftUI
 
-/// An observable object used to manage stack presentation.
-///
-/// This object is necessary to keep `NavigationPath` bindings consistent and in sync.
 @MainActor
 @Perceptible
 final class StackState {
-  fileprivate var _path: NavigationPath = NavigationPath()
+  fileprivate var _path: SwiftUI.NavigationPath
+  
+  @PerceptionIgnored
+  fileprivate(set) var stack: [AnyDestination]
 
   @PerceptionIgnored
-  weak var delegate: StackStateDelegate?
+  private var delegates: [ObjectIdentifier: AnyStackStateDelegate] = [:]
+  
+  init(
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) {
+    _path = SwiftUI.NavigationPath()
+    stack = []
+  }
   
   /// A Boolean that indicates whether this stack is empty.
   @PerceptionIgnored
@@ -35,7 +43,15 @@ final class StackState {
   func append<Destination: Sendable & Hashable>(
     _ destination: Destination
   ) {
+    let entry = AnyDestination(destination)
+    guard !stack.contains(entry) else {
+      fatalError()
+    }
+    
+    logMessage("\(ShortDescription(self)): Append \(ShortDescription(destination))")
+    
     _path.append(destination)
+    stack.append(entry)
   }
   /// Removes values from the end of this stack.
   func removeLast(
@@ -43,63 +59,129 @@ final class StackState {
   ) {
     guard numOfItemsToRemove > 0 else { return }
     
+    logMessage("\(ShortDescription(self)): Remove last \(numOfItemsToRemove)")
+    
     _path.removeLast(numOfItemsToRemove)
+    stack.removeLast(numOfItemsToRemove)
+  }
+  
+  func firstIndex<Destination: Sendable & Hashable>(
+    of destination: Destination
+  ) -> Int? {
+    stack.firstIndex(of: AnyDestination(destination))
   }
   
   func removeAll() {
     guard !isEmpty else { return }
     
-    _path.removeLast(count)
+    logMessage("\(ShortDescription(self)): Remove all")
+    
+    let numOfItemsToRemove = count
+    
+    _path.removeLast(numOfItemsToRemove)
+    stack.removeLast(numOfItemsToRemove)
   }
   
   fileprivate func setBoundPath(
-    _ newValue: NavigationPath,
-    file: StaticString,
+    _ newValue: SwiftUI.NavigationPath,
+    sourceFile: StaticString,
     line: UInt
   ) {
-    let interaction: StackUserInteraction
+    let dismissedDestination: AnyDestination
+    
     switch (newValue.count - _path.count) {
     case 0:
       return
       
     case -1:
-      interaction = .pop
-      
-    case _ where newValue.isEmpty:
-      interaction = .popToRoot
+      dismissedDestination = stack.removeLast()
       
     default:
       fatalError(
-        """
-          Invalid path update from count `\(_path.count)` to \(newValue.count). \
-          Source: \(file):\(line)
-        """,
-        file: file,
+        "Invalid path update from count `\(_path.count)` to \(newValue.count).",
+        sourceFile: sourceFile,
         line: line
       )
     }
 
     _path = newValue
-    delegate?.userDidChangeStack(with: interaction)
+    
+    reportDismiss(of: dismissedDestination)
+  }
+  
+  func appendDelegate<Delegate: StackStateDelegate2>(_ delegate: Delegate) {
+    delegates[ObjectIdentifier(delegate)] = delegate.eraseToAnyStackStateDelegate()
+  }
+  
+  private func reportDismiss(of destination: AnyDestination) {
+    for (id, delegate) in delegates {
+      delegate.stackStateDidDismiss(destination)
+      
+      if !delegate.isValid {
+        delegates.removeValue(forKey: id)
+      }
+    }
   }
 }
 
 extension Perception.Bindable where Value == StackState {
   func path(
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
-  ) -> Binding<NavigationPath> {
-    Binding<NavigationPath>(
-      get:  { [unowned wrappedValue] () -> NavigationPath in
-        return wrappedValue._path
+  ) -> Binding<SwiftUI.NavigationPath> {
+    Binding<SwiftUI.NavigationPath>(
+      get: { [unowned wrappedValue] () -> SwiftUI.NavigationPath in
+        wrappedValue._path
       },
       set: { [unowned wrappedValue] (updatedPath) in
         wrappedValue.setBoundPath(
           updatedPath,
-          file: file,
+          sourceFile: sourceFile,
           line: line
         )
       }
     )
+  }
+}
+
+@MainActor
+protocol StackStateDelegate2: AnyObject {
+  func stackStateDidDismiss(_ destination: AnyDestination)
+}
+
+extension StackStateDelegate2 {
+  @_disfavoredOverload
+  func eraseToAnyStackStateDelegate() -> AnyStackStateDelegate {
+    AnyStackStateDelegate(self)
+  }
+  
+  func eraseToAnyNavigationQueue() -> AnyStackStateDelegate where Self == AnyStackStateDelegate {
+    self
+  }
+}
+
+@MainActor
+final class AnyStackStateDelegate: StackStateDelegate2 {
+  private var _stackStateDidDismiss: ((AnyDestination) -> Void)!
+  
+  private(set) var isValid = true
+  
+  init<Delegate: StackStateDelegate2>(
+    _ delegate: Delegate
+  ) {
+    assert(Delegate.self != AnyStackStateDelegate.self)
+    
+    _stackStateDidDismiss = { [weak self, weak delegate] in
+      guard let delegate else {
+        self?.isValid = false
+        return
+      }
+      
+      delegate.stackStateDidDismiss($0)
+    }
+  }
+  
+  func stackStateDidDismiss(_ destination: AnyDestination) {
+    _stackStateDidDismiss(destination)
   }
 }

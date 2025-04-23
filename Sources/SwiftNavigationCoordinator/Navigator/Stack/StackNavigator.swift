@@ -32,7 +32,7 @@ public final class StackNavigator<
     self.state = state
     self.navigationQueue = navigationQueue
     
-    state.delegate = self
+//    state.delegate = self
   }
   
   public convenience init() {
@@ -372,7 +372,7 @@ extension StackNavigator: StackStateDelegate {
       )
     }
     
-    parent.state.delegate = parent
+//    parent.state.delegate = parent
     parent.userDidChangeStack(with: interaction)
   }
 }
