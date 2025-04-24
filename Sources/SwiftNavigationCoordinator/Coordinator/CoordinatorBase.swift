@@ -6,7 +6,7 @@
 //
 
 @MainActor
-open class CoordinatorBase {
+open class CoordinatorBase: NavigatorDelegate {
   private(set) weak var parent: CoordinatorBase?
   private(set) public var children: [AnyDestination: CoordinatorBase] = [:]
   
@@ -14,13 +14,19 @@ open class CoordinatorBase {
   private var onFinish: Callback<Void>?
   
   private(set) var isFinished: Bool = false
+  
+  public let navigator: Navigator
 
   // MARK: - Init
   
   public init(
+    navigator: Navigator = Navigator(),
     onFinish: Callback<Void>? = nil
   ) {
+    self.navigator = navigator
     self.onFinish = onFinish
+    
+    navigator.delegate = self
 
     logMessage("INIT: `\(ShortDescription(self))`")
   }
@@ -229,6 +235,12 @@ open class CoordinatorBase {
 
     return false
   }
+  
+  // MARK: - Navigator Delegate
+  
+  open func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination) {}
+  
+  open func navigatorDidDismissStackDestination(_ destination: AnyDestination) {}
 }
 
 extension CoordinatorBase {
