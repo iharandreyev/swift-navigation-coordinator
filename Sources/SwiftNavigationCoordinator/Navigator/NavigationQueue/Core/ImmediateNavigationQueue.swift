@@ -10,11 +10,11 @@ struct ImmediateNavigationQueue: NavigationQueueType {
   init() { }
 
   func schedule(
-    sourceFile: StaticString,
-    line: UInt,
-    function: StaticString,
+    update: @escaping NavigationQueueUpdate,
     animated: Bool,
-    update: @MainActor @Sendable @escaping () -> Void
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) async {
     update()
   }

@@ -9,16 +9,16 @@
 func assert<Value, Target>(
   _ value: Value,
   is targetType: Target.Type,
-  sourceFile: StaticString = #file,
-  line: UInt = #line
+  invokedIn file: StaticString = #file,
+  at line: UInt = #line
 ) -> Bool {
   guard value is Target else {
     logWarning(
       """
         Type mismatch. `\(value)` of type `\(Value.self)` can't be cast into `\(targetType)`
       """,
-      file: sourceFile,
-      line: line
+      invokedIn: file,
+      at: line
     )
     return false
   }
@@ -29,15 +29,15 @@ func assert<Value, Target>(
 func assert<Value, Target>(
   contentsOf optional: Value?,
   is targetType: Target.Type,
-  sourceFile: StaticString = #file,
-  line: UInt = #line
+  invokedIn file: StaticString = #file,
+  at line: UInt = #line
 ) -> Bool {
   guard let optional else { return true }
   
   return assert(
     optional,
     is: targetType,
-    sourceFile: sourceFile,
-    line: line
+    invokedIn: file,
+    at: line
   )
 }

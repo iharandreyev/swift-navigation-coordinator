@@ -9,16 +9,17 @@ extension Navigator {
   public func replaceSpecimenDestination<Destination: DestinationType>(
     with destination: Destination,
     animated: Bool = true,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) async {
     await navigationQueue.schedule(
-      sourceFile: sourceFile,
-      line: line,
-      animated: animated
-    ) { [weak _specimenState] in
-      _specimenState?.setDestination(destination)
-    }
+      update: { [weak _specimenState] in
+        _specimenState?.setDestination(destination)
+      },
+      animated: animated,
+      from: file,
+      at: line
+    )
   }
 }
 
@@ -26,10 +27,10 @@ extension Navigator {
   @_disfavoredOverload
   public func specimenDestination<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) -> Destination {
-    _specimenState.destination(for: destinationType, sourceFile: sourceFile, line: line)
+    _specimenState.destination(for: destinationType, invokedIn: file, at: line)
   }
   
   public func specimenDestination() -> AnyDestination {

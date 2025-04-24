@@ -8,24 +8,24 @@
 @MainActor
 struct AnyNavigationQueue: NavigationQueueType, Sendable {
   private typealias ScheduleClosure = @Sendable (
-    _ sourceFile: StaticString,
-    _ line: UInt,
-    _ function: StaticString,
+    _ update: @MainActor @Sendable @escaping () -> Void,
     _ animated: Bool,
-    _ update: @MainActor @Sendable @escaping () -> Void
+    _ function: StaticString,
+    _ file: StaticString,
+    _ line: UInt
   ) async -> Void
   
   private let _schedule: ScheduleClosure
   
   @_disfavoredOverload
   init<NavigationQueue: NavigationQueueType>(_ navigationQueue: NavigationQueue) {
-    _schedule = { sourceFile, line, function, animated, update in
+    _schedule = { update, animated, function, file, line in
       await navigationQueue.schedule(
-        sourceFile: sourceFile,
-        line: line,
-        function: function,
+        update: update,
         animated: animated,
-        update: update
+        invokedIn: function,
+        from: file,
+        at: line
       )
     }
   }
@@ -36,12 +36,12 @@ struct AnyNavigationQueue: NavigationQueueType, Sendable {
 
   @inline(__always)
   func schedule(
-    sourceFile: StaticString,
-    line: UInt,
-    function: StaticString,
+    update: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
-    update: @MainActor @Sendable @escaping () -> Void
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) async {
-    await _schedule(sourceFile, line, function, animated, update)
+    await _schedule(update, animated, function, file, line)
   }
 }

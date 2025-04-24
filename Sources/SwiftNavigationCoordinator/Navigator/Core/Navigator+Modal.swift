@@ -9,30 +9,32 @@ extension Navigator {
   public func presentDestination<Destination: DestinationType>(
     _ destination: ModalDestinationPath<Destination>,
     animated: Bool = true,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) async {
     await navigationQueue.schedule(
-      sourceFile: sourceFile,
-      line: line,
-      animated: animated
-    ) { [weak _modalState] in
-      _modalState?.setDestination(destination)
-    }
+      update: { [weak _modalState] in
+        _modalState?.setDestination(destination)
+      },
+      animated: animated,
+      from: file,
+      at: line
+    )
   }
   
   public func dismissDestination(
     animated: Bool = true,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) async {
     await navigationQueue.schedule(
-      sourceFile: sourceFile,
-      line: line,
-      animated: animated
-    ) { [weak _modalState] in
-      _modalState?.dismissDestination()
-    }
+      update: { [weak _modalState] in
+        _modalState?.dismissDestination()
+      },
+      animated: animated,
+      from: file,
+      at: line
+    )
   }
 }
 
@@ -40,10 +42,10 @@ extension Navigator {
   @_disfavoredOverload
   public func modalDestination<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) -> ModalDestinationPath<Destination>? {
-    _modalState.destination(for: destinationType, sourceFile: sourceFile, line: line)
+    _modalState.destination(for: destinationType, invokedIn: file, at: line)
   }
   
   public func modalDestination() -> ModalDestinationPath<AnyDestination>? {

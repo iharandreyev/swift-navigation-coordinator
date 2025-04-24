@@ -15,7 +15,7 @@ extension Callback {
   public func onCompleted(
     fileID: StaticString = #fileID,
     filePath: StaticString = #filePath,
-    line: UInt = #line,
+    at line: UInt = #line,
     column: UInt = #column
   ) async {
     await createCompletionIfNeeded()

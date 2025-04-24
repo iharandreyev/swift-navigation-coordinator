@@ -26,14 +26,14 @@ extension SpecimenCoordinatorType {
   public func replaceSpecimenDestination(
     with destination: SpecimenDestination,
     animated: Bool = true,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) async {
     await navigator.replaceSpecimenDestination(
       with: destination,
       animated: animated,
-      sourceFile: sourceFile,
-      line: line
+      invokedIn: file,
+      at: line
     )
   }
 }
