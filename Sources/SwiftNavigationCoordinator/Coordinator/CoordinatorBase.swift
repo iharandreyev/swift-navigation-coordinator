@@ -8,9 +8,9 @@
 @MainActor
 open class CoordinatorBase: NavigatorDelegate {
   private(set) weak var parent: CoordinatorBase?
-  private(set) public var children: [AnyIdentifiableDestination: CoordinatorBase] = [:]
+  private(set) public var children: [AnyDestination: CoordinatorBase] = [:]
   
-  private(set) lazy var id = AnyIdentifiableDestination(
+  private(set) lazy var id = AnyDestination(
     DestinationNever(id: ShortDescription(self).description)
   )
   
@@ -52,7 +52,7 @@ open class CoordinatorBase: NavigatorDelegate {
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) -> Child {
-    let anyDestination = AnyIdentifiableDestination(destination)
+    let anyDestination = AnyDestination(destination)
     
     guard children[anyDestination] == nil else {
       fatalError(
@@ -208,7 +208,7 @@ open class CoordinatorBase: NavigatorDelegate {
   
   // MARK: - Navigator Delegate
   
-  open func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination) {
+  open func navigatorDidDismissModalDestination(_ destination: AnyDestination) {
     switch destination {
     case id:
       finish()
@@ -217,7 +217,7 @@ open class CoordinatorBase: NavigatorDelegate {
     }
   }
   
-  open func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination) {
+  open func navigatorDidDismissStackDestination(_ destination: AnyDestination) {
     switch destination {
     case id:
       finish()

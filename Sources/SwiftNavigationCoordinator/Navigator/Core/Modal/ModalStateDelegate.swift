@@ -7,7 +7,7 @@
 
 @MainActor
 protocol ModalStateDelegate: AnyObject {
-  func modalStateDidDismiss(_ destination: AnyIdentifiableDestination)
+  func modalStateDidDismiss(_ destination: AnyDestination)
 }
 
 extension ModalStateDelegate {
@@ -23,7 +23,7 @@ extension ModalStateDelegate {
 
 @MainActor
 final class AnyModalStateDelegate: ModalStateDelegate {
-  private var _modalStateDidDismiss: ((AnyIdentifiableDestination) -> Void)!
+  private var _modalStateDidDismiss: ((AnyDestination) -> Void)!
   
   private(set) var isValid = true
   
@@ -42,7 +42,7 @@ final class AnyModalStateDelegate: ModalStateDelegate {
     }
   }
   
-  func modalStateDidDismiss(_ destination: AnyIdentifiableDestination) {
+  func modalStateDidDismiss(_ destination: AnyDestination) {
     _modalStateDidDismiss(destination)
   }
 }

@@ -179,7 +179,7 @@ extension Navigator {
 }
 
 extension Navigator {
-  public func stack() -> [AnyIdentifiableDestination] {
+  public func stack() -> [AnyDestination] {
     _stackState.stack()
   }
 }

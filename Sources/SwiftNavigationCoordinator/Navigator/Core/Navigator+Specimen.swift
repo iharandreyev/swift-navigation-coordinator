@@ -32,7 +32,7 @@ extension Navigator {
     _specimenState.destination(for: destinationType, sourceFile: sourceFile, line: line)
   }
   
-  public func specimenDestination() -> AnyIdentifiableDestination {
+  public func specimenDestination() -> AnyDestination {
     _specimenState._destination
   }
 }

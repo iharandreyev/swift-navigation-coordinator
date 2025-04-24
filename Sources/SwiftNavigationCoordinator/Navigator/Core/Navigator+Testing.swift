@@ -35,7 +35,7 @@ extension Navigator {
   }
 
   public static func test(
-    stack: OrderedSet<AnyIdentifiableDestination>
+    stack: OrderedSet<AnyDestination>
   ) -> Navigator {
     Navigator(
       initialStack: stack,
@@ -61,7 +61,7 @@ extension Navigator {
     SpecimenDestination: DestinationType
   >(
     specimenDestination: SpecimenDestination,
-    stack: OrderedSet<AnyIdentifiableDestination>
+    stack: OrderedSet<AnyDestination>
   ) -> Navigator {
     Navigator(
       initialSpecimenDestination: specimenDestination,
@@ -74,7 +74,7 @@ extension Navigator {
     ModalDestination: DestinationType
   >(
     modalDestination: ModalDestinationPath<ModalDestination>,
-    stack: OrderedSet<AnyIdentifiableDestination>
+    stack: OrderedSet<AnyDestination>
   ) -> Navigator {
     Navigator(
       initialModalDestination: modalDestination,
@@ -89,7 +89,7 @@ extension Navigator {
   >(
     modalDestination: ModalDestinationPath<ModalDestination>,
     specimenDestination: SpecimenDestination,
-    stack: OrderedSet<AnyIdentifiableDestination>
+    stack: OrderedSet<AnyDestination>
   ) -> Navigator {
     Navigator(
       initialModalDestination: modalDestination,

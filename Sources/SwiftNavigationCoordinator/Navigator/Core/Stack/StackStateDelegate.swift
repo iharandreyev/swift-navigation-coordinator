@@ -7,7 +7,7 @@
 
 @MainActor
 protocol StackStateDelegate: AnyObject {
-  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination)
+  func stackStateDidDismiss(_ destination: AnyDestination)
 }
 
 extension StackStateDelegate {
@@ -23,7 +23,7 @@ extension StackStateDelegate {
 
 @MainActor
 final class AnyStackStateDelegate: StackStateDelegate {
-  private var _stackStateDidDismiss: ((AnyIdentifiableDestination) -> Void)!
+  private var _stackStateDidDismiss: ((AnyDestination) -> Void)!
   
   private(set) var isValid = true
   
@@ -42,7 +42,7 @@ final class AnyStackStateDelegate: StackStateDelegate {
     }
   }
   
-  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination) {
+  func stackStateDidDismiss(_ destination: AnyDestination) {
     _stackStateDidDismiss(destination)
   }
 }

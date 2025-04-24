@@ -81,7 +81,7 @@ public final class Navigator {
   convenience init<
     NavigationQueue: NavigationQueueType
   >(
-    initialStack: OrderedSet<AnyIdentifiableDestination>,
+    initialStack: OrderedSet<AnyDestination>,
     navigationQueue: NavigationQueue
   ) {
     self.init(
@@ -117,7 +117,7 @@ public final class Navigator {
     NavigationQueue: NavigationQueueType
   >(
     initialSpecimenDestination: SpecimenDestination,
-    initialStack: OrderedSet<AnyIdentifiableDestination>,
+    initialStack: OrderedSet<AnyDestination>,
     navigationQueue: NavigationQueue
   ) {
     self.init(
@@ -136,7 +136,7 @@ public final class Navigator {
     NavigationQueue: NavigationQueueType
   >(
     initialModalDestination: ModalDestinationPath<ModalDestination>,
-    initialStack: OrderedSet<AnyIdentifiableDestination>,
+    initialStack: OrderedSet<AnyDestination>,
     navigationQueue: NavigationQueue
   ) {
     self.init(
@@ -157,7 +157,7 @@ public final class Navigator {
   >(
     initialModalDestination: ModalDestinationPath<ModalDestination>,
     initialSpecimenDestination: SpecimenDestination,
-    initialStack: OrderedSet<AnyIdentifiableDestination>,
+    initialStack: OrderedSet<AnyDestination>,
     navigationQueue: NavigationQueue
   ) {
     self.init(
@@ -197,7 +197,7 @@ public final class Navigator {
   }
 
   public convenience init(
-    initialStack: OrderedSet<AnyIdentifiableDestination>
+    initialStack: OrderedSet<AnyDestination>
   ) {
     self.init(
       initialStack: initialStack,
@@ -223,7 +223,7 @@ public final class Navigator {
     SpecimenDestination: DestinationType
   >(
     initialSpecimenDestination: SpecimenDestination,
-    initialStack: OrderedSet<AnyIdentifiableDestination>
+    initialStack: OrderedSet<AnyDestination>
   ) {
     self.init(
       initialSpecimenDestination: initialSpecimenDestination,
@@ -236,7 +236,7 @@ public final class Navigator {
     ModalDestination: DestinationType
   >(
     initialModalDestination: ModalDestinationPath<ModalDestination>,
-    initialStack: OrderedSet<AnyIdentifiableDestination>
+    initialStack: OrderedSet<AnyDestination>
   ) {
     self.init(
       initialModalDestination: initialModalDestination,
@@ -251,7 +251,7 @@ public final class Navigator {
   >(
     initialModalDestination: ModalDestinationPath<ModalDestination>,
     initialSpecimenDestination: SpecimenDestination,
-    initialStack: OrderedSet<AnyIdentifiableDestination>
+    initialStack: OrderedSet<AnyDestination>
   ) {
     self.init(
       initialModalDestination: initialModalDestination,
@@ -277,13 +277,13 @@ public final class Navigator {
 }
 
 extension Navigator: ModalStateDelegate {
-  func modalStateDidDismiss(_ destination: AnyIdentifiableDestination) {
+  func modalStateDidDismiss(_ destination: AnyDestination) {
     delegate?.navigatorDidDismissModalDestination(destination)
   }
 }
 
 extension Navigator: StackStateDelegate {
-  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination) {
+  func stackStateDidDismiss(_ destination: AnyDestination) {
     delegate?.navigatorDidDismissStackDestination(destination)
   }
 }

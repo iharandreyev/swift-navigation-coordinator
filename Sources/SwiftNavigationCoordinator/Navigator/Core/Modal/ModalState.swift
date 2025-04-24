@@ -11,7 +11,7 @@ import SwiftUI
 @MainActor
 @Perceptible
 final class ModalState {
-  fileprivate(set) var _destination: ModalDestinationPath<AnyIdentifiableDestination>?
+  fileprivate(set) var _destination: ModalDestinationPath<AnyDestination>?
   
   @PerceptionIgnored
   fileprivate(set) var delegates: [ObjectIdentifier: AnyModalStateDelegate] = [:]
@@ -19,7 +19,7 @@ final class ModalState {
   init<Destination: Sendable & Hashable & Identifiable>(
     initialDestination: ModalDestinationPath<Destination>?
   ) {
-    _destination = initialDestination?.map(AnyIdentifiableDestination.init)
+    _destination = initialDestination?.map(AnyDestination.init)
   }
   
   init() {
@@ -40,7 +40,7 @@ final class ModalState {
       return
     }
     
-    let newValue = modalDestination.map(AnyIdentifiableDestination.init)
+    let newValue = modalDestination.map(AnyDestination.init)
     guard _destination != newValue else { return }
     _destination = newValue
   }
@@ -75,7 +75,7 @@ final class ModalState {
     delegates[ObjectIdentifier(delegate)] = delegate.eraseToAnyModalStateDelegate()
   }
   
-  private func reportDismiss(of destination: AnyIdentifiableDestination) {
+  private func reportDismiss(of destination: AnyDestination) {
     for (id, delegate) in delegates {
       delegate.modalStateDidDismiss(destination)
       

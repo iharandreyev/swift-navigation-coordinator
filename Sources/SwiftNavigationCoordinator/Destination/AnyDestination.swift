@@ -1,5 +1,5 @@
 //
-//  AnyIdentifiableDestination.swift
+//  AnyDestination.swift
 //  swift-navigation-coordinator
 //
 //  Created by Andreyeu, Ihar on 4/24/25.
@@ -7,7 +7,7 @@
 
 import OrderedCollections
 
-public struct AnyIdentifiableDestination: Sendable {
+public struct AnyDestination: Sendable {
   internal let wrapped: Sendable
 
   private let getId: @Sendable () -> String
@@ -41,41 +41,41 @@ public struct AnyIdentifiableDestination: Sendable {
   }
 }
 
-extension AnyIdentifiableDestination: Identifiable {
+extension AnyDestination: Identifiable {
   public var id: String {
     getId()
   }
 }
 
-extension AnyIdentifiableDestination: Hashable {
+extension AnyDestination: Hashable {
   public func hash(into hasher: inout Hasher) {
     hashInto(&hasher)
   }
 }
 
-extension AnyIdentifiableDestination: Equatable {
+extension AnyDestination: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.equateTo(rhs)
   }
 }
 
-extension AnyIdentifiableDestination: CustomStringConvertible {
+extension AnyDestination: CustomStringConvertible {
   public var description: String {
     "Erased(\(ShortDescription(wrapped)))"
   }
 }
 
-extension AnyIdentifiableDestination {
+extension AnyDestination {
   public static func == <Destination: SomeDestination>(
     lhs: Self,
     rhs: Destination
   ) -> Bool {
-    let result = lhs == AnyIdentifiableDestination(rhs)
+    let result = lhs == AnyDestination(rhs)
     return result
   }
 }
 
-extension Optional where Wrapped == AnyIdentifiableDestination {
+extension Optional where Wrapped == AnyDestination {
   public static func == <Destination: Sendable & Hashable & Identifiable>(
     lhs: Self,
     rhs: Destination
@@ -90,7 +90,7 @@ extension Optional where Wrapped == AnyIdentifiableDestination {
   }
 }
 
-extension Array where Element == AnyIdentifiableDestination {
+extension Array where Element == AnyDestination {
   public static func == <Destination: Sendable & Hashable & Identifiable>(
     lhs: Self,
     rhs: [Destination]
@@ -109,7 +109,7 @@ extension Array where Element == AnyIdentifiableDestination {
   }
 }
 
-extension OrderedSet where Element == AnyIdentifiableDestination {
+extension OrderedSet where Element == AnyDestination {
   public static func == <Destination: Sendable & Hashable & Identifiable>(
     lhs: Self,
     rhs: OrderedSet<Destination>
@@ -129,13 +129,13 @@ extension OrderedSet where Element == AnyIdentifiableDestination {
 }
 
 extension Array where Element: DestinationType {
-  public func erase() -> Array<AnyIdentifiableDestination> {
-    map(AnyIdentifiableDestination.init)
+  public func erase() -> Array<AnyDestination> {
+    map(AnyDestination.init)
   }
 }
 
 extension OrderedSet where Element: DestinationType {
-  public func erase() -> OrderedSet<AnyIdentifiableDestination> {
-    OrderedSet<AnyIdentifiableDestination>(map(AnyIdentifiableDestination.init))
+  public func erase() -> OrderedSet<AnyDestination> {
+    OrderedSet<AnyDestination>(map(AnyDestination.init))
   }
 }

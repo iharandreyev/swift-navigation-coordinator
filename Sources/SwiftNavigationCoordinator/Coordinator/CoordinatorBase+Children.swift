@@ -87,6 +87,6 @@ extension CoordinatorBase {
   public func child<Destination: Sendable & Hashable & Identifiable>(
     for destination: Destination
   ) -> CoordinatorBase? {
-    children[AnyIdentifiableDestination(destination)]
+    children[AnyDestination(destination)]
   }
 }
