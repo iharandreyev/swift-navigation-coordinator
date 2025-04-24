@@ -33,7 +33,7 @@ struct NavigatorTests {
   }
   
   func createSut<Tag>(
-    modalDestination: ModalDestination<TestDestinationOf<Tag>>? = nil,
+    modalDestination: ModalDestinationPath<TestDestinationOf<Tag>>? = nil,
     stack: OrderedSet<TestDestinationOf<Tag>>
   ) async -> Sut {
     await Sut.test(

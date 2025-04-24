@@ -1,5 +1,5 @@
 //
-//  ModalDestination.swift
+//  ModalDestinationPath.swift
 //  swift-navigation-coordinator
 //
 //  Created by Andreyeu, Ihar on 3/26/25.
@@ -8,12 +8,12 @@
 import CasePaths
 
 @CasePathable
-public enum ModalDestination<Destination: Sendable & Hashable & Identifiable>: Sendable, Hashable {
+public enum ModalDestinationPath<Destination: Sendable & Hashable & Identifiable>: Sendable, Hashable {
   case cover(Destination)
   case sheet(Destination)
 }
 
-extension ModalDestination {
+extension ModalDestinationPath {
   public var value: Destination {
     switch self {
     case let .cover(destination): return destination
@@ -21,7 +21,7 @@ extension ModalDestination {
     }
   }
   
-  public func map<AnotherDestination>(_ transform: (Destination) -> AnotherDestination) -> ModalDestination<AnotherDestination> {
+  public func map<AnotherDestination>(_ transform: (Destination) -> AnotherDestination) -> ModalDestinationPath<AnotherDestination> {
     switch self {
     case let .cover(destination): return .cover(transform(destination))
     case let .sheet(destination): return .sheet(transform(destination))

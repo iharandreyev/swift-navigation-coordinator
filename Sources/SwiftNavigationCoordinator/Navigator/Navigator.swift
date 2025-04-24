@@ -89,7 +89,7 @@ public final class Navigator {
   // MARK: Modal State
   
   public func presentDestination<Destination: DestinationType>(
-    _ destination: ModalDestination<Destination>,
+    _ destination: ModalDestinationPath<Destination>,
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
@@ -293,11 +293,11 @@ extension Navigator {
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) -> ModalDestination<Destination>? {
+  ) -> ModalDestinationPath<Destination>? {
     _modalState.destination(for: destinationType, sourceFile: sourceFile, line: line)
   }
   
-  public func modalDestination() -> ModalDestination<AnyIdentifiableDestination>? {
+  public func modalDestination() -> ModalDestinationPath<AnyIdentifiableDestination>? {
     _modalState._destination
   }
   
@@ -332,7 +332,7 @@ import SwiftUI
 extension Navigator {
   static func test<Destination: SomeDestination>(
     specimenDestination: Destination? = nil,
-    modalDestination: ModalDestination<Destination>? = nil,
+    modalDestination: ModalDestinationPath<Destination>? = nil,
     stack: [Destination] = [],
     sourceFile: StaticString = #file,
     line: UInt = #line
@@ -356,7 +356,7 @@ extension Navigator {
   
   func testModalStateBinding<Destination: Sendable & Hashable & Identifiable>(
     for destinationType: Destination.Type = Destination.self
-  ) -> Binding<ModalDestination<Destination>?> {
+  ) -> Binding<ModalDestinationPath<Destination>?> {
     _modalState.testBinding(for: destinationType)
   }
   
