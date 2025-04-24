@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum UsecasesDestination: String, ModalDestinationContentType {
+enum UsecasesDestination: String, DestinationType {
   case modalSheet
   case modalCover
   case pushedScreen

@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum OnboardingDestination: ScreenDestinationType, ModalDestinationContentType {
+enum OnboardingDestination: DestinationType, DestinationType {
   case step(OnboardingStep)
   case info
   

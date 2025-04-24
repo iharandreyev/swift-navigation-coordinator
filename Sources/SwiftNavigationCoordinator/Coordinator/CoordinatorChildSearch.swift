@@ -6,7 +6,7 @@
 //
 
 public protocol CoordinatorChildSearch: CoordinatorBase {
-  associatedtype DestinationType: ScreenDestinationType
+  associatedtype Destination: DestinationType
 }
 
 extension CoordinatorChildSearch {
@@ -14,7 +14,7 @@ extension CoordinatorChildSearch {
     Child: CoordinatorBase & ScreenCoordinatorType
   >(
     ofType: Child.Type = Child.self,
-    for destination: DestinationType,
+    for destination: Destination,
     file: StaticString = #file,
     line: UInt = #line
   ) -> Child {
@@ -44,7 +44,7 @@ extension CoordinatorChildSearch {
   }
   
   public func child(
-    for destination: DestinationType
+    for destination: Destination
   ) -> CoordinatorBase? {
     children[AnyDestination(destination)]
   }

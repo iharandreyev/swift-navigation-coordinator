@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum InfoDestination: String, ScreenDestinationType {
+enum InfoDestination: String, DestinationType {
   case last
 }
 

@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MultiChildFlowPathBDestination: String, ModalDestinationContentType {
+enum MultiChildFlowPathBDestination: String, DestinationType {
   case finish
   
   var id: String {

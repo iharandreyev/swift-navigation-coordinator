@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum AppDestination: ScreenDestinationType {
+enum AppDestination: DestinationType {
   case appInit
   case onboarding
   case main

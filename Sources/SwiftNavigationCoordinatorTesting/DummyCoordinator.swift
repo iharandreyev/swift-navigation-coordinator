@@ -19,7 +19,7 @@ public final class DummyCoordinator:
   StaticSpecimenCoordinatorType,
   LabelledSpecimenCoordinatorType
 {
-  public typealias DestinationType = DummyDestination
+  public typealias Destination = DummyDestination
 
   public var onProcessDeeplink: (any DeeplinkEventType) async -> ProcessDeeplinkResult
   
@@ -47,17 +47,17 @@ public final class DummyCoordinator:
   }
 
   public func screenContent(
-    for destination: DestinationType
+    for destination: Destination
   ) -> DummyView {
     DummyView()
   }
   
-  public func screen(for destination: DestinationType) -> DummyView {
+  public func screen(for destination: Destination) -> DummyView {
     DummyView()
   }
   
   public func label(
-    for destination: DestinationType
+    for destination: Destination
   ) -> DummyLabel {
     DummyLabel()
   }

@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MultiChildFlowPathADestination: ScreenDestinationType {
+enum MultiChildFlowPathADestination: DestinationType {
   case finish
 }
 

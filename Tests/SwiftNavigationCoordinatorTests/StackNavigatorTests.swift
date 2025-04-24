@@ -268,7 +268,7 @@ struct StackNavigatorTests {
   }
 }
 
-private enum TestDestination: String, ScreenDestinationType, CustomStringConvertible {
+private enum TestDestination: String, DestinationType, CustomStringConvertible {
   case first
   case second
   case third
@@ -279,7 +279,7 @@ private enum TestDestination: String, ScreenDestinationType, CustomStringConvert
   }
 }
 
-private enum TestChildDestination: String, ScreenDestinationType, CustomStringConvertible {
+private enum TestChildDestination: String, DestinationType, CustomStringConvertible {
   case firstCh
   case secondCh
   case lastCh

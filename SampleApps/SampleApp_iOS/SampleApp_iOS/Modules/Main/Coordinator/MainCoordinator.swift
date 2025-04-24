@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MainTab: ScreenDestinationType, CaseIterable {
+enum MainTab: DestinationType, CaseIterable {
   case usecases
   case deeplinks
 }

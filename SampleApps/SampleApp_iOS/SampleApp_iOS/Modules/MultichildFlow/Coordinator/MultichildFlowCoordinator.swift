@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MultiChildFlowDestination: ScreenDestinationType {
+enum MultiChildFlowDestination: DestinationType {
   case selectPath
   case pathA
   case pathB
