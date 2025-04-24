@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#warning("TODO: Documentation")
 @MainActor
 public protocol NavigationCoordinatorType<
   SpecimenDestination,

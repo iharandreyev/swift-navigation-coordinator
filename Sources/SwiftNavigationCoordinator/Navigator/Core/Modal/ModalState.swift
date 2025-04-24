@@ -11,22 +11,22 @@ import SwiftUI
 @MainActor
 @Perceptible
 final class ModalState {
-  fileprivate(set) var _destination: ModalDestinationPath<AnyIdentifiableDestination>?
+  fileprivate(set) var _destination: ModalDestinationPath<AnyDestination>?
   
   @PerceptionIgnored
   fileprivate(set) var delegates: [ObjectIdentifier: AnyModalStateDelegate] = [:]
 
-  init<Destination: Sendable & Hashable & Identifiable>(
+  init<Destination: SomeDestination>(
     initialDestination: ModalDestinationPath<Destination>?
   ) {
-    _destination = initialDestination?.map(AnyIdentifiableDestination.init)
+    _destination = initialDestination?.map(AnyDestination.init)
   }
   
   init() {
     _destination = nil
   }
   
-  func setDestination<Destination: Sendable & Hashable & Identifiable>(
+  func setDestination<Destination: SomeDestination>(
     _ modalDestination: ModalDestinationPath<Destination>,
     sourceFile: StaticString = #file,
     line: UInt = #line
@@ -40,12 +40,12 @@ final class ModalState {
       return
     }
     
-    let newValue = modalDestination.map(AnyIdentifiableDestination.init)
+    let newValue = modalDestination.map(AnyDestination.init)
     guard _destination != newValue else { return }
     _destination = newValue
   }
   
-  fileprivate func setBoundDestination<Destination: Sendable & Hashable & Identifiable>(
+  fileprivate func setBoundDestination<Destination: SomeDestination>(
     _ newValue: ModalDestinationPath<Destination>?,
     sourceFile: StaticString,
     line: UInt
@@ -75,7 +75,7 @@ final class ModalState {
     delegates[ObjectIdentifier(delegate)] = delegate.eraseToAnyModalStateDelegate()
   }
   
-  private func reportDismiss(of destination: AnyIdentifiableDestination) {
+  private func reportDismiss(of destination: AnyDestination) {
     for (id, delegate) in delegates {
       delegate.modalStateDidDismiss(destination)
       
@@ -106,7 +106,7 @@ extension Perception.Bindable where Value == ModalState {
 
 extension ModalState {
   @MainActor
-  func destination<Destination: Sendable & Hashable & Identifiable>(
+  func destination<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
     line: UInt = #line

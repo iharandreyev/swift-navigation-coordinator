@@ -15,13 +15,13 @@ final class StackState {
   fileprivate(set) var _path: SwiftUI.NavigationPath
   
   @PerceptionIgnored
-  fileprivate(set) var _stack: OrderedSet<AnyIdentifiableDestination>
+  fileprivate(set) var _stack: OrderedSet<AnyDestination>
 
   @PerceptionIgnored
   private var delegates: [ObjectIdentifier: AnyStackStateDelegate] = [:]
   
   init(
-    initialStack: OrderedSet<AnyIdentifiableDestination> = [],
+    initialStack: OrderedSet<AnyDestination> = [],
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
@@ -51,7 +51,7 @@ final class StackState {
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
-    let entry = AnyIdentifiableDestination(destination)
+    let entry = AnyDestination(destination)
     guard !_stack.contains(entry) else {
       return logWarning(
         """
@@ -90,7 +90,7 @@ final class StackState {
   func index<Destination: SomeDestination>(
     of destination: Destination
   ) -> Int? {
-    _stack.firstIndex(of: AnyIdentifiableDestination(destination))
+    _stack.firstIndex(of: AnyDestination(destination))
   }
   
   func removeAll(
@@ -119,7 +119,7 @@ final class StackState {
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
-    let dismissedDestination: AnyIdentifiableDestination
+    let dismissedDestination: AnyDestination
     
     switch (newValue.count - _path.count) {
     case 0:
@@ -145,7 +145,7 @@ final class StackState {
     delegates[ObjectIdentifier(delegate)] = delegate.eraseToAnyStackStateDelegate()
   }
   
-  private func reportDismiss(of destination: AnyIdentifiableDestination) {
+  private func reportDismiss(of destination: AnyDestination) {
     for (id, delegate) in delegates {
       delegate.stackStateDidDismiss(destination)
       
@@ -180,7 +180,7 @@ extension Perception.Bindable where Value == StackState {
 extension StackState {
   @MainActor
   @inline(__always)
-  func stack() -> [AnyIdentifiableDestination] {
+  func stack() -> [AnyDestination] {
     _stack.elements
   }
 }

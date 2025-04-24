@@ -8,6 +8,7 @@
 import SwiftUI
 import Perception
 
+#warning("TODO: Documentation")
 @available(
   iOS, deprecated: 17, message: "'ObservingView' is no longer needed in iOS 17+"
 )

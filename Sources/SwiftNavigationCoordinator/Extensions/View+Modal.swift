@@ -1,5 +1,5 @@
 //
-//  View+Convenience.swift
+//  View+Modal.swift
 //  swift-navigation-coordinator
 //
 //  Created by Andreyeu, Ihar on 4/24/25.
@@ -10,21 +10,16 @@ import Perception
 import SwiftUI
 import SwiftUINavigation
 
+#warning("TODO: Documentation")
 extension View {
   public func optionalModal<Coordinator: NavigationCoordinatorType>(
     for coordinator: Coordinator
-  ) -> some View {
+  ) -> ModifiedContent<Self, OptionalModalModifier<Coordinator>> {
     modifier(OptionalModalModifier(coordinator: coordinator))
-  }
-  
-  public func optionalStackDestination<Coordinator: NavigationCoordinatorType>(
-    for coordinator: Coordinator
-  ) -> some View {
-    modifier(OptionalStackDestinationModifier(coordinator: coordinator))
   }
 }
 
-struct OptionalModalModifier<Coordinator: NavigationCoordinatorType>: ViewModifier {
+public struct OptionalModalModifier<Coordinator: NavigationCoordinatorType>: ViewModifier {
   private let coordinator: Coordinator
   
   @Perception.Bindable
@@ -38,7 +33,7 @@ struct OptionalModalModifier<Coordinator: NavigationCoordinatorType>: ViewModifi
     self.isEnabled = Coordinator.ModalDestination.self != DestinationNever.self
   }
   
-  func body(content: Content) -> some View {
+  public func body(content: Content) -> some View {
     if isEnabled {
       activeBody(content: content)
     } else {
@@ -61,37 +56,6 @@ struct OptionalModalModifier<Coordinator: NavigationCoordinatorType>: ViewModifi
         }
       )
     }
-  }
-  
-  private func inactive(content: Content) -> some View {
-    content
-  }
-}
-
-struct OptionalStackDestinationModifier<Coordinator: NavigationCoordinatorType>: ViewModifier {
-  private let coordinator: Coordinator
-  private let isEnabled: Bool
-  
-  init(coordinator: Coordinator) {
-    self.coordinator = coordinator
-    self.isEnabled = Coordinator.StackDestination.self != DestinationNever.self
-  }
-  
-  func body(content: Content) -> some View {
-    if isEnabled {
-      activeBody(content: content)
-    } else {
-      inactive(content: content)
-    }
-  }
-  
-  private func activeBody(content: Content) -> some View {
-    content.navigationDestination(
-      for: Coordinator.StackDestination.self,
-      destination: { [unowned coordinator] destination in
-        coordinator.content(forStack: destination)
-      }
-    )
   }
   
   private func inactive(content: Content) -> some View {

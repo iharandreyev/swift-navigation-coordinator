@@ -6,6 +6,7 @@
 //
 
 #warning("TODO: Investigate whether tab bar is applicable for watchOS or tvOS")
+#warning("TODO: Documentation")
 
 #if os(iOS)
 

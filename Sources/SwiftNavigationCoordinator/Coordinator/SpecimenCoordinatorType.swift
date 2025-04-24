@@ -7,10 +7,9 @@
 
 import SwiftUI
 
+#warning("TODO: Documentation")
 @MainActor
-public protocol SpecimenCoordinatorType: NavigationCoordinatorType where SpecimenDestination: DestinationType {
-
-}
+public protocol SpecimenCoordinatorType: NavigationCoordinatorType where SpecimenDestination: DestinationType { }
 
 @MainActor
 public protocol StaticSpecimenCoordinatorType: SpecimenCoordinatorType where SpecimenDestination: CaseIterable, SpecimenDestination.AllCases: RandomAccessCollection { }

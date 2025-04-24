@@ -7,6 +7,6 @@
 
 @MainActor
 public protocol NavigatorDelegate: AnyObject {
-  func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination)
-  func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination)
+  func navigatorDidDismissModalDestination(_ destination: AnyDestination)
+  func navigatorDidDismissStackDestination(_ destination: AnyDestination)
 }

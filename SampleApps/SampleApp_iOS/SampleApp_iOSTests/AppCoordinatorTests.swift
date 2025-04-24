@@ -16,11 +16,7 @@ import SampleApp_iOS
 @MainActor
 struct AppCoordinatorTests {
   let factory = AppCoordinatorFactoryDelegateMock.create()
-  
-  init() {
-    SwiftNavigationCoordinator.setEnvironment(.test)
-  }
-  
+
   @Test
   func screen_for_appInit_invokes_createAppInitScreen() {
     let sut = createSut(navigator: createNavigator())
@@ -83,7 +79,7 @@ struct AppCoordinatorTests {
   private func createNavigator(
     initialDestination: AppDestination = .appInit
   ) -> Navigator {
-    Navigator(initialSpecimenDestination: initialDestination)
+    Navigator.test(specimenDestination: initialDestination)
   }
   
   private func createSut(

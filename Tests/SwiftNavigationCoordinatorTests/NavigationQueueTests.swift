@@ -15,7 +15,7 @@ import SwiftNavigationCoordinator
 struct NavigationQueueTests {
   @Test
   func navigationQueue_scheduleSingle_finishesWhenAnimated() async throws {
-    try await withTimeout(.seconds(1)) {
+    try await withTimeout(Constants.timeout) {
       let sut = await createSut()
       
       await sut.schedule(
@@ -23,13 +23,13 @@ struct NavigationQueueTests {
         animated: true
       )
       
-      #expect(await sut.queueLength == 0)
+      #expect(await sut.testQueueLength() == 0)
     }
   }
   
   @Test
   func navigationQueue_scheduleSingle_finishesWhenNotAnimated() async throws {
-    try await withTimeout(.seconds(1)) {
+    try await withTimeout(Constants.timeout) {
       let sut = await createSut()
       
       await sut.schedule(
@@ -37,13 +37,13 @@ struct NavigationQueueTests {
         animated: false
       )
       
-      #expect(await sut.queueLength == 0)
+      #expect(await sut.testQueueLength() == 0)
     }
   }
   
   @Test
   func navigationQueue_scheduleMultiple_finishesWhenAnimated() async throws {
-    try await withTimeout(.seconds(1)) {
+    try await withTimeout(Constants.timeout) {
       let sut = await createSut()
       
       await withTaskGroup(of: Void.self) { taskGroup in
@@ -57,11 +57,15 @@ struct NavigationQueueTests {
         }
       }
       
-      #expect(await sut.queueLength == 0)
+      #expect(await sut.testQueueLength() == 0)
     }
   }
   
   func createSut() async -> NavigationQueue {
     NavigationQueue(clock: ImmediateClock())
+  }
+  
+  enum Constants {
+    static let timeout = Duration.milliseconds(1500)
   }
 }

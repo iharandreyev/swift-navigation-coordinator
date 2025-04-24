@@ -19,7 +19,7 @@ extension Navigator {
   ) -> Navigator {
     Navigator(
       initialModalDestination: modalDestination,
-      navigationQueue: NavigationQueue(clock: ImmediateClock())
+      navigationQueue: ImmediateNavigationQueue()
     )
   }
   
@@ -30,16 +30,16 @@ extension Navigator {
   ) -> Navigator {
     Navigator(
       initialSpecimenDestination: specimenDestination,
-      navigationQueue: NavigationQueue(clock: ImmediateClock())
+      navigationQueue: ImmediateNavigationQueue()
     )
   }
 
   public static func test(
-    stack: OrderedSet<AnyIdentifiableDestination>
+    stack: OrderedSet<AnyDestination>
   ) -> Navigator {
     Navigator(
       initialStack: stack,
-      navigationQueue: NavigationQueue(clock: ImmediateClock())
+      navigationQueue: ImmediateNavigationQueue()
     )
   }
   
@@ -53,7 +53,7 @@ extension Navigator {
     Navigator(
       initialModalDestination: modalDestination,
       initialSpecimenDestination: specimenDestination,
-      navigationQueue: NavigationQueue(clock: ImmediateClock())
+      navigationQueue: ImmediateNavigationQueue()
     )
   }
   
@@ -61,12 +61,12 @@ extension Navigator {
     SpecimenDestination: DestinationType
   >(
     specimenDestination: SpecimenDestination,
-    stack: OrderedSet<AnyIdentifiableDestination>
+    stack: OrderedSet<AnyDestination>
   ) -> Navigator {
     Navigator(
       initialSpecimenDestination: specimenDestination,
       initialStack: stack,
-      navigationQueue: NavigationQueue(clock: ImmediateClock())
+      navigationQueue: ImmediateNavigationQueue()
     )
   }
   
@@ -74,12 +74,12 @@ extension Navigator {
     ModalDestination: DestinationType
   >(
     modalDestination: ModalDestinationPath<ModalDestination>,
-    stack: OrderedSet<AnyIdentifiableDestination>
+    stack: OrderedSet<AnyDestination>
   ) -> Navigator {
     Navigator(
       initialModalDestination: modalDestination,
       initialStack: stack,
-      navigationQueue: NavigationQueue(clock: ImmediateClock())
+      navigationQueue: ImmediateNavigationQueue()
     )
   }
   
@@ -89,21 +89,21 @@ extension Navigator {
   >(
     modalDestination: ModalDestinationPath<ModalDestination>,
     specimenDestination: SpecimenDestination,
-    stack: OrderedSet<AnyIdentifiableDestination>
+    stack: OrderedSet<AnyDestination>
   ) -> Navigator {
     Navigator(
       initialModalDestination: modalDestination,
       initialSpecimenDestination: specimenDestination,
       initialStack: stack,
-      navigationQueue: NavigationQueue(clock: ImmediateClock())
+      navigationQueue: ImmediateNavigationQueue()
     )
   }
   
   public static func test() -> Navigator {
-    Navigator(navigationQueue: NavigationQueue(clock: ImmediateClock()))
+    Navigator(navigationQueue: ImmediateNavigationQueue())
   }
   
-  func testModalStateBinding<Destination: Sendable & Hashable & Identifiable>(
+  func testModalStateBinding<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self
   ) -> Binding<ModalDestinationPath<Destination>?> {
     _modalState.testBinding(for: destinationType)

@@ -11,7 +11,7 @@ import Perception
 import SwiftUI
 
 extension ModalState {
-  func testBinding<Destination: Sendable & Hashable & Identifiable>(
+  func testBinding<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self
   ) -> Binding<ModalDestinationPath<Destination>?> {
     Perception.Bindable(self).destination(for: destinationType)

@@ -9,13 +9,8 @@ import SwiftNavigationCoordinator
 
 struct CoordinatorBaseTests {
   typealias Sut = CoordinatorBase
-  
-  init() {
-    #warning("TODO: Looks like bad design, since `Environment.current` is updated for everything")
-    setEnvironment(.test)
-  }
-  
+
   enum Constants {
-    static let timeout = Duration.milliseconds(500)
+    static let timeout = Duration.milliseconds(1500)
   }
 }

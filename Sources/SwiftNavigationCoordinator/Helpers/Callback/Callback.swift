@@ -8,11 +8,11 @@
 import IssueReporting
 
 public actor Callback<Params: Sendable>: Sendable {
-  private typealias Completion = @Sendable () -> Void
+  typealias Completion = @Sendable () -> Void
   
   private let job: @Sendable (Params) async -> Void
 
-  private let completion: MutableValue<Task<Void, any Error>?> = MutableValue(value: nil)
+  let completion: MutableValue<Task<Void, any Error>?> = MutableValue(value: nil)
   
   public init(
     job: @Sendable @escaping (Params) async -> Void
@@ -31,34 +31,8 @@ public actor Callback<Params: Sendable>: Sendable {
     await job(params)
     await resolveCompletion()
   }
-  
-  //  Had to make this public since #if canImport(Testing) does not work when importing stuff from another package
-  //  https://forums.swift.org/t/xcode-not-respecting-canimport-xctest/46826
-  public func onCompleted(
-    fileID: StaticString = #fileID,
-    filePath: StaticString = #filePath,
-    line: UInt = #line,
-    column: UInt = #column
-  ) async {
-    Environment.assert(.test)
-    
-    await createCompletionIfNeeded()
-    do {
-      try await completion.value?.value
-    } catch _ as CancellationError {
-      return
-    } catch {
-      reportIssue(
-        error,
-        fileID: fileID,
-        filePath: filePath,
-        line: line,
-        column: column
-      )
-    }
-  }
 
-  private func createCompletionIfNeeded() async {
+  func createCompletionIfNeeded() async {
     guard await completion.value == nil else { return }
     let task = veryLongDelayTask()
     await completion.setValue(task)

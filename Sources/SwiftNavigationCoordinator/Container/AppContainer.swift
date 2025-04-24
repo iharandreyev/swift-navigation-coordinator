@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+#warning("TODO: Documentation")
+/// Use this at the app entry point to ensure all operations without animation work properly
 public struct AppContainer<Content: View>: View {
   private let content: () -> Content
   

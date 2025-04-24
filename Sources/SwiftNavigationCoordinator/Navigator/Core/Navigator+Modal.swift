@@ -46,7 +46,7 @@ extension Navigator {
     _modalState.destination(for: destinationType, sourceFile: sourceFile, line: line)
   }
   
-  public func modalDestination() -> ModalDestinationPath<AnyIdentifiableDestination>? {
+  public func modalDestination() -> ModalDestinationPath<AnyDestination>? {
     _modalState._destination
   }
 }

@@ -7,6 +7,7 @@
 
 import OrderedCollections
 
+#warning("TODO: Documentation")
 @MainActor
 public final class Navigator {
   private let createModalState: () -> ModalState
@@ -81,7 +82,7 @@ public final class Navigator {
   convenience init<
     NavigationQueue: NavigationQueueType
   >(
-    initialStack: OrderedSet<AnyIdentifiableDestination>,
+    initialStack: OrderedSet<AnyDestination>,
     navigationQueue: NavigationQueue
   ) {
     self.init(
@@ -117,7 +118,7 @@ public final class Navigator {
     NavigationQueue: NavigationQueueType
   >(
     initialSpecimenDestination: SpecimenDestination,
-    initialStack: OrderedSet<AnyIdentifiableDestination>,
+    initialStack: OrderedSet<AnyDestination>,
     navigationQueue: NavigationQueue
   ) {
     self.init(
@@ -136,7 +137,7 @@ public final class Navigator {
     NavigationQueue: NavigationQueueType
   >(
     initialModalDestination: ModalDestinationPath<ModalDestination>,
-    initialStack: OrderedSet<AnyIdentifiableDestination>,
+    initialStack: OrderedSet<AnyDestination>,
     navigationQueue: NavigationQueue
   ) {
     self.init(
@@ -157,7 +158,7 @@ public final class Navigator {
   >(
     initialModalDestination: ModalDestinationPath<ModalDestination>,
     initialSpecimenDestination: SpecimenDestination,
-    initialStack: OrderedSet<AnyIdentifiableDestination>,
+    initialStack: OrderedSet<AnyDestination>,
     navigationQueue: NavigationQueue
   ) {
     self.init(
@@ -181,7 +182,7 @@ public final class Navigator {
   ) {
     self.init(
       initialModalDestination: initialModalDestination,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -192,16 +193,16 @@ public final class Navigator {
   ) {
     self.init(
       initialSpecimenDestination: initialSpecimenDestination,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
 
   public convenience init(
-    initialStack: OrderedSet<AnyIdentifiableDestination>
+    initialStack: OrderedSet<AnyDestination>
   ) {
     self.init(
       initialStack: initialStack,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -215,7 +216,7 @@ public final class Navigator {
     self.init(
       initialModalDestination: initialModalDestination,
       initialSpecimenDestination: initialSpecimenDestination,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -223,12 +224,12 @@ public final class Navigator {
     SpecimenDestination: DestinationType
   >(
     initialSpecimenDestination: SpecimenDestination,
-    initialStack: OrderedSet<AnyIdentifiableDestination>
+    initialStack: OrderedSet<AnyDestination>
   ) {
     self.init(
       initialSpecimenDestination: initialSpecimenDestination,
       initialStack: initialStack,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -236,12 +237,12 @@ public final class Navigator {
     ModalDestination: DestinationType
   >(
     initialModalDestination: ModalDestinationPath<ModalDestination>,
-    initialStack: OrderedSet<AnyIdentifiableDestination>
+    initialStack: OrderedSet<AnyDestination>
   ) {
     self.init(
       initialModalDestination: initialModalDestination,
       initialStack: initialStack,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -251,18 +252,18 @@ public final class Navigator {
   >(
     initialModalDestination: ModalDestinationPath<ModalDestination>,
     initialSpecimenDestination: SpecimenDestination,
-    initialStack: OrderedSet<AnyIdentifiableDestination>
+    initialStack: OrderedSet<AnyDestination>
   ) {
     self.init(
       initialModalDestination: initialModalDestination,
       initialSpecimenDestination: initialSpecimenDestination,
       initialStack: initialStack,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
   public convenience init() {
-    self.init(navigationQueue: Environment.navigationQueue)
+    self.init(navigationQueue: NavigationQueue.live)
   }
 
   public static func `continue`(_ parent: Navigator) -> Navigator {
@@ -277,13 +278,13 @@ public final class Navigator {
 }
 
 extension Navigator: ModalStateDelegate {
-  func modalStateDidDismiss(_ destination: AnyIdentifiableDestination) {
+  func modalStateDidDismiss(_ destination: AnyDestination) {
     delegate?.navigatorDidDismissModalDestination(destination)
   }
 }
 
 extension Navigator: StackStateDelegate {
-  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination) {
+  func stackStateDidDismiss(_ destination: AnyDestination) {
     delegate?.navigatorDidDismissStackDestination(destination)
   }
 }

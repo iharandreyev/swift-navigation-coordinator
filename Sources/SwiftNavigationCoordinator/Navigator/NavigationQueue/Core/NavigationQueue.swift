@@ -11,12 +11,12 @@ import SwiftUI
 
 /// Used to throttle animation completions to avoid multiple transitions at the same time
 @MainActor
-public final class NavigationQueue {
+final class NavigationQueue {
   private let withoutAnimations: WithoutAnimations
   private let withAnimations: WithAnimations
   
   // Fifo queue
-  private var queue: [NavigationQueueItem] = []
+  private(set) var queue: [NavigationQueueItem] = []
   
   nonisolated init<ClockType: Clock<Duration>>(
     clock: ClockType
@@ -25,7 +25,7 @@ public final class NavigationQueue {
     self.withAnimations = WithAnimations(clock: clock)
   }
 
-  public func schedule(
+  func schedule(
     uiUpdate job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
     function: StaticString = #function
@@ -81,16 +81,12 @@ public final class NavigationQueue {
       function: function
     )
     queue.append(item)
-    
-    logMessage("NavigationQueue: Did enqueue \(item)")
   }
   
   private func resolveQueue() async  {
     guard !queue.isEmpty else { return }
     
     let next = queue.removeFirst()
-    
-    logMessage("NavigationQueue: Did dequeue \(next)")
     
     if next.animated {
       await withAnimations.run(next.job)
@@ -100,13 +96,13 @@ public final class NavigationQueue {
 
     next.completion?()
     
-    logMessage("NavigationQueue: Did complete \(next)")
     await resolveQueue()
   }
 }
 
 extension NavigationQueue {
-  public var shared: NavigationQueue { Environment.navigationQueue }
+  static let live = NavigationQueue(clock: ContinuousClock())
+  static let test = NavigationQueue(clock: ImmediateClock())
 }
 
 struct NavigationQueueItem: CustomStringConvertible {
@@ -130,17 +126,6 @@ struct NavigationQueueItem: CustomStringConvertible {
     self.description = "\(function)"
   }
 }
-
-#if canImport(XCTest)
-
-extension NavigationQueue {
-  var queueLength: Int {
-    Environment.assert(.test)
-    return queue.count
-  }
-}
-
-#endif
 
 extension NavigationQueue: NavigationQueueType {
   func schedule(
