@@ -35,19 +35,15 @@ final class MainCoordinator<
     case .usecases:
       CoordinatedScreen.stackRoot(
         modalCoordinator: addChild(
-          childFactory: {
-            factory.createUsecasesCoordinator()
-          },
-          as: destination
+          for: destination,
+          factory.createUsecasesCoordinator
         )
       )
     case .deeplinks:
       CoordinatedScreen.base(
         coordinator: addChild(
-          childFactory: {
-            factory.createDeeplinksCoordinator()
-          },
-          as: destination
+          for: destination,
+          factory.createDeeplinksCoordinator
         )
       )
     }

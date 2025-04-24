@@ -80,15 +80,14 @@ final class OnboardingCoordinator<
     case .info:
       CoordinatedScreen.stackRoot(
         stackCoordinator: addChild(
-          childFactory: {
-            factory.createInfoCoordinator(
-              onFinish: Callback { [unowned self] in
-                await infoDidFinish()
-              }
-            )
-          },
-          as: destination
-        )
+          for: destination
+        ) {
+          factory.createInfoCoordinator(
+            onFinish: Callback { [unowned self] in
+              await infoDidFinish()
+            }
+          )
+        }
       )
     }
   }

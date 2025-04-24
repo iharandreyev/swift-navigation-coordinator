@@ -73,7 +73,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       CoordinatedScreen
         .stackPage(
           stackCoordinator: child(
-            ofType: MultiChildFlowCoordinator.self,
+            of: MultiChildFlowCoordinator.self,
             for: destination
           )
         )
@@ -96,16 +96,15 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
     let destination = Destination.multiChildFlow
     
     addChild(
-      childFactory: {
-        MultiChildFlowCoordinator(
-          navigator: Navigator.continue(navigator),
-          onFinish: Callback { [unowned self] in
-            await multiChildFlowDidFinish()
-          }
-        )
-      },
-      as: destination
-    )
+      for: destination
+    ) { navigator in
+      MultiChildFlowCoordinator(
+        navigator: navigator,
+        onFinish: Callback { [unowned self] in
+          await multiChildFlowDidFinish()
+        }
+      )
+    }
     
     await navigator.replacePath(with: destination)
   }

@@ -45,7 +45,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     case .pathA:
       CoordinatedScreen.stackPage(
         stackCoordinator: child(
-          ofType: MultiChildFlowPathACoordinator.self,
+          of: MultiChildFlowPathACoordinator.self,
           for: destination
         )
       )
@@ -53,7 +53,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     case .pathB:
       CoordinatedScreen.base(
         modalCoordinator: child(
-          ofType: MultiChildFlowPathBCoordinator.self,
+          of: MultiChildFlowPathBCoordinator.self,
           for: destination
         )
       )
@@ -79,11 +79,10 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     let destination = Destination.pathA
     
     addChild(
-      childFactory: {
-        MultiChildFlowPathACoordinator(navigator: Navigator.continue(navigator))
-      },
-      as: destination
-    )
+      for: destination
+    ) { navigator in
+      MultiChildFlowPathACoordinator(navigator: navigator)
+    }
 
     await navigator.push(destination)
   }
@@ -92,11 +91,10 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     let destination = Destination.pathB
     
     addChild(
-      childFactory: {
-        MultiChildFlowPathBCoordinator(navigator: Navigator())
-      },
-      as: destination
-    )
+      for: destination
+    ) {
+      MultiChildFlowPathBCoordinator()
+    }
 
     await navigator.push(destination)
   }

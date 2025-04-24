@@ -42,21 +42,20 @@ final class AppCoordinator<
     case .onboarding:
       CoordinatedScreen.stackRoot(
         modalCoordinator: addChild(
-          childFactory: {
-            factory.createOnboardingCoordinator(
-              onFinish: Callback { [unowned self] in
-                await onboardingDidFinish()
-              }
-            )
-          },
-          as: destination
-        )
+          for: destination
+        ) {
+          factory.createOnboardingCoordinator(
+            onFinish: Callback { [unowned self] in
+              await onboardingDidFinish()
+            }
+          )
+        }
       )
     case .main:
       CoordinatedScreen.tabbed(
         coordinator: addChild(
-          childFactory: factory.createMainCoordinator,
-          as: destination
+          for: destination,
+          factory.createMainCoordinator
         )
       )
     }

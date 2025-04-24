@@ -21,13 +21,12 @@ extension CoordinatorBaseTests {
       
       let child1Destination = TestDestination.first
       weak var child1 = parent.addChild(
-        childFactory: {
-          CoordinatorBase(
-            onFinish: Callback(job: {})
-          )
-        },
-        as: child1Destination
-      )
+        for: child1Destination
+      ) {
+        CoordinatorBase(
+          onFinish: Callback(job: {})
+        )
+      }
       
       let child2Destination = TestDestinationOf<Tags.T1>.first
       weak var child2 = child1!.addChild(

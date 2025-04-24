@@ -28,9 +28,9 @@ struct DeeplinkTests {
       factory: AppCoordinatorFactoryDelegateMock.create()
     )
     
-    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.appInit)
-    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.onboarding)
-    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.main)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), for: AppDestination.appInit)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), for: AppDestination.onboarding)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), for: AppDestination.main)
     
     try await withTimeout(.seconds(1)) {
       for deeplink in Deeplink.allCases {

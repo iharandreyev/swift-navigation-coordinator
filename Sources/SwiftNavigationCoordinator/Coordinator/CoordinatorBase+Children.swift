@@ -11,8 +11,8 @@ extension CoordinatorBase {
     Child: CoordinatorBase,
     Destination: Sendable & Hashable & Identifiable
   >(
-    childFactory createChild: () -> Child,
-    as destination: Destination,
+    for destination: Destination,
+    _ createChild: () -> Child,
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) -> Child {
@@ -29,7 +29,7 @@ extension CoordinatorBase {
     
     addChild(
       child,
-      as: destination,
+      for: destination,
       sourceFile: sourceFile,
       line: line
     )
@@ -49,19 +49,20 @@ extension CoordinatorBase {
     line: UInt = #line
   ) -> Child {
     addChild(
-      childFactory: {
+      for: destination,
+      {
         createChild(Navigator.continue(navigator))
       },
-      as: destination,
       sourceFile: sourceFile,
-      line: line)
+      line: line
+    )
   }
   
   public func child<
     Child: CoordinatorBase,
     Destination: Sendable & Hashable & Identifiable
   >(
-    ofType: Child.Type = Child.self,
+    of childType: Child.Type = Child.self,
     for destination: Destination,
     sourceFile: StaticString = #file,
     line: UInt = #line
