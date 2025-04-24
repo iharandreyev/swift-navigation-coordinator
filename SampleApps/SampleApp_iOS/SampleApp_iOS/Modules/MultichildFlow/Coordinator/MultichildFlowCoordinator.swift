@@ -15,7 +15,7 @@ enum MultiChildFlowDestination: String, DestinationType {
   case confirmRestart
 }
 
-final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType, CoordinatorChildSearch {
+final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType {
   typealias Destination = MultiChildFlowDestination
 
   func initialScreen() -> some View {
@@ -46,7 +46,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
       CoordinatedScreen.stackPage(
         stackCoordinator: child(
           ofType: MultiChildFlowPathACoordinator.self,
-          for: .pathA
+          for: destination
         )
       )
 
@@ -54,7 +54,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
       CoordinatedScreen.base(
         modalCoordinator: child(
           ofType: MultiChildFlowPathBCoordinator.self,
-          for: .pathB
+          for: destination
         )
       )
 

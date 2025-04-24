@@ -38,7 +38,7 @@ final class MainCoordinator<
           childFactory: {
             factory.createUsecasesCoordinator()
           },
-          as: MainTab.usecases
+          as: destination
         )
       )
     case .deeplinks:
@@ -47,7 +47,7 @@ final class MainCoordinator<
           childFactory: {
             factory.createDeeplinksCoordinator()
           },
-          as: MainTab.deeplinks
+          as: destination
         )
       )
     }

@@ -44,49 +44,11 @@ open class CoordinatorBase: NavigatorDelegate {
     Child: CoordinatorBase,
     Destination: Sendable & Hashable & Identifiable
   >(
-    childFactory createChild: () -> Child,
-    as destination: Destination,
-    file: StaticString = #file,
-    line: UInt = #line
-  ) -> Child {
-    if let child = children[AnyIdentifiableDestination(destination)] {
-      guard let child = child as? Child else {
-        fatalError(
-          """
-            Type mismatch!                                        \
-            Expected `\(ShortDescription(child))` to be of type 
-            `\(ShortDescription(Child.self))`                     \
-            Source: \(file):\(line)
-          """,
-          file: file,
-          line: line
-        )
-      }
-      
-      return child
-    }
-    
-    let child = createChild()
-    
-    addChild(
-      child,
-      as: destination,
-      file: file,
-      line: line
-    )
-    
-    return child
-  }
-  
-  public final func addChild<
-    Child: CoordinatorBase,
-    Destination: Sendable & Hashable & Identifiable
-  >(
     _ child: Child,
     as destination: Destination,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) {
+  ) -> Child {
     let anyDestination = AnyIdentifiableDestination(destination)
     
     guard children[anyDestination] == nil else {
@@ -111,6 +73,8 @@ open class CoordinatorBase: NavigatorDelegate {
         into `\(ShortDescription(self))`
       """
     )
+    
+    return child
   }
   
   public final func removeFromParent(
@@ -176,6 +140,16 @@ open class CoordinatorBase: NavigatorDelegate {
     logMessage("FINISH: \(ShortDescription(self))")
   }
   
+  @_disfavoredOverload
+  final func finish(
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) {
+    Task { [weak self] in
+      await self?.finish(sourceFile: sourceFile, line: line)
+    }
+  }
+  
   public final func setOnFinish(
     _ onFinish: Callback<Void>
   ) {
@@ -233,16 +207,12 @@ open class CoordinatorBase: NavigatorDelegate {
   
   open func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination) {
     guard destination == id else { return }
-    Task { [weak self] in
-      await self?.finish()
-    }
+    finish()
   }
   
   open func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination) {
     guard destination == id else { return }
-    Task { [weak self] in
-      await self?.finish()
-    }
+    finish()
   }
 }
 

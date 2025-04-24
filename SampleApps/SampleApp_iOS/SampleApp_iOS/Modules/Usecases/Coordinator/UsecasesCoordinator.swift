@@ -17,7 +17,7 @@ enum UsecasesDestination: String, DestinationType {
   var id: String { rawValue }
 }
 
-final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType, CoordinatorChildSearch {
+final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
   typealias Destination = UsecasesDestination
   
   func initialScreen() -> some View {
