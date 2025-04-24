@@ -57,8 +57,8 @@ extension CoordinatorBaseTests {
   }
   
   @Test
-  func pop_finishesChildren() async {
-    try await withTimeout(Constants.timeout) { @MainActor in
+  func pop_finishesChildren() async throws {
+    try await withTimeout(.seconds(10)) { @MainActor in
       let parent = CoordinatorBase(
         onFinish: Callback(job: {})
       )
@@ -84,13 +84,14 @@ extension CoordinatorBaseTests {
       }
       
       await parent.navigator.push(child1Destination)
-      await child1?.navigator.push(child2Destination)
+      await child1!.navigator.push(child2Destination)
       
       let child1OnFinish = child1!.testOnFinish()!
       
       let binding = parent.navigator.testStackStateBinding()
       
       // Simulate SUI pop
+      binding.wrappedValue.removeLast()
       binding.wrappedValue.removeLast()
       
       await child1OnFinish.onCompleted()
