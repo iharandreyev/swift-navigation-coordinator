@@ -160,3 +160,15 @@ final class AnyModalStateDelegate: ModalStateDelegate {
     _modalStateDidDismiss(destination)
   }
 }
+
+#if canImport(XCTest)
+
+extension ModalState {
+  func testBinding<Destination: Sendable & Hashable & Identifiable>(
+    for destinationType: Destination.Type = Destination.self
+  ) -> Binding<ModalDestination<Destination>?> {
+    Perception.Bindable(self).destination(for: destinationType)
+  }
+}
+
+#endif

@@ -327,6 +327,7 @@ public protocol NavigatorDelegate: AnyObject {
 #if canImport(XCTest)
 
 import Clocks
+import SwiftUI
 
 extension Navigator {
   static func test<Destination: SomeDestination>(
@@ -349,8 +350,18 @@ extension Navigator {
     stack.forEach {
       navigator._stackState.append($0, sourceFile: sourceFile, line: line)
     }
-
+    
     return navigator
+  }
+  
+  func testModalStateBinding<Destination: Sendable & Hashable & Identifiable>(
+    for destinationType: Destination.Type = Destination.self
+  ) -> Binding<ModalDestination<Destination>?> {
+    _modalState.testBinding(for: destinationType)
+  }
+  
+  func testStackStateBinding() -> Binding<SwiftUI.NavigationPath> {
+    _stackState.testBinding()
   }
 }
 

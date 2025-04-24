@@ -221,3 +221,13 @@ final class AnyStackStateDelegate: StackStateDelegate {
     _stackStateDidDismiss(destination)
   }
 }
+
+#if canImport(XCTest)
+
+extension StackState {
+  func testBinding() -> Binding<SwiftUI.NavigationPath> {
+    Perception.Bindable(self).path()
+  }
+}
+
+#endif

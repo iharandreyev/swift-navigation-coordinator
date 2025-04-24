@@ -37,6 +37,26 @@ extension CoordinatorBase {
     return child
   }
   
+  @inline(__always)
+  @discardableResult
+  public func addChild<
+    Child: CoordinatorBase,
+    Destination: Sendable & Hashable & Identifiable
+  >(
+    for destination: Destination,
+    _ createChild: (Navigator) -> Child,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) -> Child {
+    addChild(
+      childFactory: {
+        createChild(Navigator.continue(navigator))
+      },
+      as: destination,
+      sourceFile: sourceFile,
+      line: line)
+  }
+  
   public func child<
     Child: CoordinatorBase,
     Destination: Sendable & Hashable & Identifiable

@@ -90,7 +90,7 @@ struct StackStateTests {
   @Test
   func bindingUpdatesDestinationCorrectly() async {
     let sut = await createSut(stack: [.first, .second, .third, .fourth])
-    let binding = Perception.Bindable(sut).path()
+    let binding = sut.testBinding()
     
     let expectedState = [TestDestination.first, .second, .third]
     

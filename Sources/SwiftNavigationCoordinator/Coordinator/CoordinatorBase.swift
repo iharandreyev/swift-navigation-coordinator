@@ -237,3 +237,13 @@ extension CoordinatorBase {
     false
   }
 }
+
+#if canImport(XCTest)
+
+extension CoordinatorBase {
+  func testOnFinish() -> Callback<Void>? {
+    onFinish
+  }
+}
+
+#endif

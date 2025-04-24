@@ -46,7 +46,7 @@ struct ModalStateTests {
   @Test
   func bindingUpdatesDestinationCorrectly() async {
     let sut = await createSut(destination: .cover)
-    let binding = Perception.Bindable(sut).destination(for: TestDestination.self)
+    let binding = sut.testBinding(for: TestDestination.self)
 
     // Simulate SUI dismiss
     binding.wrappedValue = nil
