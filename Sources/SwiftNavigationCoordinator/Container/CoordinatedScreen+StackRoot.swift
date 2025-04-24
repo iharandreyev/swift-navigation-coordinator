@@ -42,7 +42,7 @@ struct _CoordinatedScreen_StackRoot<
         coordinator.initialScreen()
       },
       destinationContent: { [weak coordinator] destination in
-        coordinator?.screen(for: destination)
+        coordinator?.screen(forStack: destination)
       }
     )
   }

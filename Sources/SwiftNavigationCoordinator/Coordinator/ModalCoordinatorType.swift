@@ -9,9 +9,15 @@ import SwiftUI
 
 @MainActor
 public protocol ModalCoordinatorType: CoordinatorBase {
-  associatedtype Destination: DestinationType
-  associatedtype DestinationScreenType: View
+  associatedtype ModalDestination: DestinationType
+  associatedtype ModalDestinationScreen: View
 
   @ViewBuilder
-  func screen(for destination: Destination) -> DestinationScreenType
+  func content(forModal destination: ModalDestination) -> ModalDestinationScreen
+}
+
+extension ModalCoordinatorType {
+  func screen(forModal destination: ModalDestination) -> some View {
+    content(forModal: destination)
+  }
 }

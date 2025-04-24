@@ -9,9 +9,15 @@ import SwiftUI
 
 @MainActor
 public protocol StackCoordinatorType: CoordinatorBase {
-  associatedtype Destination: DestinationType
-  associatedtype DestinationScreenType: View
+  associatedtype StackDestination: DestinationType
+  associatedtype StackDestinationScreen: View
   
   @ViewBuilder
-  func screen(for destination: Destination) -> DestinationScreenType
+  func content(forStack destination: StackDestination) -> StackDestinationScreen
+}
+
+extension StackCoordinatorType {
+  func screen(forStack destination: StackDestination) -> some View {
+    content(forStack: destination)
+  }
 }

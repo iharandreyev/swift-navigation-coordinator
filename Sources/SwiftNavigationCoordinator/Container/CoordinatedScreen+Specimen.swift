@@ -23,7 +23,7 @@ extension CoordinatedScreen {
       navigator: coordinator.navigator,
       destinationContent: { [unowned coordinator] destination in
         coordinator.screen(
-          for: destination.wrappedValue
+          forSpecimen: destination.wrappedValue
         )
       }
     )
