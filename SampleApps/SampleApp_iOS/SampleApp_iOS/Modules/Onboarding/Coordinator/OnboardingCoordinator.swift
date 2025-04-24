@@ -60,7 +60,6 @@ final class OnboardingCoordinator<
         await showInfo()
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
   
   func screen(for destination: OnboardingDestination) -> some View {

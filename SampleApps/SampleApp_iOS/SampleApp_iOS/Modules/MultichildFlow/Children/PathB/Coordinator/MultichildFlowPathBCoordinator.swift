@@ -25,7 +25,6 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
         Task(operation: proceedToFinishFlow)
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
   
   func screen(for destination: Destination) -> some View {

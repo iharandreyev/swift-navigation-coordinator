@@ -21,7 +21,6 @@ final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorTyp
         Task(operation: proceedToFinishFlow)
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
   
   func screen(for destination: Destination) -> some View {
