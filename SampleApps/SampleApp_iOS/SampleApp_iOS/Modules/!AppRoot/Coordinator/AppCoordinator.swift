@@ -59,7 +59,7 @@ final class AppCoordinator<
         }
       )
     case .onboarding:
-      addChild(
+      initialContent(
         for: destination
       ) {
         factory.createOnboardingCoordinator(
@@ -68,13 +68,11 @@ final class AppCoordinator<
           }
         )
       }
-      .initialContent()
     case .main:
-      addChild(
+      initialContent(
         for: destination,
         factory.createMainCoordinator
       )
-      .initialContent()
     }
   }
   

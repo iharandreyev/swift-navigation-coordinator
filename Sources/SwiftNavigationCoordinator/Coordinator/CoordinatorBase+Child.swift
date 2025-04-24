@@ -1,5 +1,5 @@
 //
-//  CoordinatorBase+Children.swift
+//  CoordinatorBase+Child.swift
 //  swift-navigation-coordinator
 //
 //  Created by Andreyeu, Ihar on 4/24/25.

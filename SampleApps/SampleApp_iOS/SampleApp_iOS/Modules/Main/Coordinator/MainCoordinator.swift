@@ -48,17 +48,15 @@ final class MainCoordinator<
   func content(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .usecases:
-      addChild(
+      initialContent(
         for: destination,
         factory.createUsecasesCoordinator
       )
-      .initialContent()
     case .deeplinks:
-      addChild(
+      initialContent(
         for: destination,
         factory.createDeeplinksCoordinator
       )
-      .initialContent()
     }
   }
   

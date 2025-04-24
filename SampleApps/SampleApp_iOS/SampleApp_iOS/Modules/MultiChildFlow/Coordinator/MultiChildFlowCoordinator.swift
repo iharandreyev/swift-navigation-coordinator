@@ -52,18 +52,17 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Na
       .navigationTitle("Select Path")
 
     case .pathA:
-      child(
-        of: MultiChildFlowPathACoordinator.self,
-        for: destination
+      initialContent(
+        for: destination,
+        ofChild: MultiChildFlowPathACoordinator.self
       )
-      .initialContent()
 
     case .pathB:
-      child(
-        of: MultiChildFlowPathBCoordinator.self,
-        for: destination
+      #warning("TODO: Figure out a way to erase coordinator type without AnyView")
+      initialContent(
+        for: destination,
+        ofChild: MultiChildFlowPathBCoordinator.self
       )
-      .initialContent()
 
     case .confirmRestart:
       MultiChildFlowConfirmRestartScreen(
