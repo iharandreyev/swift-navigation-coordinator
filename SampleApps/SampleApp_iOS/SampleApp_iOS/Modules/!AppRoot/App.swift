@@ -32,7 +32,7 @@ struct App: SwiftUI.App {
   
   var body: some Scene {
     WindowGroup {
-      AppRoot(coordinator: coordinator)
+      coordinator.initialContent()
     }
     .environment(\.urlOpener, UIApplicationURLOpener())
   }

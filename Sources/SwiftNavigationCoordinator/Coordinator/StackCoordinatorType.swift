@@ -8,24 +8,8 @@
 import SwiftUI
 
 @MainActor
-public protocol StackCoordinatorType: CoordinatorBase {
-  associatedtype StackDestination: SomeDestination
-  associatedtype StackDestinationScreen: View
-  
-  @ViewBuilder
-  func content(
-    forStack destination: StackDestination
-  ) -> StackDestinationScreen
-}
+public protocol StackCoordinatorType: NavigationCoordinatorType where StackDestination: DestinationType {
 
-extension StackCoordinatorType {
-  func screen(
-    forStack destination: StackDestination
-  ) -> some View {
-    content(
-      forStack: destination
-    )
-  }
 }
 
 extension StackCoordinatorType {
@@ -37,7 +21,7 @@ extension StackCoordinatorType {
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) async where StackDestination: DestinationType {
+  ) async {
     await navigator.push(
       destination,
       animated: animated,
@@ -51,7 +35,7 @@ extension StackCoordinatorType {
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) async where StackDestination: DestinationType {
+  ) async {
     await navigator.replaceLast(
       with: destination,
       animated: animated,
@@ -65,7 +49,7 @@ extension StackCoordinatorType {
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) async where StackDestination: DestinationType {
+  ) async {
     await navigator.replacePath(
       with: destination,
       animated: animated,
@@ -80,7 +64,7 @@ extension StackCoordinatorType {
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) async where StackDestination: DestinationType {
+  ) async {
     await navigator.pop(
       animated: animated,
       sourceFile: sourceFile,
@@ -93,7 +77,7 @@ extension StackCoordinatorType {
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) async where StackDestination: DestinationType {
+  ) async {
     await navigator.popToDestination(
       destination,
       animated: animated,
@@ -106,7 +90,7 @@ extension StackCoordinatorType {
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) async where StackDestination: DestinationType {
+  ) async {
     await navigator.popToRoot(
       animated: animated,
       sourceFile: sourceFile,

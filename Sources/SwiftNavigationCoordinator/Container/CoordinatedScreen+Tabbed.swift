@@ -16,10 +16,10 @@ extension CoordinatedScreen {
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   public static func tabbed<
-    CoordinatorType: LabelledSpecimenCoordinatorType
+    Coordinator: LabelledSpecimenCoordinatorType
   >(
-    coordinator: CoordinatorType
-  ) -> some View where CoordinatorType.SpecimenDestination: DestinationType, CoordinatorType.SpecimenDestination: CaseIterable, CoordinatorType.SpecimenDestination.AllCases: RandomAccessCollection {
+    coordinator: Coordinator
+  ) -> some View where Coordinator.SpecimenDestination: CaseIterable, Coordinator.SpecimenDestination.AllCases: RandomAccessCollection {
     _CoordinatedScreen_Tabbed(coordinator: coordinator)
   }
   
@@ -31,35 +31,35 @@ extension CoordinatedScreen {
   /// * pass `build tab label` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   public static func tabbed<
-    CoordinatorType: LabelledSpecimenCoordinatorType
+    Coordinator: LabelledSpecimenCoordinatorType
   >(
-    coordinator: CoordinatorType,
-    tabs: [CoordinatorType.SpecimenDestination]
-  ) -> some View where CoordinatorType.SpecimenDestination: DestinationType {
+    coordinator: Coordinator,
+    tabs: [Coordinator.SpecimenDestination]
+  ) -> some View {
     _CoordinatedScreen_Tabbed(coordinator: coordinator, tabs: tabs)
   }
 }
 
 struct _CoordinatedScreen_Tabbed<
-  CoordinatorType: LabelledSpecimenCoordinatorType
->: View where CoordinatorType.SpecimenDestination: DestinationType {
-  private let coordinator: CoordinatorType
+  Coordinator: LabelledSpecimenCoordinatorType
+>: View {
+  private let coordinator: Coordinator
   private let navigator: Navigator
   
-  private let tabs: [CoordinatorType.SpecimenDestination]
+  private let tabs: [Coordinator.SpecimenDestination]
   
   init(
-    coordinator: CoordinatorType
-  ) where CoordinatorType.SpecimenDestination: CaseIterable, CoordinatorType.SpecimenDestination.AllCases: RandomAccessCollection {
+    coordinator: Coordinator
+  ) where Coordinator.SpecimenDestination: CaseIterable, Coordinator.SpecimenDestination.AllCases: RandomAccessCollection {
     self.init(
       coordinator: coordinator,
-      tabs: Array(CoordinatorType.SpecimenDestination.allCases)
+      tabs: Array(Coordinator.SpecimenDestination.allCases)
     )
   }
   
   init(
-    coordinator: CoordinatorType,
-    tabs: [CoordinatorType.SpecimenDestination]
+    coordinator: Coordinator,
+    tabs: [Coordinator.SpecimenDestination]
   ) {
     self.coordinator = coordinator
     self.navigator = coordinator.navigator
@@ -69,7 +69,7 @@ struct _CoordinatedScreen_Tabbed<
   var body: some View {
     SpecimenContainer(
       navigator: navigator,
-      destinationContent: { (destination: Binding<CoordinatorType.SpecimenDestination>) in
+      destinationContent: { (destination: Binding<Coordinator.SpecimenDestination>) in
         TabView(
           selection: destination
         ) {
@@ -77,7 +77,7 @@ struct _CoordinatedScreen_Tabbed<
             tabs,
             id: \.self,
             content: { [unowned coordinator] tab in
-              coordinator.screen(
+              coordinator.content(
                 forSpecimen: tab
               )
               .tabItem {

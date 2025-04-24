@@ -8,18 +8,8 @@
 import SwiftUI
 
 @MainActor
-public protocol ModalCoordinatorType: CoordinatorBase {
-  associatedtype ModalDestination: SomeDestination
-  associatedtype ModalDestinationScreen: View
+public protocol ModalCoordinatorType: NavigationCoordinatorType where ModalDestination: DestinationType {
 
-  @ViewBuilder
-  func content(forModal destination: ModalDestination) -> ModalDestinationScreen
-}
-
-extension ModalCoordinatorType {
-  func screen(forModal destination: ModalDestination) -> some View {
-    content(forModal: destination)
-  }
 }
 
 extension ModalCoordinatorType {
@@ -28,7 +18,7 @@ extension ModalCoordinatorType {
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) async where ModalDestination: DestinationType {
+  ) async {
     await navigator.presentDestination(
       destination,
       animated: animated,

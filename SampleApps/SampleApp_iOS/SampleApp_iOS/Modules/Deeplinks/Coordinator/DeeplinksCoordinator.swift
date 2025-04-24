@@ -8,14 +8,14 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-final class DeeplinksCoordinator: CoordinatorBase, ScreenCoordinatorType {
+final class DeeplinksCoordinator: CoordinatorBase, NavigationCoordinatorType {
   // MARK: - Navigation Coordinator
   
   typealias SpecimenDestination = DestinationNever
   typealias ModalDestination = DestinationNever
   typealias StackDestination = DestinationNever
   
-  func initialScreen() -> some View {
+  func initialContent() -> some View {
     DeeplinksListScreen()
   }
   

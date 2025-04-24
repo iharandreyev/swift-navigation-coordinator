@@ -16,7 +16,7 @@ enum MainTab: String, DestinationType, CaseIterable {
 @MainActor
 final class MainCoordinator<
   FactoryDelegateType: MainCoordinatorFactoryDelegateType
->: CoordinatorBase, CoordinatorType, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
+>: CoordinatorBase, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
   let factory: FactoryDelegateType
   
   init(
@@ -33,6 +33,12 @@ final class MainCoordinator<
   typealias SpecimenDestination = MainTab
   typealias ModalDestination = DestinationNever
   typealias StackDestination = DestinationNever
+  
+  func initialContent() -> some View {
+    CoordinatedScreen.tabbed(
+      coordinator: self
+    )
+  }
 
   @ViewBuilder
   func content(forSpecimen destination: SpecimenDestination) -> some View {

@@ -8,31 +8,8 @@
 import SwiftUI
 
 @MainActor
-public protocol SpecimenCoordinatorType: CoordinatorBase {
-  associatedtype SpecimenDestination: SomeDestination
-  associatedtype SpecimenDestinationScreen: View
+public protocol SpecimenCoordinatorType: NavigationCoordinatorType where SpecimenDestination: DestinationType {
 
-  @ViewBuilder
-  func content(forSpecimen destination: SpecimenDestination) -> SpecimenDestinationScreen
-  func transition(forSpecimen destination: SpecimenDestination) -> AnyTransition
-}
-
-extension SpecimenCoordinatorType {
-  public func screen(
-    forSpecimen destination: SpecimenDestination
-  ) -> some View {
-    content(
-      forSpecimen: destination
-    )
-    .transition(
-      transition(forSpecimen: destination)
-    )
-    .id(destination)
-  }
-  
-  public func transition(forSpecimen destination: SpecimenDestination) -> AnyTransition {
-    .opacity
-  }
 }
 
 @MainActor
@@ -52,7 +29,7 @@ extension SpecimenCoordinatorType {
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) async where SpecimenDestination: DestinationType {
+  ) async {
     await navigator.replaceSpecimenDestination(
       with: destination,
       animated: animated,

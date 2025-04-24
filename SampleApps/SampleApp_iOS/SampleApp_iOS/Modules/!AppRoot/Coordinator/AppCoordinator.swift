@@ -17,7 +17,7 @@ enum AppDestination: String, DestinationType {
 @MainActor
 final class AppCoordinator<
   FactoryDelegateType: AppCoordinatorFactoryDelegateType
->: CoordinatorBase, CoordinatorType, SpecimenCoordinatorType {
+>: CoordinatorBase, SpecimenCoordinatorType {
   let factory: FactoryDelegateType
   
   // MARK: - Init
@@ -38,6 +38,11 @@ final class AppCoordinator<
   typealias ModalDestination = DestinationNever
   typealias StackDestination = DestinationNever
 
+  func initialContent() -> some View {
+    AppRoot(coordinator: self)
+  }
+  
+  @ViewBuilder
   func content(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .appInit:
@@ -59,12 +64,11 @@ final class AppCoordinator<
         }
       )
     case .main:
-      CoordinatedScreen.tabbed(
-        coordinator: addChild(
-          for: destination,
-          factory.createMainCoordinator
-        )
+      addChild(
+        for: destination,
+        factory.createMainCoordinator
       )
+      .initialContent()
     }
   }
   

@@ -27,7 +27,7 @@ enum OnboardingDestination {
 @MainActor
 final class OnboardingCoordinator<
   FactoryDelegateType: OnboardingCoordinatorFactoryDelegateType
->: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
+>: CoordinatorBase, NavigationCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
   let factory: FactoryDelegateType
   
   private(set) var currentStepIdx = 0
@@ -50,7 +50,7 @@ final class OnboardingCoordinator<
   typealias ModalDestination = OnboardingDestination.Modal
   typealias StackDestination = OnboardingDestination.Stack
 
-  func initialScreen() -> some View {
+  func initialContent() -> some View {
     factory.createStepScreen(
       for: OnboardingStep.allCases[0],
       onNext: Callback { [unowned self] in

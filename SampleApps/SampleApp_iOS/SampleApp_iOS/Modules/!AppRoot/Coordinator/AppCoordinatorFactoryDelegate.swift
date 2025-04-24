@@ -9,10 +9,11 @@ import SwiftNavigationCoordinator
 import SwiftUI
 
 // sourcery: AutoMockable
-protocol AppCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
+@MainActor
+protocol AppCoordinatorFactoryDelegateType {
   associatedtype AppInitScreenType: View
-  associatedtype OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType where OnboardingCoordinatorType.ModalDestination: DestinationType, OnboardingCoordinatorType.StackDestination: DestinationType
-  associatedtype MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType where MainCoordinatorType.SpecimenDestination: DestinationType
+  associatedtype OnboardingCoordinatorType: StackCoordinatorType & ModalCoordinatorType
+  associatedtype MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
   
   func createAppInitScreen(
     onFinish: Callback<Void>

@@ -15,14 +15,14 @@ enum MultiChildFlowDestination: String, DestinationType {
   case confirmRestart
 }
 
-final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType {
+final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, NavigationCoordinatorType {
   // MARK: - Navigation Coordinator
 
   typealias SpecimenDestination = DestinationNever
   typealias ModalDestination = DestinationNever
   typealias StackDestination = MultiChildFlowDestination
 
-  func initialScreen() -> some View {
+  func initialContent() -> some View {
     MultiChildFlowRootScreen(
       onNext: { [unowned self] in
         Task(operation: showSelectPath)

@@ -15,7 +15,7 @@ enum InfoDestination: String, DestinationType {
 @MainActor
 final class InfoCoordinator<
   FactoryDelegateType: InfoCoordinatorFactoryDelegateType
->: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType {
+>: CoordinatorBase, NavigationCoordinatorType, StackCoordinatorType {
   let factory: FactoryDelegateType
 
   init(
@@ -34,7 +34,7 @@ final class InfoCoordinator<
   typealias ModalDestination = DestinationNever
   typealias StackDestination = InfoDestination
   
-  func initialScreen() -> some View {
+  func initialContent() -> some View {
     factory.createFirstScreen(
       onContinue: Callback { [unowned self] in
         await showLastScreen()

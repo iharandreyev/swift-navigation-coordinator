@@ -12,14 +12,14 @@ enum MultiChildFlowPathADestination: String, DestinationType {
   case finish
 }
 
-final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType {
+final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorType, NavigationCoordinatorType {
   // MARK: - Navigation Coordinator
 
   typealias SpecimenDestination = DestinationNever
   typealias ModalDestination = DestinationNever
   typealias StackDestination = MultiChildFlowPathADestination
 
-  func initialScreen() -> some View {
+  func initialContent() -> some View {
     MultiChildFlowPathAInitialScreen(
       onProceed: { [unowned self] in
         Task(operation: proceedToFinishFlow)

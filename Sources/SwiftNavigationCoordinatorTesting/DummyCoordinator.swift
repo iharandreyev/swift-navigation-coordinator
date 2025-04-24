@@ -13,7 +13,7 @@ import SwiftNavigationCoordinator
 /// Useful for testing coordinator behavior when we don't care about child coordinator type.
 public final class DummyCoordinator:
   CoordinatorBase,
-  ScreenCoordinatorType,
+  NavigationCoordinatorType,
   ModalCoordinatorType,
   StackCoordinatorType,
   StaticSpecimenCoordinatorType,
@@ -43,8 +43,8 @@ public final class DummyCoordinator:
       onFinish: onFinish
     )
   }
-  
-  public func initialScreen() -> DummyView {
+
+  public func initialContent() -> DummyView {
     DummyView()
   }
 

@@ -16,21 +16,21 @@ extension CoordinatedScreen {
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations pushed into coordinator's `StackNavigator`;
   public static func stackPage<
-    CoordinatorType: ScreenCoordinatorType & StackCoordinatorType
+    Coordinator: StackCoordinatorType
   >(
-    stackCoordinator coordinator: CoordinatorType
-  ) -> some View where CoordinatorType.StackDestination: DestinationType {
+    stackCoordinator coordinator: Coordinator
+  ) -> some View {
     _CoordinatedScreen_StackPage(coordinator: coordinator)
   }
 }
 
 struct _CoordinatedScreen_StackPage<
-  CoordinatorType: ScreenCoordinatorType & StackCoordinatorType
->: View where CoordinatorType.StackDestination: DestinationType {
-  private let coordinator: CoordinatorType
+  Coordinator: StackCoordinatorType
+>: View {
+  private let coordinator: Coordinator
 
   init(
-    coordinator: CoordinatorType
+    coordinator: Coordinator
   ) {
     self.coordinator = coordinator
   }

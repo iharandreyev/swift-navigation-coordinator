@@ -20,14 +20,14 @@ enum UsecasesDestination {
   }
 }
 
-final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
+final class UsecasesCoordinator: CoordinatorBase, NavigationCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
   // MARK: - Navigation Coordinator
 
   typealias SpecimenDestination = DestinationNever
   typealias ModalDestination = UsecasesDestination.Modal
   typealias StackDestination = UsecasesDestination.Stack
 
-  func initialScreen() -> some View {
+  func initialContent() -> some View {
     UsecasesListScreen(
       onShowModalSheet: { [unowned self] in
         Task(operation: showModalSheet)
