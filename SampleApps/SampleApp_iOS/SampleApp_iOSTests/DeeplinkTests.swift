@@ -35,11 +35,11 @@ struct DeeplinkTests {
     
     try await withTimeout(.seconds(1)) {
       for deeplink in Deeplink.allCases {
-        await navigator.replaceDestination(with: .appInit)
+        await navigator.replaceSpecimenDestination(with: .appInit)
         #expect(await sut.handleDeeplink(deeplink) == false)
-        await navigator.replaceDestination(with: .onboarding)
+        await navigator.replaceSpecimenDestination(with: .onboarding)
         #expect(await sut.handleDeeplink(deeplink) == false)
-        await navigator.replaceDestination(with: .main)
+        await navigator.replaceSpecimenDestination(with: .main)
         #expect(await sut.handleDeeplink(deeplink) == true)
       }
     }
@@ -72,7 +72,7 @@ struct DeeplinkTests {
       // Simulate view presentation
       _ = root.screenContent(for: .main)
       _ = main.screenContent(for: .usecases)
-      await mainNavigator.replaceDestination(with: .deeplinks)
+      await mainNavigator.replaceSpecimenDestination(with: .deeplinks)
       _ = main.screenContent(for: .deeplinks)
       
       #expect(root.factory.createMainCoordinatorCalled)
@@ -111,7 +111,7 @@ struct DeeplinkTests {
       // Simulate view presentation
       _ = root.screenContent(for: .main)
       _ = main.screenContent(for: .usecases)
-      await mainNavigator.replaceDestination(with: .deeplinks)
+      await mainNavigator.replaceSpecimenDestination(with: .deeplinks)
       _ = main.screenContent(for: .deeplinks)
       
       #expect(root.factory.createMainCoordinatorCalled)

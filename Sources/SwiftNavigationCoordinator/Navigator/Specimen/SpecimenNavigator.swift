@@ -35,7 +35,7 @@ public final class SpecimenNavigator<
     self.navigationQueue = navigationQueue
   }
   
-  public func replaceDestination(
+  public func replaceSpecimenDestination(
     with destination: DestinationType,
     animated: Bool = true
   ) async {

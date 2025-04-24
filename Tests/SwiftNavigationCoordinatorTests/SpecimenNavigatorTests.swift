@@ -22,7 +22,7 @@ struct SpecimenNavigatorTests {
     try await withTimeout(.seconds(1)) {
       let sut = await SpecimenNavigator.test(destination: DummyDestination(id: "0"))
 
-      await sut.replaceDestination(with: DummyDestination(id: "1"))
+      await sut.replaceSpecimenDestination(with: DummyDestination(id: "1"))
       
       #expect(await sut.destination.id == "1")
     }

@@ -85,11 +85,11 @@ final class AppCoordinator<
   }
   
   func initDidFinish() async {
-    await specimenNavigator.replaceDestination(with: .onboarding)
+    await specimenNavigator.replaceSpecimenDestination(with: .onboarding)
   }
 
   func onboardingDidFinish() async {
-    await specimenNavigator.replaceDestination(with: .main)
+    await specimenNavigator.replaceSpecimenDestination(with: .main)
   }
   
   override func processDeeplink(

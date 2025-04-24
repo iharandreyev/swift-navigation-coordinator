@@ -77,7 +77,7 @@ final class MainCoordinator<
   ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecases:
-      await specimenNavigator.replaceDestination(with: .usecases)
+      await specimenNavigator.replaceSpecimenDestination(with: .usecases)
       return .done
       
     case
@@ -89,7 +89,7 @@ final class MainCoordinator<
       Deeplink.showMultiChildPathB,
       Deeplink.showMultiChildPathBFinish:
       
-      await specimenNavigator.replaceDestination(with: .usecases)
+      await specimenNavigator.replaceSpecimenDestination(with: .usecases)
       return .partial
       
     default:

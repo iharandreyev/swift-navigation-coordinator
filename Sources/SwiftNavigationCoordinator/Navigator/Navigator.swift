@@ -88,7 +88,7 @@ public final class Navigator {
   
   // MARK: Modal State
   
-  public func present<Destination: DestinationType>(
+  public func presentDestination<Destination: DestinationType>(
     _ destination: ModalDestination<Destination>,
     animated: Bool = true,
     sourceFile: StaticString = #file,
@@ -103,7 +103,7 @@ public final class Navigator {
     }
   }
   
-  public func dismiss(
+  public func dismissDestination(
     animated: Bool = true,
     sourceFile: StaticString = #file,
     line: UInt = #line
