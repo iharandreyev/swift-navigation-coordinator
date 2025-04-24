@@ -36,7 +36,7 @@ private struct UIDisableViewModifier: ViewModifier {
 
 extension View {
   @inline(__always)
-  public func disableUiWhenAnimationsAreDisabled() -> some View {
+  func disableUiWhenAnimationsAreDisabled() -> some View {
     modifier(UIDisableViewModifier())
   }
 }
