@@ -45,5 +45,6 @@ struct _CoordinatedScreen_StackRoot<
         coordinator?.screen(for: destination)
       }
     )
+    .onRemoveFromHierarchy(finish: coordinator)
   }
 }

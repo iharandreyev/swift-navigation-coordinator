@@ -58,6 +58,7 @@ extension AnyIdentifiableDestination: Equatable {
 }
 
 extension AnyIdentifiableDestination {
+  @_disfavoredOverload
   public static func == <Destination: SomeDestination>(
     lhs: Self,
     rhs: Destination
@@ -74,7 +75,8 @@ extension AnyIdentifiableDestination {
 }
 
 extension Optional where Wrapped == AnyIdentifiableDestination {
-  public static func == <Destination: Sendable & Hashable>(
+  @_disfavoredOverload
+  public static func == <Destination: Sendable & Hashable & Identifiable>(
     lhs: Self,
     rhs: Destination
   ) -> Bool {
@@ -84,7 +86,7 @@ extension Optional where Wrapped == AnyIdentifiableDestination {
     }
   }
   
-  public static func == <Destination: Sendable & Hashable>(
+  public static func == <Destination: Sendable & Hashable & Identifiable>(
     lhs: Destination,
     rhs: Self
   ) -> Bool {

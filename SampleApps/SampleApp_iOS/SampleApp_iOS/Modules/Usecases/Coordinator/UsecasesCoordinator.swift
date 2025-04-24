@@ -89,7 +89,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   }
   
   private func showPushedScreen() async {
-    await navigator.push(Destination.pushedScreen)
+    await navigator.replacePath(with: Destination.pushedScreen)
   }
   
   private func showMultiChildFlow() async {
@@ -107,7 +107,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       as: destination
     )
     
-    await navigator.push(destination)
+    await navigator.replacePath(with: destination)
   }
 
 
