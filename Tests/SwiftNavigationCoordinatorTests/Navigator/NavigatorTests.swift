@@ -84,6 +84,6 @@ struct NavigatorTests {
   }
   
   enum Constants {
-    static let timeout = Duration.seconds(2)
+    static let timeout = Duration.milliseconds(1500)
   }
 }

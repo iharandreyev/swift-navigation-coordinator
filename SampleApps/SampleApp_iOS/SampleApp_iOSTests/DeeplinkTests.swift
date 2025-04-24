@@ -102,6 +102,6 @@ struct DeeplinkTests {
   }
   
   enum Constants {
-    static let timeout = Duration.seconds(1)
+    static let timeout = Duration.milliseconds(1500)
   }
 }

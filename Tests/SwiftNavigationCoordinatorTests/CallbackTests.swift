@@ -61,5 +61,5 @@ struct CallbackTests {
 private enum Constants {
   static let sutJobDuration = Duration.milliseconds(1)
   static let sutInvocationDelay = sutJobDuration * 3
-  static let timeout = Duration.seconds(3)
+  static let timeout = Duration.milliseconds(1500)
 }
