@@ -296,7 +296,7 @@ extension Navigator {
     _modalState._destination
   }
   
-  public func stack() -> [AnyDestination] {
+  public func stack() -> [AnyIdentifiableDestination] {
     _stackState.stack
   }
 }
@@ -308,7 +308,7 @@ extension Navigator: ModalStateDelegate {
 }
 
 extension Navigator: StackStateDelegate {
-  func stackStateDidDismiss(_ destination: AnyDestination) {
+  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination) {
     delegate?.navigatorDidDismissStackDestination(destination)
   }
 }
@@ -316,5 +316,5 @@ extension Navigator: StackStateDelegate {
 @MainActor
 public protocol NavigatorDelegate: AnyObject {
   func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination)
-  func navigatorDidDismissStackDestination(_ destination: AnyDestination)
+  func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination)
 }

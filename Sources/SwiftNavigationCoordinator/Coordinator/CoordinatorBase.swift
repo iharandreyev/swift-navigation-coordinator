@@ -8,9 +8,9 @@
 @MainActor
 open class CoordinatorBase: NavigatorDelegate {
   private(set) weak var parent: CoordinatorBase?
-  private(set) public var children: [AnyDestination: CoordinatorBase] = [:]
+  private(set) public var children: [AnyIdentifiableDestination: CoordinatorBase] = [:]
   
-  private var id: AnyDestination?
+  private var id: AnyIdentifiableDestination?
   private var onFinish: Callback<Void>?
   
   private(set) var isFinished: Bool = false
@@ -42,14 +42,14 @@ open class CoordinatorBase: NavigatorDelegate {
   @discardableResult
   public final func addChild<
     Child: CoordinatorBase,
-    Destination: Sendable & Hashable
+    Destination: Sendable & Hashable & Identifiable
   >(
     childFactory createChild: () -> Child,
     as destination: Destination,
     file: StaticString = #file,
     line: UInt = #line
   ) -> Child {
-    if let child = children[AnyDestination(destination)] {
+    if let child = children[AnyIdentifiableDestination(destination)] {
       guard let child = child as? Child else {
         fatalError(
           """
@@ -80,14 +80,14 @@ open class CoordinatorBase: NavigatorDelegate {
   
   public final func addChild<
     Child: CoordinatorBase,
-    Destination: Sendable & Hashable
+    Destination: Sendable & Hashable & Identifiable
   >(
     _ child: Child,
     as destination: Destination,
     file: StaticString = #file,
     line: UInt = #line
   ) {
-    let anyDestination = AnyDestination(destination)
+    let anyDestination = AnyIdentifiableDestination(destination)
     
     guard children[anyDestination] == nil else {
       fatalError(
@@ -238,9 +238,10 @@ open class CoordinatorBase: NavigatorDelegate {
   
   // MARK: - Navigator Delegate
   
-  open func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination) {}
+  open func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination) {
+  }
   
-  open func navigatorDidDismissStackDestination(_ destination: AnyDestination) {}
+  open func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination) {}
 }
 
 extension CoordinatorBase {

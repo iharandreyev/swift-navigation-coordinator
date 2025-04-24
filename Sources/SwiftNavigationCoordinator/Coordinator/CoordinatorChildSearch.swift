@@ -18,7 +18,7 @@ extension CoordinatorChildSearch {
     file: StaticString = #file,
     line: UInt = #line
   ) -> Child {
-    guard let someChild = children[AnyDestination(destination)] else {
+    guard let someChild = children[AnyIdentifiableDestination(destination)] else {
       fatalError(
         """
           Child for destination `\(ShortDescription(destination))` is not found in the children list  \
@@ -46,6 +46,6 @@ extension CoordinatorChildSearch {
   public func child(
     for destination: Destination
   ) -> CoordinatorBase? {
-    children[AnyDestination(destination)]
+    children[AnyIdentifiableDestination(destination)]
   }
 }

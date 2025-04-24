@@ -14,7 +14,7 @@ final class StackState {
   fileprivate var _path: SwiftUI.NavigationPath
   
   @PerceptionIgnored
-  fileprivate(set) var stack: [AnyDestination]
+  fileprivate(set) var stack: [AnyIdentifiableDestination]
 
   @PerceptionIgnored
   private var delegates: [ObjectIdentifier: AnyStackStateDelegate] = [:]
@@ -40,10 +40,10 @@ final class StackState {
   }
   
   /// Appends a new destination value to the end of this stack.
-  func append<Destination: Sendable & Hashable>(
+  func append<Destination: Sendable & Hashable & Identifiable>(
     _ destination: Destination
   ) {
-    let entry = AnyDestination(destination)
+    let entry = AnyIdentifiableDestination(destination)
     guard !stack.contains(entry) else {
       fatalError()
     }
@@ -65,10 +65,10 @@ final class StackState {
     stack.removeLast(numOfItemsToRemove)
   }
   
-  func firstIndex<Destination: Sendable & Hashable>(
+  func firstIndex<Destination: Sendable & Hashable & Identifiable>(
     of destination: Destination
   ) -> Int? {
-    stack.firstIndex(of: AnyDestination(destination))
+    stack.firstIndex(of: AnyIdentifiableDestination(destination))
   }
   
   func removeAll() {
@@ -87,7 +87,7 @@ final class StackState {
     sourceFile: StaticString,
     line: UInt
   ) {
-    let dismissedDestination: AnyDestination
+    let dismissedDestination: AnyIdentifiableDestination
     
     switch (newValue.count - _path.count) {
     case 0:
@@ -113,7 +113,7 @@ final class StackState {
     delegates[ObjectIdentifier(delegate)] = delegate.eraseToAnyStackStateDelegate()
   }
   
-  private func reportDismiss(of destination: AnyDestination) {
+  private func reportDismiss(of destination: AnyIdentifiableDestination) {
     for (id, delegate) in delegates {
       delegate.stackStateDidDismiss(destination)
       
@@ -146,7 +146,7 @@ extension Perception.Bindable where Value == StackState {
 
 @MainActor
 protocol StackStateDelegate: AnyObject {
-  func stackStateDidDismiss(_ destination: AnyDestination)
+  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination)
 }
 
 extension StackStateDelegate {
@@ -162,7 +162,7 @@ extension StackStateDelegate {
 
 @MainActor
 final class AnyStackStateDelegate: StackStateDelegate {
-  private var _stackStateDidDismiss: ((AnyDestination) -> Void)!
+  private var _stackStateDidDismiss: ((AnyIdentifiableDestination) -> Void)!
   
   private(set) var isValid = true
   
@@ -181,7 +181,7 @@ final class AnyStackStateDelegate: StackStateDelegate {
     }
   }
   
-  func stackStateDidDismiss(_ destination: AnyDestination) {
+  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination) {
     _stackStateDidDismiss(destination)
   }
 }
