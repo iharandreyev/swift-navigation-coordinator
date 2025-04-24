@@ -133,7 +133,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
   
   override func handleChildEvent(
     _ event: any ChildEventType,
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) async {
     switch event {
@@ -142,7 +142,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     case _ as MultiChildFlowPathBFinishEvent:
       await finish()
     default:
-      return await super.handleChildEvent(event, file: file, line: line)
+      return await super.handleChildEvent(event, sourceFile: sourceFile, line: line)
     }
   }
 }

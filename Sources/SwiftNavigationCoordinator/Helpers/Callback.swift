@@ -20,7 +20,7 @@ public actor Callback<Params: Sendable>: Sendable {
     self.job = job
   }
   
-  public func callAsFunction(_ params: Params) {
+  nonisolated public func callAsFunction(_ params: Params) {
     Task {
       await execute(params)
     }
@@ -78,7 +78,7 @@ public actor Callback<Params: Sendable>: Sendable {
 
 extension Callback where Params == Void {
   @inline(__always)
-  public func callAsFunction() {
+  nonisolated public func callAsFunction() {
     callAsFunction(())
   }
   

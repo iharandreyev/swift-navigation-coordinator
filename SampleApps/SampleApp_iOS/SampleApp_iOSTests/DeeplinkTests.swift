@@ -21,11 +21,10 @@ struct DeeplinkTests {
   
   @Test
   func appCoordinator_canHandleDeeplink_onlyWhen_main() async throws {
-    let navigator = SpecimenNavigator(
-      initialDestination: AppDestination.appInit
-    )
     let sut = AppCoordinator(
-      navigator: navigator,
+      navigator: Navigator(
+        initialSpecimenDestination: AppDestination.appInit
+      ),
       factory: AppCoordinatorFactoryDelegateMock.create()
     )
     
@@ -35,11 +34,11 @@ struct DeeplinkTests {
     
     try await withTimeout(.seconds(1)) {
       for deeplink in Deeplink.allCases {
-        await navigator.replaceSpecimenDestination(with: Destination.appInit)
+        await sut.navigator.replaceSpecimenDestination(with: AppDestination.appInit)
         #expect(await sut.handleDeeplink(deeplink) == false)
-        await navigator.replaceSpecimenDestination(with: Destination.onboarding)
+        await sut.navigator.replaceSpecimenDestination(with: AppDestination.onboarding)
         #expect(await sut.handleDeeplink(deeplink) == false)
-        await navigator.replaceSpecimenDestination(with: Destination.main)
+        await sut.navigator.replaceSpecimenDestination(with: AppDestination.main)
         #expect(await sut.handleDeeplink(deeplink) == true)
       }
     }
@@ -48,22 +47,13 @@ struct DeeplinkTests {
   @MainActor
   @Test
   func app_handles_showUsecasesAndModalSheet() async throws {
-    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
-    let usecases = UsecasesCoordinator(navigator: usecasesModalNavigator)
-    
-    let mainNavigator = SpecimenNavigator(
-      initialDestination: MainTab.usecases
-    )
+    let usecases = UsecasesCoordinator()
     let main = MainCoordinator(
-      navigator: mainNavigator,
+      navigator: Navigator(initialSpecimenDestination: MainTab.usecases),
       factory: MainCoordinatorFactoryDelegateMock.create(usecasesCoordinator: usecases)
     )
-    
-    let rootNavigator = SpecimenNavigator(
-      initialDestination: AppDestination.main
-    )
     let root = AppCoordinator(
-      navigator: rootNavigator,
+      navigator: Navigator(initialSpecimenDestination: AppDestination.main),
       factory: AppCoordinatorFactoryDelegateMock.create(mainCoordinator: main)
     )
     
@@ -72,7 +62,7 @@ struct DeeplinkTests {
       // Simulate view presentation
       _ = root.screenContent(for: .main)
       _ = main.screenContent(for: .usecases)
-      await mainNavigator.replaceSpecimenDestination(with: .deeplinks)
+      await main.navigator.replaceSpecimenDestination(with: MainTab.deeplinks)
       _ = main.screenContent(for: .deeplinks)
       
       #expect(root.factory.createMainCoordinatorCalled)
@@ -80,30 +70,21 @@ struct DeeplinkTests {
       #expect(!root.factory.createOnboardingCoordinatorOnFinishCallbackVoidCalled)
       
       #expect(await root.handleDeeplink(Deeplink.showUsecasesAndModalSheet))
-      #expect(await mainNavigator.destination == .usecases)
-      #expect(await usecasesModalNavigator.destination == .sheet(.modalSheet))
+      #expect(main.navigator.specimenDestination() == MainTab.usecases)
+      #expect(usecases.navigator.modalDestination() == .sheet(UsecasesDestination.modalSheet))
     }
   }
   
   @MainActor
   @Test
   func app_handles_showUsecasesAndModalCover() async throws {
-    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
-    let usecases = UsecasesCoordinator(navigator: usecasesModalNavigator)
-    
-    let mainNavigator = SpecimenNavigator(
-      initialDestination: MainTab.usecases
-    )
+    let usecases = UsecasesCoordinator()
     let main = MainCoordinator(
-      navigator: mainNavigator,
+      navigator: Navigator(initialSpecimenDestination: MainTab.usecases),
       factory: MainCoordinatorFactoryDelegateMock.create(usecasesCoordinator: usecases)
     )
-    
-    let rootNavigator = SpecimenNavigator(
-      initialDestination: AppDestination.main
-    )
     let root = AppCoordinator(
-      navigator: rootNavigator,
+      navigator: Navigator(initialSpecimenDestination: AppDestination.main),
       factory: AppCoordinatorFactoryDelegateMock.create(mainCoordinator: main)
     )
 
@@ -111,7 +92,7 @@ struct DeeplinkTests {
       // Simulate view presentation
       _ = root.screenContent(for: .main)
       _ = main.screenContent(for: .usecases)
-      await mainNavigator.replaceSpecimenDestination(with: .deeplinks)
+      await main.navigator.replaceSpecimenDestination(with: MainTab.deeplinks)
       _ = main.screenContent(for: .deeplinks)
       
       #expect(root.factory.createMainCoordinatorCalled)
@@ -119,8 +100,8 @@ struct DeeplinkTests {
       #expect(!root.factory.createOnboardingCoordinatorOnFinishCallbackVoidCalled)
       
       #expect(await root.handleDeeplink(Deeplink.showUsecasesAndModalCover))
-      #expect(await mainNavigator.destination == .usecases)
-      #expect(await usecasesModalNavigator.destination == .cover(.modalCover))
+      #expect(main.navigator.specimenDestination() == MainTab.usecases)
+      #expect(usecases.navigator.modalDestination() == .cover(UsecasesDestination.modalCover))
     }
   }
 }

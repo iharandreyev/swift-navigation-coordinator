@@ -64,7 +64,7 @@ struct AppCoordinatorTests {
     finishAppInit()
     await finishAppInit.onCompleted()
     
-    #expect(navigator.destination == AppDestination.onboarding)
+    #expect(navigator.specimenDestination() == AppDestination.onboarding)
   }
   
   @Test
@@ -77,19 +77,19 @@ struct AppCoordinatorTests {
     finishOnboarding()
     await finishOnboarding.onCompleted()
 
-    #expect(navigator.destination == AppDestination.main)
+    #expect(navigator.specimenDestination() == AppDestination.main)
   }
 
   private func createNavigator(
     initialDestination: AppDestination = .appInit
-  ) -> SpecimenNavigator<AppDestination> {
-    SpecimenNavigator(initialDestination: initialDestination)
+  ) -> Navigator {
+    Navigator(initialSpecimenDestination: initialDestination)
   }
   
   private func createSut(
-    navigator: SpecimenNavigator<AppDestination> = SpecimenNavigator(initialDestination: .appInit)
+    navigator: Navigator? = nil
   ) -> AppCoordinator<AppCoordinatorFactoryDelegateMock.Dummy> {
-    AppCoordinator(navigator: navigator, factory: factory)
+    AppCoordinator(navigator: navigator ?? createNavigator(), factory: factory)
   }
 }
 
