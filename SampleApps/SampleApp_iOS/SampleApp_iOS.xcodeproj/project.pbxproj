@@ -71,59 +71,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		14CB15793561D2D33B033D2F /* SampleApp_iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				91DCEAA8728DBC953BB880FA /* Sourcery */,
-			);
-			path = SampleApp_iOSTests;
-			sourceTree = "<group>";
-		};
-		1B2A45A5DA66C67DF55F9087 /* SampleApp_iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				2632D4F60192CB494AB600AB /* Sourcery */,
-			);
-			path = SampleApp_iOSTests;
-			sourceTree = "<group>";
-		};
-		2632D4F60192CB494AB600AB /* Sourcery */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Sourcery;
-			sourceTree = "<group>";
-		};
-		26EC7BFF6602F5BCA17936FD /* SampleApp_iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				B385E43B522DBA2B33475E6F /* Sourcery */,
-			);
-			path = SampleApp_iOSTests;
-			sourceTree = "<group>";
-		};
-		3E683AF48A507183E8A4880D /* Sourcery */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Sourcery;
-			sourceTree = "<group>";
-		};
-		7761DF86D6C6498C85A462C5 /* SampleApp_iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				A11E432BC7CDC2F793A1590A /* Sourcery */,
-			);
-			path = SampleApp_iOSTests;
-			sourceTree = "<group>";
-		};
-		91DCEAA8728DBC953BB880FA /* Sourcery */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Sourcery;
-			sourceTree = "<group>";
-		};
 		963B769C2D936B6C00ECEB6C = {
 			isa = PBXGroup;
 			children = (
@@ -131,12 +78,6 @@
 				963B76A72D936B6C00ECEB6C /* SampleApp_iOS */,
 				963B76B82D936B7100ECEB6C /* SampleApp_iOSTests */,
 				963B76A62D936B6C00ECEB6C /* Products */,
-				14CB15793561D2D33B033D2F /* SampleApp_iOSTests */,
-				BD41BFECCC484F6068C50AFF /* SampleApp_iOSTests */,
-				FF524D90BBB2B80DBA371D18 /* SampleApp_iOSTests */,
-				26EC7BFF6602F5BCA17936FD /* SampleApp_iOSTests */,
-				1B2A45A5DA66C67DF55F9087 /* SampleApp_iOSTests */,
-				7761DF86D6C6498C85A462C5 /* SampleApp_iOSTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -147,43 +88,6 @@
 				963B76B52D936B7100ECEB6C /* SampleApp_iOSTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		A11E432BC7CDC2F793A1590A /* Sourcery */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Sourcery;
-			sourceTree = "<group>";
-		};
-		B385E43B522DBA2B33475E6F /* Sourcery */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Sourcery;
-			sourceTree = "<group>";
-		};
-		BD41BFECCC484F6068C50AFF /* SampleApp_iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				3E683AF48A507183E8A4880D /* Sourcery */,
-			);
-			path = SampleApp_iOSTests;
-			sourceTree = "<group>";
-		};
-		D99B815551C24290E8BF9ED0 /* Sourcery */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Sourcery;
-			sourceTree = "<group>";
-		};
-		FF524D90BBB2B80DBA371D18 /* SampleApp_iOSTests */ = {
-			isa = PBXGroup;
-			children = (
-				D99B815551C24290E8BF9ED0 /* Sourcery */,
-			);
-			path = SampleApp_iOSTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
