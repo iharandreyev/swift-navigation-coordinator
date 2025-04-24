@@ -23,7 +23,7 @@ struct NavigationQueueTests {
         animated: true
       )
       
-      #expect(await sut.queueLength == 0)
+      #expect(await sut.testQueueLength() == 0)
     }
   }
   
@@ -37,7 +37,7 @@ struct NavigationQueueTests {
         animated: false
       )
       
-      #expect(await sut.queueLength == 0)
+      #expect(await sut.testQueueLength() == 0)
     }
   }
   
@@ -57,7 +57,7 @@ struct NavigationQueueTests {
         }
       }
       
-      #expect(await sut.queueLength == 0)
+      #expect(await sut.testQueueLength() == 0)
     }
   }
   

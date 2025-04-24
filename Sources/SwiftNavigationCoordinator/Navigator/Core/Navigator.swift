@@ -181,7 +181,7 @@ public final class Navigator {
   ) {
     self.init(
       initialModalDestination: initialModalDestination,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -192,7 +192,7 @@ public final class Navigator {
   ) {
     self.init(
       initialSpecimenDestination: initialSpecimenDestination,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
 
@@ -201,7 +201,7 @@ public final class Navigator {
   ) {
     self.init(
       initialStack: initialStack,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -215,7 +215,7 @@ public final class Navigator {
     self.init(
       initialModalDestination: initialModalDestination,
       initialSpecimenDestination: initialSpecimenDestination,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -228,7 +228,7 @@ public final class Navigator {
     self.init(
       initialSpecimenDestination: initialSpecimenDestination,
       initialStack: initialStack,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -241,7 +241,7 @@ public final class Navigator {
     self.init(
       initialModalDestination: initialModalDestination,
       initialStack: initialStack,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
@@ -257,12 +257,12 @@ public final class Navigator {
       initialModalDestination: initialModalDestination,
       initialSpecimenDestination: initialSpecimenDestination,
       initialStack: initialStack,
-      navigationQueue: Environment.navigationQueue
+      navigationQueue: NavigationQueue.live
     )
   }
   
   public convenience init() {
-    self.init(navigationQueue: Environment.navigationQueue)
+    self.init(navigationQueue: NavigationQueue.live)
   }
 
   public static func `continue`(_ parent: Navigator) -> Navigator {

@@ -16,6 +16,7 @@ extension CoordinatorBaseTests {
   func modalDismiss_finishesChildren() async throws {
     try await withTimeout(Constants.timeout) { @MainActor in
       let parent = CoordinatorBase(
+        navigator: Navigator.test(),
         onFinish: Callback(job: {})
       )
       
@@ -24,6 +25,7 @@ extension CoordinatorBaseTests {
         for: child1Destination
       ) {
         CoordinatorBase(
+          navigator: Navigator.test(),
           onFinish: Callback(job: {})
         )
       }
@@ -59,6 +61,7 @@ extension CoordinatorBaseTests {
   func pop_finishesChildren() async throws {
     try await withTimeout(Constants.timeout) { @MainActor in
       let parent = CoordinatorBase(
+        navigator: Navigator.test(),
         onFinish: Callback(job: {})
       )
       

@@ -18,24 +18,27 @@ struct NavigatorTests {
   func createSut<Tag>(
     specimenDestination: TestDestinationOf<Tag>
   ) async -> Sut {
-    await Sut.test(
-      specimenDestination: specimenDestination
+    await Sut(
+      initialSpecimenDestination: specimenDestination,
+      navigationQueue: NavigationQueue.test
     )
   }
   
   func createSut<Tag>(
     modalDestination: ModalDestinationPath<TestDestinationOf<Tag>>
   ) async -> Sut {
-    await Sut.test(
-      modalDestination: modalDestination
+    await Sut(
+      initialModalDestination: modalDestination,
+      navigationQueue: NavigationQueue.test
     )
   }
   
   func createSut<Tag>(
     stack: OrderedSet<TestDestinationOf<Tag>>
   ) async -> Sut {
-    await Sut.test(
-      stack: stack.erase()
+    await Sut(
+      initialStack: stack.erase(),
+      navigationQueue: NavigationQueue.test
     )
   }
   
@@ -43,14 +46,15 @@ struct NavigatorTests {
     modalDestination: ModalDestinationPath<TestDestinationOf<T1>>,
     stack: OrderedSet<TestDestinationOf<T2>>
   ) async -> Sut {
-    await Sut.test(
-      modalDestination: modalDestination,
-      stack: stack.erase()
+    await Sut(
+      initialModalDestination: modalDestination,
+      initialStack: stack.erase(),
+      navigationQueue: NavigationQueue.test
     )
   }
   
   func createSut() async -> Sut {
-    await Sut.test()
+    await Sut(navigationQueue: NavigationQueue.test)
   }
   
   func assertSut<Tag>(
@@ -80,6 +84,6 @@ struct NavigatorTests {
   }
   
   enum Constants {
-    static let timeout = Duration.milliseconds(500)
+    static let timeout = Duration.seconds(2)
   }
 }

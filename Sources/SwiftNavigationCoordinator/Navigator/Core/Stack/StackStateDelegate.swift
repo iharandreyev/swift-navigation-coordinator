@@ -16,7 +16,7 @@ extension StackStateDelegate {
     AnyStackStateDelegate(self)
   }
   
-  func eraseToAnyNavigationQueue() -> AnyStackStateDelegate where Self == AnyStackStateDelegate {
+  func eraseToAnyStackStateDelegate() -> AnyStackStateDelegate where Self == AnyStackStateDelegate {
     self
   }
 }

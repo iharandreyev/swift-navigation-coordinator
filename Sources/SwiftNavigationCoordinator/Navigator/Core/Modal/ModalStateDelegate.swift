@@ -16,7 +16,7 @@ extension ModalStateDelegate {
     AnyModalStateDelegate(self)
   }
   
-  func eraseToAnyNavigationQueue() -> AnyModalStateDelegate where Self == AnyModalStateDelegate {
+  func eraseToAnyModalStateDelegate() -> AnyModalStateDelegate where Self == AnyModalStateDelegate {
     self
   }
 }
