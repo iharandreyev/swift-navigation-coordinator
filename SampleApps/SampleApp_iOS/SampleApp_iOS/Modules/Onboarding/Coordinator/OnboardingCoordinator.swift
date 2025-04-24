@@ -5,6 +5,7 @@
 //  Created by Andreyeu, Ihar on 4/1/25.
 //
 
+import SUIOnRemoveFromParent
 import SwiftNavigationCoordinator
 import SwiftUI
 
@@ -51,13 +52,18 @@ final class OnboardingCoordinator<
   typealias StackDestination = OnboardingDestination.Stack
 
   func initialContent() -> some View {
-    factory.createStepScreen(
-      for: OnboardingStep.allCases[0],
-      onNext: Callback { [unowned self] in
-        await showNextStep()
-      },
-      onShowInfo: Callback{ [unowned self] in
-        await showInfo()
+    StackContainer.root(
+      coordinator: self,
+      initialContent: { [unowned self] in
+        factory.createStepScreen(
+          for: OnboardingStep.allCases[0],
+          onNext: Callback { [unowned self] in
+            await showNextStep()
+          },
+          onShowInfo: Callback{ [unowned self] in
+            await showInfo()
+          }
+        )
       }
     )
   }
@@ -71,8 +77,8 @@ final class OnboardingCoordinator<
   func content(forModal destination: ModalDestination) -> some View {
     switch destination {
     case .info:
-      CoordinatedScreen.stackRoot(
-        stackCoordinator: addChild(
+      StackContainer.leaf(
+        coordinator: addChild(
           for: destination
         ) {
           factory.createInfoCoordinator(

@@ -10,7 +10,10 @@ open class CoordinatorBase: NavigatorDelegate {
   private(set) weak var parent: CoordinatorBase?
   private(set) public var children: [AnyIdentifiableDestination: CoordinatorBase] = [:]
   
-  private var id: AnyIdentifiableDestination?
+  private(set) lazy var id = AnyIdentifiableDestination(
+    DestinationNever(id: ShortDescription(self).description)
+  )
+  
   private var onFinish: Callback<Void>?
   
   private(set) var isFinished: Bool = false
@@ -85,7 +88,7 @@ open class CoordinatorBase: NavigatorDelegate {
     
     self.parent = nil
     
-    if let id {
+    if parent.children.keys.contains(id) {
       parent.children.removeValue(forKey: id)
       return
     }

@@ -20,11 +20,15 @@ final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorTyp
   typealias StackDestination = MultiChildFlowPathADestination
 
   func initialContent() -> some View {
-    MultiChildFlowPathAInitialScreen(
-      onProceed: { [unowned self] in
-        Task(operation: proceedToFinishFlow)
-      }
-    )
+    Container(
+      coordinator: self
+    ) { [unowned self] in
+      MultiChildFlowPathAInitialScreen(
+        onProceed: { [unowned self] in
+          Task(operation: proceedToFinishFlow)
+        }
+      )
+    }
   }
   
   @ViewBuilder
