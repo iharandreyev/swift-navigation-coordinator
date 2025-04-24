@@ -11,7 +11,7 @@ public final class Navigator {
   private let createModalState: () -> ModalState
   private let createStackState: () -> StackState
   
-  private let navigationQueue: AnyNavigationQueue
+  let navigationQueue: AnyNavigationQueue
   
   // States are initialized lazily to avoid unnecessary init when appropriate states are not used by a coordinator
   private(set) lazy var _specimenState: SpecimenState = createSpecimenState()
@@ -85,38 +85,7 @@ public final class Navigator {
       _specimenState?.setDestination(destination)
     }
   }
-  
-  // MARK: Modal State
-  
-  public func presentDestination<Destination: DestinationType>(
-    _ destination: ModalDestinationPath<Destination>,
-    animated: Bool = true,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) async {
-    await navigationQueue.schedule(
-      sourceFile: sourceFile,
-      line: line,
-      animated: animated
-    ) { [weak _modalState] in
-      _modalState?.setDestination(destination)
-    }
-  }
-  
-  public func dismissDestination(
-    animated: Bool = true,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) async {
-    await navigationQueue.schedule(
-      sourceFile: sourceFile,
-      line: line,
-      animated: animated
-    ) { [weak _modalState] in
-      _modalState?.dismissDestination()
-    }
-  }
-  
+
   // MARK: - Stack State
   
   // MARK: Push
