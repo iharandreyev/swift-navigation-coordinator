@@ -14,7 +14,7 @@ extension View {
     for coordinator: CoordinatorType
   ) -> some View {
     self.modal(
-      modalNavigator: coordinator.modalNavigator,
+      navigator: coordinator.navigator,
       content: { [unowned coordinator] destination in
         coordinator.screen(for: destination)
       }
@@ -26,27 +26,9 @@ extension View {
     for coordinator: CoordinatorType
   ) -> some View {
     self.navigationDestination(
-      for: CoordinatorType.DestinationType.self,
+      for: CoordinatorType.Destination.self,
       destination: { [unowned coordinator] destination in
         coordinator.screen(for: destination)
-      }
-    )
-  }
-  
-  @inline(__always)
-  public func onRemoveFromHierarchy(
-    finish coordinator: CoordinatorBase,
-    file: StaticString = #file,
-    line: UInt = #line
-  ) -> some View {
-    self.onRemoveFromParent(
-      perform: { [weak coordinator] in
-        guard let coordinator else { return }
-        guard !coordinator.isFinished else { return }
-
-        Task {
-          await coordinator.finish(file: file, line: line)
-        }
       }
     )
   }

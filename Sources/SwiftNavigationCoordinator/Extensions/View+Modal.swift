@@ -10,14 +10,14 @@ import SwiftUI
 extension View {
   @inline(__always)
   public func modal<
-    Destination: ModalDestinationContentType,
+    Destination: DestinationType,
     DestinationContent: View
   >(
-    modalNavigator: ModalNavigator<Destination>,
+    navigator: Navigator,
     content: @escaping (Destination) -> DestinationContent
   ) -> some View {
     ModalContainer(
-      modalNavigator: modalNavigator,
+      navigator: navigator,
       root: { self },
       destinationContent: content
     )

@@ -6,21 +6,27 @@
 //
 
 @MainActor
-open class CoordinatorBase {
+open class CoordinatorBase: NavigatorDelegate {
   private(set) weak var parent: CoordinatorBase?
-  private(set) public var children: [AnyDestination: CoordinatorBase] = [:]
+  private(set) public var children: [AnyIdentifiableDestination: CoordinatorBase] = [:]
   
-  private var id: AnyDestination?
+  private var id: AnyIdentifiableDestination?
   private var onFinish: Callback<Void>?
   
   private(set) var isFinished: Bool = false
+  
+  public let navigator: Navigator
 
   // MARK: - Init
   
   public init(
+    navigator: Navigator = Navigator(),
     onFinish: Callback<Void>? = nil
   ) {
+    self.navigator = navigator
     self.onFinish = onFinish
+    
+    navigator.delegate = self
 
     logMessage("INIT: `\(ShortDescription(self))`")
   }
@@ -36,61 +42,22 @@ open class CoordinatorBase {
   @discardableResult
   public final func addChild<
     Child: CoordinatorBase,
-    Destination: Sendable & Hashable
-  >(
-    childFactory createChild: () -> Child,
-    as destination: Destination,
-    file: StaticString = #file,
-    line: UInt = #line
-  ) -> Child {
-    if let child = children[AnyDestination(destination)] {
-      guard let child = child as? Child else {
-        fatalError(
-          """
-            Type mismatch!                                        \
-            Expected `\(ShortDescription(child))` to be of type 
-            `\(ShortDescription(Child.self))`                     \
-            Source: \(file):\(line)
-          """,
-          file: file,
-          line: line
-        )
-      }
-      
-      return child
-    }
-    
-    let child = createChild()
-    
-    addChild(
-      child,
-      as: destination,
-      file: file,
-      line: line
-    )
-    
-    return child
-  }
-  
-  public final func addChild<
-    Child: CoordinatorBase,
-    Destination: Sendable & Hashable
+    Destination: Sendable & Hashable & Identifiable
   >(
     _ child: Child,
     as destination: Destination,
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
-  ) {
-    let anyDestination = AnyDestination(destination)
+  ) -> Child {
+    let anyDestination = AnyIdentifiableDestination(destination)
     
     guard children[anyDestination] == nil else {
       fatalError(
         """
           `\(ShortDescription(self))` already contains child of type 
-          `\(ShortDescription(Child.self))`"                          \
-          Source: \(file):\(line)
+          `\(ShortDescription(Child.self))`"                          
         """,
-        file: file,
+        sourceFile: sourceFile,
         line: line
       )
     }
@@ -106,10 +73,12 @@ open class CoordinatorBase {
         into `\(ShortDescription(self))`
       """
     )
+    
+    return child
   }
   
   public final func removeFromParent(
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
     guard let parent else { return }
@@ -128,11 +97,8 @@ open class CoordinatorBase {
     }
     
     fatalError(
-      """
-        `\(ShortDescription(self))` is not found in the `parent.children` list. \
-        Source: \(file):\(line)
-      """,
-      file: file,
+      "\(ShortDescription(self))` is not found in the `parent.children` list",
+      sourceFile: sourceFile,
       line: line
     )
   }
@@ -147,7 +113,7 @@ open class CoordinatorBase {
   // MARK: - Life Cycle
   
   open func finish(
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) async {
     guard !isFinished else {
@@ -156,7 +122,7 @@ open class CoordinatorBase {
           Trying to finish `\(ShortDescription(self))` that has already been finished \
           This is a programming error
         """,
-        file: file,
+        file: sourceFile,
         line: line
       )
     }
@@ -164,7 +130,7 @@ open class CoordinatorBase {
     await onFinish?.execute()
     
     removeFromParent(
-      file: file,
+      sourceFile: sourceFile,
       line: line
     )
     
@@ -172,6 +138,16 @@ open class CoordinatorBase {
     onFinish = nil
     
     logMessage("FINISH: \(ShortDescription(self))")
+  }
+  
+  @_disfavoredOverload
+  final func finish(
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) {
+    Task { [weak self] in
+      await self?.finish(sourceFile: sourceFile, line: line)
+    }
   }
   
   public final func setOnFinish(
@@ -184,23 +160,20 @@ open class CoordinatorBase {
   
   open func handleChildEvent(
     _ event: any ChildEventType,
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) async {
     guard let parent else {
       fatalError(
-        """
-          There's no handler for event `\(ShortDescription(event))` \
-          Source: \(file):\(line)
-        """,
-        file: file,
+        "There's no handler for event `\(ShortDescription(event))`",
+        sourceFile: sourceFile,
         line: line
       )
     }
     
     return await parent.handleChildEvent(
       event,
-      file: file,
+      sourceFile: sourceFile,
       line: line
     )
   }
@@ -229,6 +202,26 @@ open class CoordinatorBase {
 
     return false
   }
+  
+  // MARK: - Navigator Delegate
+  
+  open func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination) {
+    switch destination {
+    case id:
+      finish()
+    default:
+      child(for: destination)?.finish()
+    }
+  }
+  
+  open func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination) {
+    switch destination {
+    case id:
+      finish()
+    default:
+      child(for: destination)?.finish()
+    }
+  }
 }
 
 extension CoordinatorBase {
@@ -244,3 +237,13 @@ extension CoordinatorBase {
     false
   }
 }
+
+#if canImport(XCTest)
+
+extension CoordinatorBase {
+  func testOnFinish() -> Callback<Void>? {
+    onFinish
+  }
+}
+
+#endif

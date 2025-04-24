@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MainTab: ScreenDestinationType, CaseIterable {
+enum MainTab: String, DestinationType, CaseIterable {
   case usecases
   case deeplinks
 }
@@ -17,22 +17,20 @@ enum MainTab: ScreenDestinationType, CaseIterable {
 final class MainCoordinator<
   FactoryDelegateType: MainCoordinatorFactoryDelegateType
 >: CoordinatorBase, CoordinatorType, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
-  typealias DestinationType = MainTab
+  typealias Destination = MainTab
   
-  let specimenNavigator: SpecimenNavigator<MainTab>
   let factory: FactoryDelegateType
   
   init(
-    specimenNavigator: SpecimenNavigator<MainTab>,
+    navigator: Navigator,
     factory: FactoryDelegateType
   ) {
-    self.specimenNavigator = specimenNavigator
     self.factory = factory
     
-    super.init(onFinish: nil)
+    super.init(navigator: navigator, onFinish: nil)
   }
   
-  func screenContent(for destination: DestinationType) -> some View {
+  func screenContent(for destination: Destination) -> some View {
     switch destination {
     case .usecases:
       CoordinatedScreen.stackRoot(
@@ -40,7 +38,7 @@ final class MainCoordinator<
           childFactory: {
             factory.createUsecasesCoordinator()
           },
-          as: MainTab.usecases
+          as: destination
         )
       )
     case .deeplinks:
@@ -49,13 +47,13 @@ final class MainCoordinator<
           childFactory: {
             factory.createDeeplinksCoordinator()
           },
-          as: MainTab.deeplinks
+          as: destination
         )
       )
     }
   }
   
-  func label(for destination: DestinationType) -> some View {
+  func label(for destination: Destination) -> some View {
     switch destination {
     case .usecases:
       Label("Usecases", systemImage: "folder.fill")
@@ -77,7 +75,7 @@ final class MainCoordinator<
   ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecases:
-      await specimenNavigator.replaceDestination(with: .usecases)
+      await navigator.replaceSpecimenDestination(with: Destination.usecases)
       return .done
       
     case
@@ -89,7 +87,7 @@ final class MainCoordinator<
       Deeplink.showMultiChildPathB,
       Deeplink.showMultiChildPathBFinish:
       
-      await specimenNavigator.replaceDestination(with: .usecases)
+      await navigator.replaceSpecimenDestination(with: Destination.usecases)
       return .partial
       
     default:

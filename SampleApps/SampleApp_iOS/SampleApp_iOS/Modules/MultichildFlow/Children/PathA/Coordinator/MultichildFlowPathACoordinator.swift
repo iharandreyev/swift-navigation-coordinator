@@ -8,23 +8,12 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MultiChildFlowPathADestination: ScreenDestinationType {
+enum MultiChildFlowPathADestination: String, DestinationType {
   case finish
 }
 
 final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType {
-  typealias DestinationType = MultiChildFlowPathADestination
-  
-  let stackNavigator: StackNavigator<DestinationType>
-  
-  init(
-    stackNavigator: StackNavigator<DestinationType>,
-    onFinish: Callback<Void>? = nil
-  ) {
-    self.stackNavigator = stackNavigator
-    
-    super.init(onFinish: onFinish)
-  }
+  typealias Destination = MultiChildFlowPathADestination
 
   func initialScreen() -> some View {
     MultiChildFlowPathAInitialScreen(
@@ -32,10 +21,9 @@ final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorTyp
         Task(operation: proceedToFinishFlow)
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
   
-  func screen(for destination: DestinationType) -> some View {
+  func screen(for destination: Destination) -> some View {
     switch destination {
     case .finish:
       MultiChildFlowFinishScreen(
@@ -47,7 +35,7 @@ final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorTyp
   }
   
   func proceedToFinishFlow() async {
-    await stackNavigator.push(.finish)
+    await navigator.push(Destination.finish)
   }
   
   func finishFlow() async {

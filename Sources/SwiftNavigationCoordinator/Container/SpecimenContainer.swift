@@ -9,29 +9,29 @@ import Perception
 import SwiftUI
 
 public struct SpecimenContainer<
-  DestinationType: ScreenDestinationType,
+  Destination: DestinationType,
   DestinationContent: View
 >: ObservingView {
   @Perception.Bindable
-  private var specimenNavigator: SpecimenNavigator<DestinationType>
+  private var state: SpecimenState
   
-  private let destinationContent: (Binding<DestinationType>) -> DestinationContent
+  private let destinationContent: (Binding<Destination>) -> DestinationContent
   
   public init(
-    specimenNavigator: SpecimenNavigator<DestinationType>,
-    @ViewBuilder destinationContent: @escaping (Binding<DestinationType>) -> DestinationContent
+    navigator: Navigator,
+    @ViewBuilder destinationContent: @escaping (Binding<Destination>) -> DestinationContent
   ) {
-    self.specimenNavigator = specimenNavigator
+    self.state = navigator._specimenState
     self.destinationContent = destinationContent
   }
   
   public var content: some View {
     destinationContent(
-      $specimenNavigator.destination()
+      $state.destination(for: Destination.self)
     )
     .animation(
       .easeInOut,
-      value: specimenNavigator.destination
+      value: state.destination(for: Destination.self)
     )
   }
 }

@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum InfoDestination: String, ScreenDestinationType {
+enum InfoDestination: String, DestinationType {
   case last
 }
 
@@ -16,20 +16,18 @@ enum InfoDestination: String, ScreenDestinationType {
 final class InfoCoordinator<
   FactoryDelegateType: InfoCoordinatorFactoryDelegateType
 >: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType {
-  typealias DestinationType = InfoDestination
-  
-  let stackNavigator: StackNavigator<DestinationType>
+  typealias Destination = InfoDestination
+
   let factory: FactoryDelegateType
 
   init(
-    stackNavigator: StackNavigator<DestinationType>,
+    navigator: Navigator,
     factory: FactoryDelegateType,
     onFinish: Callback<Void>
   ) {
-    self.stackNavigator = stackNavigator
     self.factory = factory
     
-    super.init(onFinish: onFinish)
+    super.init(navigator: navigator, onFinish: onFinish)
   }
   
   func initialScreen() -> some View {
@@ -38,10 +36,9 @@ final class InfoCoordinator<
         await showLastScreen()
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
 
-  func screen(for destination: DestinationType) -> some View {
+  func screen(for destination: Destination) -> some View {
     switch destination {
     case .last:
       factory.createLastScreen(
@@ -53,6 +50,6 @@ final class InfoCoordinator<
   }
 
   func showLastScreen() async {
-    await stackNavigator.push(.last)
+    await navigator.push(Destination.last)
   }
 }

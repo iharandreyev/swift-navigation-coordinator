@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum OnboardingDestination: ScreenDestinationType, ModalDestinationContentType {
+enum OnboardingDestination: DestinationType {
   case step(OnboardingStep)
   case info
   
@@ -25,24 +25,19 @@ final class OnboardingCoordinator<
   FactoryDelegateType: OnboardingCoordinatorFactoryDelegateType
 >: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
   typealias DestinationType = OnboardingDestination
-  
-  let stackNavigator: StackNavigator<OnboardingDestination>
-  let modalNavigator: ModalNavigator<DestinationType>
+
   let factory: FactoryDelegateType
   
   private(set) var currentStepIdx = 0
   
   init(
-    stackNavigator: StackNavigator<DestinationType>,
-    modalNavigator: ModalNavigator<DestinationType>,
+    navigator: Navigator,
     factory: FactoryDelegateType,
     onFinish: Callback<Void>
   ) {
-    self.stackNavigator = stackNavigator
-    self.modalNavigator = modalNavigator
     self.factory = factory
     
-    super.init(onFinish: onFinish)
+    super.init(navigator: navigator, onFinish: onFinish)
   }
   
   func destinationDidDismiss(_ destination: OnboardingDestination) {
@@ -65,7 +60,6 @@ final class OnboardingCoordinator<
         await showInfo()
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
   
   func screen(for destination: OnboardingDestination) -> some View {
@@ -104,7 +98,7 @@ final class OnboardingCoordinator<
       return await finish()
     }
     
-    await stackNavigator.push(.step(nextStep))
+    await navigator.push(Destination.step(nextStep))
   }
   
   private func nextStep() -> OnboardingStep? {
@@ -114,10 +108,10 @@ final class OnboardingCoordinator<
   }
   
   func showInfo() async {
-    await modalNavigator.presentDestination(.sheet(.info))
+    await navigator.presentDestination(.sheet(Destination.info))
   }
   
   func infoDidFinish() async {
-    await modalNavigator.dismissDestination()
+    await navigator.dismissDestination()
   }
 }

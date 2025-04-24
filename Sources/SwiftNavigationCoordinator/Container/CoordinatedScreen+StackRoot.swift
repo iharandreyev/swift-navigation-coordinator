@@ -37,7 +37,7 @@ struct _CoordinatedScreen_StackRoot<
   
   var body: some View {
     StackContainer(
-      stackNavigator: coordinator.stackNavigator,
+      navigator: coordinator.navigator,
       rootContent: { [unowned coordinator] in
         coordinator.initialScreen()
       },

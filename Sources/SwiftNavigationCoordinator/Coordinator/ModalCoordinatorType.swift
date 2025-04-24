@@ -9,11 +9,9 @@ import SwiftUI
 
 @MainActor
 public protocol ModalCoordinatorType: CoordinatorBase {
-  associatedtype DestinationType: ModalDestinationContentType
+  associatedtype Destination: DestinationType
   associatedtype DestinationScreenType: View
-  
-  var modalNavigator: ModalNavigator<DestinationType> { get }
-  
+
   @ViewBuilder
-  func screen(for destination: DestinationType) -> DestinationScreenType
+  func screen(for destination: Destination) -> DestinationScreenType
 }

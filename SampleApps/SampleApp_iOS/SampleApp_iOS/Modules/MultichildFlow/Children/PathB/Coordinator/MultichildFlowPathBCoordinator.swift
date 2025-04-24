@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MultiChildFlowPathBDestination: String, ModalDestinationContentType {
+enum MultiChildFlowPathBDestination: String, DestinationType {
   case finish
   
   var id: String {
@@ -17,18 +17,7 @@ enum MultiChildFlowPathBDestination: String, ModalDestinationContentType {
 }
 
 final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorType, ScreenCoordinatorType {
-  typealias DestinationType = MultiChildFlowPathBDestination
-  
-  let modalNavigator: ModalNavigator<DestinationType>
-  
-  init(
-    modalNavigator: ModalNavigator<DestinationType>,
-    onFinish: Callback<Void>? = nil
-  ) {
-    self.modalNavigator = modalNavigator
-    
-    super.init(onFinish: onFinish)
-  }
+  typealias Destination = MultiChildFlowPathBDestination
 
   func initialScreen() -> some View {
     MultiChildFlowPathBInitialScreen(
@@ -36,10 +25,9 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
         Task(operation: proceedToFinishFlow)
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
   
-  func screen(for destination: DestinationType) -> some View {
+  func screen(for destination: Destination) -> some View {
     switch destination {
     case .finish:
       MultiChildFlowFinishScreen(
@@ -51,11 +39,11 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
   }
   
   func proceedToFinishFlow() async {
-    await modalNavigator.presentDestination(.cover(.finish))
+    await navigator.presentDestination(.cover(Destination.finish))
   }
   
   func finishFlow() async {
-    await modalNavigator.dismissDestination()
+    await navigator.dismissDestination()
     await handleChildEvent(MultiChildFlowPathBFinishEvent())
   }
   

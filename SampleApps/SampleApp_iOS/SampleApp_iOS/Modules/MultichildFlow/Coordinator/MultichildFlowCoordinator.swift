@@ -8,26 +8,15 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MultiChildFlowDestination: ScreenDestinationType {
+enum MultiChildFlowDestination: String, DestinationType {
   case selectPath
   case pathA
   case pathB
   case confirmRestart
 }
 
-final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType, CoordinatorChildSearch {
-  typealias DestinationType = MultiChildFlowDestination
-
-  let stackNavigator: StackNavigator<DestinationType>
-
-  init(
-    stackNavigator: StackNavigator<DestinationType>,
-    onFinish: Callback<Void>? = nil
-  ) {
-    self.stackNavigator = stackNavigator
-
-    super.init(onFinish: onFinish)
-  }
+final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType {
+  typealias Destination = MultiChildFlowDestination
 
   func initialScreen() -> some View {
     MultiChildFlowRootScreen(
@@ -35,10 +24,9 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
         Task(operation: showSelectPath)
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
 
-  func screen(for destination: DestinationType) -> some View {
+  func screen(for destination: Destination) -> some View {
     switch destination {
     case .selectPath:
       MultiChildFlowSelectPathScreen(
@@ -58,7 +46,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
       CoordinatedScreen.stackPage(
         stackCoordinator: child(
           ofType: MultiChildFlowPathACoordinator.self,
-          for: .pathA
+          for: destination
         )
       )
 
@@ -66,7 +54,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
       CoordinatedScreen.base(
         modalCoordinator: child(
           ofType: MultiChildFlowPathBCoordinator.self,
-          for: .pathB
+          for: destination
         )
       )
 
@@ -80,41 +68,41 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
   }
 
   func showSelectPath() async {
-    await stackNavigator.push(.selectPath)
+    await navigator.push(Destination.selectPath)
   }
 
   func showConfirmRestart() async {
-    await stackNavigator.push(.confirmRestart)
+    await navigator.push(Destination.confirmRestart)
   }
 
   func showPathA() async {
-    let destination = DestinationType.pathA
+    let destination = Destination.pathA
     
     addChild(
       childFactory: {
-        MultiChildFlowPathACoordinator(stackNavigator: stackNavigator.scope())
+        MultiChildFlowPathACoordinator(navigator: Navigator.continue(navigator))
       },
       as: destination
     )
 
-    await stackNavigator.push(destination)
+    await navigator.push(destination)
   }
 
   func showPathB() async {
-    let destination = DestinationType.pathB
+    let destination = Destination.pathB
     
     addChild(
       childFactory: {
-        MultiChildFlowPathBCoordinator(modalNavigator: ModalNavigator())
+        MultiChildFlowPathBCoordinator(navigator: Navigator())
       },
       as: destination
     )
 
-    await stackNavigator.push(destination)
+    await navigator.push(destination)
   }
 
   func restart() async {
-    await stackNavigator.popToRoot()
+    await navigator.popToRoot()
   }
 
   override func processDeeplink(
@@ -145,7 +133,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
   
   override func handleChildEvent(
     _ event: any ChildEventType,
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) async {
     switch event {
@@ -154,7 +142,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     case _ as MultiChildFlowPathBFinishEvent:
       await finish()
     default:
-      return await super.handleChildEvent(event, file: file, line: line)
+      return await super.handleChildEvent(event, sourceFile: sourceFile, line: line)
     }
   }
 }

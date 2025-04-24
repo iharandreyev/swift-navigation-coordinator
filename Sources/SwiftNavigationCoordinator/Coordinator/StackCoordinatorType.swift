@@ -9,11 +9,9 @@ import SwiftUI
 
 @MainActor
 public protocol StackCoordinatorType: CoordinatorBase {
-  associatedtype DestinationType: ScreenDestinationType
+  associatedtype Destination: DestinationType
   associatedtype DestinationScreenType: View
   
-  var stackNavigator: StackNavigator<DestinationType> { get }
-  
   @ViewBuilder
-  func screen(for destination: DestinationType) -> DestinationScreenType
+  func screen(for destination: Destination) -> DestinationScreenType
 }

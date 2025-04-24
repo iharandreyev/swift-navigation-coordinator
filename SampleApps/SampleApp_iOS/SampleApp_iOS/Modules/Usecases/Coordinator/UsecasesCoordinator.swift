@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum UsecasesDestination: String, ModalDestinationContentType {
+enum UsecasesDestination: String, DestinationType {
   case modalSheet
   case modalCover
   case pushedScreen
@@ -17,19 +17,8 @@ enum UsecasesDestination: String, ModalDestinationContentType {
   var id: String { rawValue }
 }
 
-final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType, CoordinatorChildSearch {
-  typealias DestinationType = UsecasesDestination
-  
-  let stackNavigator: StackNavigator<DestinationType>
-  let modalNavigator: ModalNavigator<DestinationType>
-  
-  init(
-    stackNavigator: StackNavigator<DestinationType> = StackNavigator(),
-    modalNavigator: ModalNavigator<DestinationType> = ModalNavigator()
-  ) {
-    self.stackNavigator = stackNavigator
-    self.modalNavigator = modalNavigator
-  }
+final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
+  typealias Destination = UsecasesDestination
   
   func initialScreen() -> some View {
     UsecasesListScreen(
@@ -48,7 +37,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
     )
   }
   
-  func screen(for destination: DestinationType) -> some View {
+  func screen(for destination: Destination) -> some View {
     switch destination {
     case .modalSheet:
       SomeScreen(
@@ -92,24 +81,24 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   }
   
   private func showModalSheet() async {
-    await modalNavigator.presentDestination(.sheet(.modalSheet))
+    await navigator.presentDestination(.sheet(Destination.modalSheet))
   }
   
   private func showModalCover() async {
-    await modalNavigator.presentDestination(.cover(.modalCover))
+    await navigator.presentDestination(.cover(Destination.modalCover))
   }
   
   private func showPushedScreen() async {
-    await stackNavigator.push(.pushedScreen)
+    await navigator.replacePath(with: Destination.pushedScreen)
   }
   
   private func showMultiChildFlow() async {
-    let destination = DestinationType.multiChildFlow
+    let destination = Destination.multiChildFlow
     
     addChild(
       childFactory: {
         MultiChildFlowCoordinator(
-          stackNavigator: stackNavigator.scope(),
+          navigator: Navigator.continue(navigator),
           onFinish: Callback { [unowned self] in
             await multiChildFlowDidFinish()
           }
@@ -118,12 +107,12 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       as: destination
     )
     
-    await stackNavigator.push(destination)
+    await navigator.replacePath(with: destination)
   }
 
 
   func multiChildFlowDidFinish() async {
-    await stackNavigator.popToRoot()
+    await navigator.popToRoot()
   }
 
   override func processDeeplink(

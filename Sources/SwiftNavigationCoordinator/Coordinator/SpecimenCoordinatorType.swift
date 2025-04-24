@@ -9,19 +9,17 @@ import SwiftUI
 
 @MainActor
 public protocol SpecimenCoordinatorType: CoordinatorBase {
-  associatedtype DestinationType: ScreenDestinationType
-  associatedtype DestinationScreenContentType: View
-  
-  var specimenNavigator: SpecimenNavigator<DestinationType> { get }
-  
+  associatedtype Destination: DestinationType
+  associatedtype DestinationScreenType: View
+
   @ViewBuilder
-  func screenContent(for destination: DestinationType) -> DestinationScreenContentType
-  func screenTransition(for destination: DestinationType) -> AnyTransition
+  func screenContent(for destination: Destination) -> DestinationScreenType
+  func screenTransition(for destination: Destination) -> AnyTransition
 }
 
 extension SpecimenCoordinatorType {
   public func screen(
-    for destination: DestinationType
+    for destination: Destination
   ) -> some View {
     screenContent(
       for: destination
@@ -32,10 +30,10 @@ extension SpecimenCoordinatorType {
     .id(destination)
   }
   
-  public func screenTransition(for destination: DestinationType) -> AnyTransition {
+  public func screenTransition(for destination: Destination) -> AnyTransition {
     .opacity
   }
 }
 
 @MainActor
-public protocol StaticSpecimenCoordinatorType: SpecimenCoordinatorType where DestinationType: CaseIterable, DestinationType.AllCases: RandomAccessCollection { }
+public protocol StaticSpecimenCoordinatorType: SpecimenCoordinatorType where Destination: CaseIterable, Destination.AllCases: RandomAccessCollection { }

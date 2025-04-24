@@ -9,22 +9,22 @@ import Perception
 import SwiftUI
 
 public struct StackContainer<
-  DestinationType: ScreenDestinationType,
+  Destination: DestinationType,
   RootContent: View,
   DestinationContent: View
 >: ObservingView {
   private let rootContent: () -> RootContent
-  private let destinationContent: (DestinationType) -> DestinationContent
+  private let destinationContent: (Destination) -> DestinationContent
   
   @Perception.Bindable
   private var state: StackState
   
   public init(
-    stackNavigator: StackNavigator<DestinationType>,
+    navigator: Navigator,
     rootContent: @escaping () -> RootContent,
-    destinationContent: @escaping (DestinationType) -> DestinationContent
+    destinationContent: @escaping (Destination) -> DestinationContent
   ) {
-    self.state = stackNavigator.state
+    self.state = navigator._stackState
     self.rootContent = rootContent
     self.destinationContent = destinationContent
   }
@@ -35,7 +35,7 @@ public struct StackContainer<
       root: {
         rootContent()
           .navigationDestination(
-            for: DestinationType.self,
+            for: Destination.self,
             destination: destinationContent
           )
       }

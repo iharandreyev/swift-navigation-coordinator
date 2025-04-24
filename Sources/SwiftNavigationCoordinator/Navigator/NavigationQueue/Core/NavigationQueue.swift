@@ -10,14 +10,15 @@ import Foundation
 import SwiftUI
 
 /// Used to throttle animation completions to avoid multiple transitions at the same time
-public actor NavigationQueue {
+@MainActor
+public final class NavigationQueue {
   private let withoutAnimations: WithoutAnimations
   private let withAnimations: WithAnimations
   
   // Fifo queue
   private var queue: [NavigationQueueItem] = []
   
-  init<ClockType: Clock<Duration>>(
+  nonisolated init<ClockType: Clock<Duration>>(
     clock: ClockType
   ) {
     self.withoutAnimations = WithoutAnimations(clock: clock)
@@ -97,7 +98,7 @@ public actor NavigationQueue {
       await withoutAnimations.run(next.job)
     }
 
-    await next.completion?()
+    next.completion?()
     
     logMessage("NavigationQueue: Did complete \(next)")
     await resolveQueue()
@@ -140,3 +141,15 @@ extension NavigationQueue {
 }
 
 #endif
+
+extension NavigationQueue: NavigationQueueType {
+  func schedule(
+    sourceFile: StaticString,
+    line: UInt,
+    function: StaticString,
+    animated: Bool,
+    update: @MainActor @Sendable @escaping () -> Void
+  ) async {
+    await schedule(uiUpdate: update, animated: animated, function: function)
+  }
+}

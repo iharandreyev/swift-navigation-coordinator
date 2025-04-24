@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum AppDestination: ScreenDestinationType {
+enum AppDestination: String, DestinationType {
   case appInit
   case onboarding
   case main
@@ -18,22 +18,20 @@ enum AppDestination: ScreenDestinationType {
 final class AppCoordinator<
   FactoryDelegateType: AppCoordinatorFactoryDelegateType
 >: CoordinatorBase, CoordinatorType, SpecimenCoordinatorType {
-  typealias DestinationType = AppDestination
+  typealias Destination = AppDestination
   
-  let specimenNavigator: SpecimenNavigator<AppDestination>
   let factory: FactoryDelegateType
   
   init(
-    specimenNavigator: SpecimenNavigator<AppDestination>,
+    navigator: Navigator,
     factory: FactoryDelegateType
   ) {
-    self.specimenNavigator = specimenNavigator
     self.factory = factory
     
-    super.init(onFinish: nil)
+    super.init(navigator: navigator, onFinish: nil)
   }
 
-  func screenContent(for destination: DestinationType) -> some View {
+  func screenContent(for destination: Destination) -> some View {
     switch destination {
     case .appInit:
       factory.createAppInitScreen(
@@ -64,7 +62,7 @@ final class AppCoordinator<
     }
   }
   
-  func screenTransition(for destination: DestinationType) -> AnyTransition {
+  func screenTransition(for destination: Destination) -> AnyTransition {
     switch destination {
     case .appInit:
       return .asymmetric(
@@ -85,11 +83,11 @@ final class AppCoordinator<
   }
   
   func initDidFinish() async {
-    await specimenNavigator.replaceDestination(with: .onboarding)
+    await navigator.replaceSpecimenDestination(with: Destination.onboarding)
   }
 
   func onboardingDidFinish() async {
-    await specimenNavigator.replaceDestination(with: .main)
+    await navigator.replaceSpecimenDestination(with: Destination.main)
   }
   
   override func processDeeplink(
@@ -97,7 +95,7 @@ final class AppCoordinator<
   ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case _ as Deeplink:
-      guard specimenNavigator.destination == .main else {
+      guard navigator.specimenDestination() == AppDestination.main else {
         return .impossible
       }
       
