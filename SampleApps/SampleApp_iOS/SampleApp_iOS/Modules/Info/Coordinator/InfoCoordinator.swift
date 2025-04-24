@@ -16,8 +16,6 @@ enum InfoDestination: String, DestinationType {
 final class InfoCoordinator<
   FactoryDelegateType: InfoCoordinatorFactoryDelegateType
 >: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType {
-  typealias Destination = InfoDestination
-
   let factory: FactoryDelegateType
 
   init(
@@ -30,6 +28,12 @@ final class InfoCoordinator<
     super.init(navigator: navigator, onFinish: onFinish)
   }
   
+  // MARK: - Navigation Coordinator
+  
+  typealias SpecimenDestination = DestinationNever
+  typealias ModalDestination = DestinationNever
+  typealias StackDestination = InfoDestination
+  
   func initialScreen() -> some View {
     factory.createFirstScreen(
       onContinue: Callback { [unowned self] in
@@ -38,7 +42,18 @@ final class InfoCoordinator<
     )
   }
 
-  func screen(for destination: Destination) -> some View {
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
     switch destination {
     case .last:
       factory.createLastScreen(
@@ -48,8 +63,10 @@ final class InfoCoordinator<
       )
     }
   }
+  
+  // MARK: - Logic
 
   func showLastScreen() async {
-    await navigator.push(Destination.last)
+    await push(.last)
   }
 }

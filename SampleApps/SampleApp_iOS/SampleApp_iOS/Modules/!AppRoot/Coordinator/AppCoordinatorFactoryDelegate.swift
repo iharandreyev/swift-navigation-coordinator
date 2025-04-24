@@ -11,8 +11,8 @@ import SwiftUI
 // sourcery: AutoMockable
 protocol AppCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
   associatedtype AppInitScreenType: View
-  associatedtype OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
-  associatedtype MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
+  associatedtype OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType where OnboardingCoordinatorType.ModalDestination: DestinationType, OnboardingCoordinatorType.StackDestination: DestinationType
+  associatedtype MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType where MainCoordinatorType.SpecimenDestination: DestinationType
   
   func createAppInitScreen(
     onFinish: Callback<Void>
@@ -34,7 +34,7 @@ struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
   
   func createOnboardingCoordinator(
     onFinish: Callback<Void>
-  ) -> some ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType {
+  ) -> OnboardingCoordinator<OnboardingCoordinatorFactoryDelegate> {
     OnboardingCoordinator(
       navigator: Navigator(),
       factory: OnboardingCoordinatorFactoryDelegate(),
@@ -42,7 +42,7 @@ struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
     )
   }
   
-  func createMainCoordinator() -> some StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType {
+  func createMainCoordinator() -> MainCoordinator<MainCoordinatorFactoryDelegate> {
     MainCoordinator(
       navigator: Navigator(initialSpecimenDestination: MainTab.usecases),
       factory: MainCoordinatorFactoryDelegate()

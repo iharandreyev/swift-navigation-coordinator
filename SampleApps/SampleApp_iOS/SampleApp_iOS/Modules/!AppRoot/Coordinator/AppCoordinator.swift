@@ -18,20 +18,27 @@ enum AppDestination: String, DestinationType {
 final class AppCoordinator<
   FactoryDelegateType: AppCoordinatorFactoryDelegateType
 >: CoordinatorBase, CoordinatorType, SpecimenCoordinatorType {
-  typealias Destination = AppDestination
-  
   let factory: FactoryDelegateType
+  
+  // MARK: - Init
   
   init(
     navigator: Navigator,
-    factory: FactoryDelegateType
+    factory: FactoryDelegateType,
+    onFinish: Callback<Void>? = nil
   ) {
     self.factory = factory
     
-    super.init(navigator: navigator, onFinish: nil)
+    super.init(navigator: navigator, onFinish: onFinish)
   }
+  
+  // MARK: - Navigation Coordinator
+  
+  typealias SpecimenDestination = AppDestination
+  typealias ModalDestination = DestinationNever
+  typealias StackDestination = DestinationNever
 
-  func screenContent(for destination: Destination) -> some View {
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .appInit:
       factory.createAppInitScreen(
@@ -61,7 +68,7 @@ final class AppCoordinator<
     }
   }
   
-  func screenTransition(for destination: Destination) -> AnyTransition {
+  func transition(forSpecimen destination: SpecimenDestination) -> AnyTransition {
     switch destination {
     case .appInit:
       return .asymmetric(
@@ -81,13 +88,27 @@ final class AppCoordinator<
     }
   }
   
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
+    EmptyView()
+  }
+  
+  // MARK: - Logic
+  
   func initDidFinish() async {
-    await navigator.replaceSpecimenDestination(with: Destination.onboarding)
+    await replaceSpecimenDestination(with: .onboarding)
   }
 
   func onboardingDidFinish() async {
-    await navigator.replaceSpecimenDestination(with: Destination.main)
+    await replaceSpecimenDestination(with: .main)
   }
+  
+  // MARK: - Deeplink
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType

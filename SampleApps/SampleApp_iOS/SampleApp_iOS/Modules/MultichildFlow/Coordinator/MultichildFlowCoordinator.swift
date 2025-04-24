@@ -16,7 +16,11 @@ enum MultiChildFlowDestination: String, DestinationType {
 }
 
 final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType {
-  typealias Destination = MultiChildFlowDestination
+  // MARK: - Navigation Coordinator
+
+  typealias SpecimenDestination = DestinationNever
+  typealias ModalDestination = DestinationNever
+  typealias StackDestination = MultiChildFlowDestination
 
   func initialScreen() -> some View {
     MultiChildFlowRootScreen(
@@ -25,8 +29,19 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
       }
     )
   }
+  
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
+    EmptyView()
+  }
 
-  func screen(for destination: Destination) -> some View {
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
     switch destination {
     case .selectPath:
       MultiChildFlowSelectPathScreen(
@@ -67,16 +82,18 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     }
   }
 
+  // MARK: - Logic
+  
   func showSelectPath() async {
-    await navigator.push(Destination.selectPath)
+    await push(.selectPath)
   }
 
   func showConfirmRestart() async {
-    await navigator.push(Destination.confirmRestart)
+    await push(.confirmRestart)
   }
 
   func showPathA() async {
-    let destination = Destination.pathA
+    let destination = StackDestination.pathA
     
     addChild(
       for: destination
@@ -84,11 +101,11 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
       MultiChildFlowPathACoordinator(navigator: navigator)
     }
 
-    await navigator.push(destination)
+    await push(destination)
   }
 
   func showPathB() async {
-    let destination = Destination.pathB
+    let destination = StackDestination.pathB
     
     addChild(
       for: destination
@@ -96,12 +113,14 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
       MultiChildFlowPathBCoordinator()
     }
 
-    await navigator.push(destination)
+    await push(destination)
   }
 
   func restart() async {
-    await navigator.popToRoot()
+    await popToRoot()
   }
+  
+  // MARK: - Deeplink
 
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType

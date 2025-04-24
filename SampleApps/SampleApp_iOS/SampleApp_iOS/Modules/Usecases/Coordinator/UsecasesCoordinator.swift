@@ -8,18 +8,25 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum UsecasesDestination: String, DestinationType {
-  case modalSheet
-  case modalCover
-  case pushedScreen
-  case multiChildFlow
+enum UsecasesDestination {
+  enum Modal: String, DestinationType {
+    case modalSheet
+    case modalCover
+  }
   
-  var id: String { rawValue }
+  enum Stack: String, DestinationType {
+    case pushedScreen
+    case multiChildFlow
+  }
 }
 
 final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
-  typealias Destination = UsecasesDestination
-  
+  // MARK: - Navigation Coordinator
+
+  typealias SpecimenDestination = DestinationNever
+  typealias ModalDestination = UsecasesDestination.Modal
+  typealias StackDestination = UsecasesDestination.Stack
+
   func initialScreen() -> some View {
     UsecasesListScreen(
       onShowModalSheet: { [unowned self] in
@@ -37,7 +44,13 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
     )
   }
   
-  func screen(for destination: Destination) -> some View {
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
     switch destination {
     case .modalSheet:
       SomeScreen(
@@ -58,7 +71,12 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
         }
       )
       .id(destination)
+    }
+  }
 
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
+    switch destination {
     case .pushedScreen:
       SomeScreen(
         name: "a pushed screen",
@@ -79,21 +97,23 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
         )
     }
   }
+
+  // MARK: - Logic
   
   private func showModalSheet() async {
-    await navigator.presentDestination(.sheet(Destination.modalSheet))
+    await presentDestination(.sheet(.modalSheet))
   }
   
   private func showModalCover() async {
-    await navigator.presentDestination(.cover(Destination.modalCover))
+    await presentDestination(.cover(.modalCover))
   }
   
   private func showPushedScreen() async {
-    await navigator.replacePath(with: Destination.pushedScreen)
+    await replacePath(with: .pushedScreen)
   }
   
   private func showMultiChildFlow() async {
-    let destination = Destination.multiChildFlow
+    let destination = StackDestination.multiChildFlow
     
     addChild(
       for: destination
@@ -106,13 +126,14 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       )
     }
     
-    await navigator.replacePath(with: destination)
+    await replacePath(with: destination)
   }
-
 
   func multiChildFlowDidFinish() async {
-    await navigator.popToRoot()
+    await popToRoot()
   }
+    
+  // MARK: - Deeplink
 
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType

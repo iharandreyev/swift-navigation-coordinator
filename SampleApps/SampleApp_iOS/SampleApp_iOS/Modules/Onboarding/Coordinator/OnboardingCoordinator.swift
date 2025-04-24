@@ -8,14 +8,18 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum OnboardingDestination: DestinationType {
-  case step(OnboardingStep)
-  case info
+enum OnboardingDestination {
+  enum Modal: String, DestinationType {
+    case info
+  }
   
-  var id: String {
-    switch self {
-    case let .step(step): return "step-\(step.id)"
-    case .info: return "info"
+  enum Stack: DestinationType {
+    case step(OnboardingStep)
+    
+    var id: String {
+      switch self {
+      case let .step(step): return "step-\(step.id)"
+      }
     }
   }
 }
@@ -24,11 +28,11 @@ enum OnboardingDestination: DestinationType {
 final class OnboardingCoordinator<
   FactoryDelegateType: OnboardingCoordinatorFactoryDelegateType
 >: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
-  typealias DestinationType = OnboardingDestination
-
   let factory: FactoryDelegateType
   
   private(set) var currentStepIdx = 0
+  
+  // MARK: - Init
   
   init(
     navigator: Navigator,
@@ -40,16 +44,12 @@ final class OnboardingCoordinator<
     super.init(navigator: navigator, onFinish: onFinish)
   }
   
-  func destinationDidDismiss(_ destination: OnboardingDestination) {
-    logMessage("OnboardingCoordinator: Did dismiss \(destination)")
-    revertToPreviousStep()
-  }
-  
-  private func revertToPreviousStep() {
-    guard currentStepIdx > 0 else { return }
-    currentStepIdx -= 1
-  }
-  
+  // MARK: - Navigation Coordinator
+
+  typealias SpecimenDestination = DestinationNever
+  typealias ModalDestination = OnboardingDestination.Modal
+  typealias StackDestination = OnboardingDestination.Stack
+
   func initialScreen() -> some View {
     factory.createStepScreen(
       for: OnboardingStep.allCases[0],
@@ -62,21 +62,14 @@ final class OnboardingCoordinator<
     )
   }
   
-  func screen(for destination: OnboardingDestination) -> some View {
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
     switch destination {
-    case let .step(step):
-      factory.createStepScreen(
-        for: step,
-        onNext: Callback{ [unowned self] in
-          await showNextStep()
-        },
-        onShowInfo: Callback{ [unowned self] in
-          await showInfo()
-        }
-      )
-      .onRemoveFromParent { [weak self] in
-        self?.destinationDidDismiss(destination)
-      }
     case .info:
       CoordinatedScreen.stackRoot(
         stackCoordinator: addChild(
@@ -91,13 +84,44 @@ final class OnboardingCoordinator<
       )
     }
   }
+
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
+    switch destination {
+    case let .step(step):
+      factory.createStepScreen(
+        for: step,
+        onNext: Callback{ [unowned self] in
+          await showNextStep()
+        },
+        onShowInfo: Callback{ [unowned self] in
+          await showInfo()
+        }
+      )
+      .onRemoveFromParent { [weak self] in
+        self?.stepDidDismiss(step)
+      }
+    }
+  }
+  
+  // MARK: Logic
+  
+  func stepDidDismiss(_ destination: OnboardingStep) {
+    logMessage("OnboardingCoordinator: Did dismiss \(destination)")
+    revertToPreviousStep()
+  }
+  
+  private func revertToPreviousStep() {
+    guard currentStepIdx > 0 else { return }
+    currentStepIdx -= 1
+  }
   
   func showNextStep() async {
     guard let nextStep = nextStep() else {
       return await finish()
     }
     
-    await navigator.push(Destination.step(nextStep))
+    await push(.step(nextStep))
   }
   
   private func nextStep() -> OnboardingStep? {
@@ -107,10 +131,10 @@ final class OnboardingCoordinator<
   }
   
   func showInfo() async {
-    await navigator.presentDestination(.sheet(Destination.info))
+    await presentDestination(.sheet(.info))
   }
   
   func infoDidFinish() async {
-    await navigator.dismissDestination()
+    await dismissDestination()
   }
 }

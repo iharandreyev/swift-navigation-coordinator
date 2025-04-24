@@ -10,7 +10,7 @@ import SwiftNavigationCoordinator
 
 // sourcery: AutoMockable
 protocol MainCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
-  associatedtype UsecasesCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  associatedtype UsecasesCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType where UsecasesCoordinatorType.ModalDestination: DestinationType, UsecasesCoordinatorType.StackDestination: DestinationType
   associatedtype DeeplinksCoordinatorType: ScreenCoordinatorType
   
   func createUsecasesCoordinator() -> UsecasesCoordinatorType
@@ -18,7 +18,7 @@ protocol MainCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
 }
 
 struct MainCoordinatorFactoryDelegate: MainCoordinatorFactoryDelegateType {
-  func createUsecasesCoordinator() -> some ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType {
+  func createUsecasesCoordinator() -> UsecasesCoordinator {
     UsecasesCoordinator()
   }
   

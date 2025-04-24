@@ -17,7 +17,11 @@ enum MultiChildFlowPathBDestination: String, DestinationType {
 }
 
 final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorType, ScreenCoordinatorType {
-  typealias Destination = MultiChildFlowPathBDestination
+  // MARK: - Navigation Coordinator
+
+  typealias SpecimenDestination = DestinationNever
+  typealias ModalDestination = MultiChildFlowPathBDestination
+  typealias StackDestination = DestinationNever
 
   func initialScreen() -> some View {
     MultiChildFlowPathBInitialScreen(
@@ -27,7 +31,13 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
     )
   }
   
-  func screen(for destination: Destination) -> some View {
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
     switch destination {
     case .finish:
       MultiChildFlowFinishScreen(
@@ -37,15 +47,24 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
       )
     }
   }
+
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
+    EmptyView()
+  }
+
+  // MARK: - Logic
   
   func proceedToFinishFlow() async {
-    await navigator.presentDestination(.cover(Destination.finish))
+    await presentDestination(.cover(.finish))
   }
   
   func finishFlow() async {
-    await navigator.dismissDestination()
+    await dismissDestination()
     await handleChildEvent(MultiChildFlowPathBFinishEvent())
   }
+  
+  // MARK: - Deeplink
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
