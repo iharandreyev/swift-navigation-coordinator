@@ -26,7 +26,7 @@ extension NavigatorTests {
   @Test
   func dismissDestination_finishes() async throws {
     try await withTimeout(Constants.timeout) {
-      let sut = await createSut(modalDestination: .sheet(.first))
+      let sut = await createSut(modalDestination: .sheet(TestDestination.first))
       
       await sut.dismissDestination()
       

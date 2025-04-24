@@ -45,7 +45,7 @@ open class CoordinatorBase: NavigatorDelegate {
     Destination: Sendable & Hashable & Identifiable
   >(
     _ child: Child,
-    as destination: Destination,
+    for destination: Destination,
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) -> Child {

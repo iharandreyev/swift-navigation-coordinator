@@ -16,9 +16,7 @@ enum MainTab: String, DestinationType, CaseIterable {
 @MainActor
 final class MainCoordinator<
   FactoryDelegateType: MainCoordinatorFactoryDelegateType
->: CoordinatorBase, CoordinatorType, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
-  typealias Destination = MainTab
-  
+>: CoordinatorBase, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
   let factory: FactoryDelegateType
   
   init(
@@ -30,30 +28,40 @@ final class MainCoordinator<
     super.init(navigator: navigator, onFinish: nil)
   }
   
-  func screenContent(for destination: Destination) -> some View {
+  // MARK: - Navigation Coordinator
+  
+  typealias SpecimenDestination = MainTab
+  typealias ModalDestination = DestinationNever
+  typealias StackDestination = DestinationNever
+  
+  func initialContent() -> some View {
+    CoordinatedScreen.tabbed(
+      coordinator: self
+    )
+  }
+
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .usecases:
       CoordinatedScreen.stackRoot(
         modalCoordinator: addChild(
-          childFactory: {
-            factory.createUsecasesCoordinator()
-          },
-          as: destination
+          for: destination,
+          factory.createUsecasesCoordinator
         )
       )
     case .deeplinks:
       CoordinatedScreen.base(
         coordinator: addChild(
-          childFactory: {
-            factory.createDeeplinksCoordinator()
-          },
-          as: destination
+          for: destination,
+          factory.createDeeplinksCoordinator
         )
       )
     }
   }
   
-  func label(for destination: Destination) -> some View {
+  @ViewBuilder
+  func label(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .usecases:
       Label("Usecases", systemImage: "folder.fill")
@@ -69,13 +77,25 @@ final class MainCoordinator<
 //      }
     }
   }
+
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
+    EmptyView()
+  }
+  
+  // MARK: - Deeplink
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
   ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecases:
-      await navigator.replaceSpecimenDestination(with: Destination.usecases)
+      await replaceSpecimenDestination(with: .usecases)
       return .done
       
     case
@@ -87,7 +107,7 @@ final class MainCoordinator<
       Deeplink.showMultiChildPathB,
       Deeplink.showMultiChildPathBFinish:
       
-      await navigator.replaceSpecimenDestination(with: Destination.usecases)
+      await replaceSpecimenDestination(with: .usecases)
       return .partial
       
     default:

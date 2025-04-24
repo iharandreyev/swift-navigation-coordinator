@@ -11,13 +11,13 @@ import SwiftUI
 @MainActor
 @Perceptible
 final class ModalState {
-  fileprivate(set) var _destination: ModalDestination<AnyIdentifiableDestination>?
+  fileprivate(set) var _destination: ModalDestinationPath<AnyIdentifiableDestination>?
   
   @PerceptionIgnored
-  private(set) var delegates: [ObjectIdentifier: AnyModalStateDelegate] = [:]
+  fileprivate(set) var delegates: [ObjectIdentifier: AnyModalStateDelegate] = [:]
 
   init<Destination: Sendable & Hashable & Identifiable>(
-    initialDestination: ModalDestination<Destination>?
+    initialDestination: ModalDestinationPath<Destination>?
   ) {
     _destination = initialDestination?.map(AnyIdentifiableDestination.init)
   }
@@ -27,7 +27,7 @@ final class ModalState {
   }
   
   func setDestination<Destination: Sendable & Hashable & Identifiable>(
-    _ modalDestination: ModalDestination<Destination>,
+    _ modalDestination: ModalDestinationPath<Destination>,
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
@@ -46,7 +46,7 @@ final class ModalState {
   }
   
   fileprivate func setBoundDestination<Destination: Sendable & Hashable & Identifiable>(
-    _ newValue: ModalDestination<Destination>?,
+    _ newValue: ModalDestinationPath<Destination>?,
     sourceFile: StaticString,
     line: UInt
   ) {
@@ -92,9 +92,9 @@ extension Perception.Bindable where Value == ModalState {
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) -> Binding<ModalDestination<Destination>?> {
-    Binding<ModalDestination<Destination>?>(
-      get: { [unowned wrappedValue] () -> ModalDestination<Destination>? in
+  ) -> Binding<ModalDestinationPath<Destination>?> {
+    Binding<ModalDestinationPath<Destination>?>(
+      get: { [unowned wrappedValue] () -> ModalDestinationPath<Destination>? in
         wrappedValue.destination(for: destinationType, sourceFile: sourceFile, line: line)
       },
       set: { [unowned wrappedValue] (newValue) in
@@ -110,7 +110,7 @@ extension ModalState {
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
     line: UInt = #line
-  ) -> ModalDestination<Destination>? {
+  ) -> ModalDestinationPath<Destination>? {
     _destination.map { destination in
       destination.map { value in
         cast(value.wrapped, sourceFile: sourceFile, line: line)
@@ -118,57 +118,3 @@ extension ModalState {
     }
   }
 }
-
-@MainActor
-protocol ModalStateDelegate: AnyObject {
-  func modalStateDidDismiss(_ destination: AnyIdentifiableDestination)
-}
-
-extension ModalStateDelegate {
-  @_disfavoredOverload
-  func eraseToAnyModalStateDelegate() -> AnyModalStateDelegate {
-    AnyModalStateDelegate(self)
-  }
-  
-  func eraseToAnyNavigationQueue() -> AnyModalStateDelegate where Self == AnyModalStateDelegate {
-    self
-  }
-}
-
-@MainActor
-final class AnyModalStateDelegate: ModalStateDelegate {
-  private var _modalStateDidDismiss: ((AnyIdentifiableDestination) -> Void)!
-  
-  private(set) var isValid = true
-  
-  init<Delegate: ModalStateDelegate>(
-    _ delegate: Delegate
-  ) {
-    assert(Delegate.self != AnyModalStateDelegate.self)
-    
-    _modalStateDidDismiss = { [weak self, weak delegate] in
-      guard let delegate else {
-        self?.isValid = false
-        return
-      }
-      
-      delegate.modalStateDidDismiss($0)
-    }
-  }
-  
-  func modalStateDidDismiss(_ destination: AnyIdentifiableDestination) {
-    _modalStateDidDismiss(destination)
-  }
-}
-
-#if canImport(XCTest)
-
-extension ModalState {
-  func testBinding<Destination: Sendable & Hashable & Identifiable>(
-    for destinationType: Destination.Type = Destination.self
-  ) -> Binding<ModalDestination<Destination>?> {
-    Perception.Bindable(self).destination(for: destinationType)
-  }
-}
-
-#endif

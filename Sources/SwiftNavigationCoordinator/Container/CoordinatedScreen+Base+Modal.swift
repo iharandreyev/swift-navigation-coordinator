@@ -16,21 +16,21 @@ extension CoordinatedScreen {
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `ModalNavigator`;
   public static func base<
-    CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType
+    Coordinator: ModalCoordinatorType
   >(
-    modalCoordinator coordinator: CoordinatorType
+    modalCoordinator coordinator: Coordinator
   ) -> some View {
     _CoordinatedScreen_Base_Modal(coordinator: coordinator)
   }
 }
 
 struct _CoordinatedScreen_Base_Modal<
-  CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType
+  Coordinator: ModalCoordinatorType
 >: View {
-  private let coordinator: CoordinatorType
+  private let coordinator: Coordinator
 
   init(
-    coordinator: CoordinatorType
+    coordinator: Coordinator
   ) {
     self.coordinator = coordinator
   }

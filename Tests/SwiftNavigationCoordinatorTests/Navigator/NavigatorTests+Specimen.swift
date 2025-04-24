@@ -14,7 +14,7 @@ extension NavigatorTests {
   @Test
   func replaceSpecimenDestination_finishes() async throws {
     try await withTimeout(Constants.timeout) {
-      let sut = await createSut(specimenDestination: .first)
+      let sut = await createSut(specimenDestination: TestDestination.first)
       let expectedDestination = TestDestination.second
       
       await sut.replaceSpecimenDestination(with: expectedDestination)

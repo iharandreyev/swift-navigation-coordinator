@@ -25,7 +25,7 @@ struct AppCoordinatorTests {
   func screen_for_appInit_invokes_createAppInitScreen() {
     let sut = createSut(navigator: createNavigator())
     
-    _ = sut.screen(for: .appInit)
+    _ = sut.content(forSpecimen: .appInit)
     
     #expect(factory.createAppInitScreenOnFinishCallbackVoidCallsCount == 1)
     #expect(factory.createOnboardingCoordinatorOnFinishCallbackVoidCallsCount == 0)
@@ -36,7 +36,7 @@ struct AppCoordinatorTests {
   func screen_for_onboarding_invokes_createOnboardingCoordinator() {
     let sut = createSut(navigator: createNavigator())
     
-    _ = sut.screen(for: .onboarding)
+    _ = sut.content(forSpecimen: .onboarding)
     
     #expect(factory.createAppInitScreenOnFinishCallbackVoidCallsCount == 0)
     #expect(factory.createOnboardingCoordinatorOnFinishCallbackVoidCallsCount == 1)
@@ -47,7 +47,7 @@ struct AppCoordinatorTests {
   func screen_for_main_invokes_reateMainCoordinator() {
     let sut = createSut(navigator: createNavigator())
     
-    _ = sut.screen(for: .main)
+    _ = sut.content(forSpecimen: .main)
     
     #expect(factory.createAppInitScreenOnFinishCallbackVoidCallsCount == 0)
     #expect(factory.createOnboardingCoordinatorOnFinishCallbackVoidCallsCount == 0)
@@ -58,7 +58,7 @@ struct AppCoordinatorTests {
   func appInit_finish_resultsIn_onboarding() async throws {
     let navigator = createNavigator(initialDestination: .appInit)
     let sut = createSut(navigator: navigator)
-    _ = sut.screen(for: .appInit)
+    _ = sut.content(forSpecimen: .appInit)
     
     let finishAppInit = factory.createAppInitScreenOnFinishCallbackVoidReceivedInvocations.first!
     finishAppInit()
@@ -71,7 +71,7 @@ struct AppCoordinatorTests {
   func onboarding_finish_resultsIn_main() async throws {
     let navigator = createNavigator(initialDestination: .onboarding)
     let sut = createSut(navigator: navigator)
-    _ = sut.screen(for: .onboarding)
+    _ = sut.content(forSpecimen: .onboarding)
     
     let finishOnboarding = factory.createOnboardingCoordinatorOnFinishCallbackVoidReceivedInvocations.first!
     finishOnboarding()

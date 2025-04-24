@@ -7,7 +7,7 @@
 
 import SwiftNavigationCoordinator
 
-typealias TestModalDestination = ModalDestination<TestDestination>
+typealias TestModalDestination = ModalDestinationPath<TestDestination>
 
 extension TestModalDestination {
   init() {

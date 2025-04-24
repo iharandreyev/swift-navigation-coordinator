@@ -15,17 +15,16 @@ import SwiftNavigationCoordinatorTesting
 struct NavigatorTests {
   typealias Sut = Navigator
   
-  func createSut(
-    specimenDestination: TestDestination
+  func createSut<Tag>(
+    specimenDestination: TestDestinationOf<Tag>
   ) async -> Sut {
     await Sut.test(
       specimenDestination: specimenDestination
     )
   }
   
-  @_disfavoredOverload
-  func createSut(
-    modalDestination: TestModalDestination? = nil
+  func createSut<Tag>(
+    modalDestination: ModalDestinationPath<TestDestinationOf<Tag>>
   ) async -> Sut {
     await Sut.test(
       modalDestination: modalDestination
@@ -33,13 +32,25 @@ struct NavigatorTests {
   }
   
   func createSut<Tag>(
-    modalDestination: ModalDestination<TestDestinationOf<Tag>>? = nil,
     stack: OrderedSet<TestDestinationOf<Tag>>
   ) async -> Sut {
     await Sut.test(
-      modalDestination: modalDestination,
-      stack: stack.elements
+      stack: stack.erase()
     )
+  }
+  
+  func createSut<T1, T2>(
+    modalDestination: ModalDestinationPath<TestDestinationOf<T1>>,
+    stack: OrderedSet<TestDestinationOf<T2>>
+  ) async -> Sut {
+    await Sut.test(
+      modalDestination: modalDestination,
+      stack: stack.erase()
+    )
+  }
+  
+  func createSut() async -> Sut {
+    await Sut.test()
   }
   
   func assertSut<Tag>(

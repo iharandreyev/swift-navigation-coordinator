@@ -15,18 +15,33 @@ enum MultiChildFlowDestination: String, DestinationType {
   case confirmRestart
 }
 
-final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType {
-  typealias Destination = MultiChildFlowDestination
+final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, NavigationCoordinatorType {
+  // MARK: - Navigation Coordinator
 
-  func initialScreen() -> some View {
+  typealias SpecimenDestination = DestinationNever
+  typealias ModalDestination = DestinationNever
+  typealias StackDestination = MultiChildFlowDestination
+
+  func initialContent() -> some View {
     MultiChildFlowRootScreen(
       onNext: { [unowned self] in
         Task(operation: showSelectPath)
       }
     )
   }
+  
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
+    EmptyView()
+  }
 
-  func screen(for destination: Destination) -> some View {
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
+    EmptyView()
+  }
+
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
     switch destination {
     case .selectPath:
       MultiChildFlowSelectPathScreen(
@@ -45,7 +60,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     case .pathA:
       CoordinatedScreen.stackPage(
         stackCoordinator: child(
-          ofType: MultiChildFlowPathACoordinator.self,
+          of: MultiChildFlowPathACoordinator.self,
           for: destination
         )
       )
@@ -53,7 +68,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     case .pathB:
       CoordinatedScreen.base(
         modalCoordinator: child(
-          ofType: MultiChildFlowPathBCoordinator.self,
+          of: MultiChildFlowPathBCoordinator.self,
           for: destination
         )
       )
@@ -67,43 +82,45 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     }
   }
 
+  // MARK: - Logic
+  
   func showSelectPath() async {
-    await navigator.push(Destination.selectPath)
+    await push(.selectPath)
   }
 
   func showConfirmRestart() async {
-    await navigator.push(Destination.confirmRestart)
+    await push(.confirmRestart)
   }
 
   func showPathA() async {
-    let destination = Destination.pathA
+    let destination = StackDestination.pathA
     
     addChild(
-      childFactory: {
-        MultiChildFlowPathACoordinator(navigator: Navigator.continue(navigator))
-      },
-      as: destination
-    )
+      for: destination
+    ) { navigator in
+      MultiChildFlowPathACoordinator(navigator: navigator)
+    }
 
-    await navigator.push(destination)
+    await push(destination)
   }
 
   func showPathB() async {
-    let destination = Destination.pathB
+    let destination = StackDestination.pathB
     
     addChild(
-      childFactory: {
-        MultiChildFlowPathBCoordinator(navigator: Navigator())
-      },
-      as: destination
-    )
+      for: destination
+    ) {
+      MultiChildFlowPathBCoordinator()
+    }
 
-    await navigator.push(destination)
+    await push(destination)
   }
 
   func restart() async {
-    await navigator.popToRoot()
+    await popToRoot()
   }
+  
+  // MARK: - Deeplink
 
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType

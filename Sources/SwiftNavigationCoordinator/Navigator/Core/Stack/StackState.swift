@@ -21,11 +21,16 @@ final class StackState {
   private var delegates: [ObjectIdentifier: AnyStackStateDelegate] = [:]
   
   init(
+    initialStack: OrderedSet<AnyIdentifiableDestination> = [],
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
+    _stack = initialStack
     _path = SwiftUI.NavigationPath()
-    _stack = []
+    
+    for destination in initialStack {
+      _path.append(destination)
+    }
   }
   
   /// A Boolean that indicates whether this _stack is empty.
@@ -179,55 +184,3 @@ extension StackState {
     _stack.elements
   }
 }
-
-@MainActor
-protocol StackStateDelegate: AnyObject {
-  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination)
-}
-
-extension StackStateDelegate {
-  @_disfavoredOverload
-  func eraseToAnyStackStateDelegate() -> AnyStackStateDelegate {
-    AnyStackStateDelegate(self)
-  }
-  
-  func eraseToAnyNavigationQueue() -> AnyStackStateDelegate where Self == AnyStackStateDelegate {
-    self
-  }
-}
-
-@MainActor
-final class AnyStackStateDelegate: StackStateDelegate {
-  private var _stackStateDidDismiss: ((AnyIdentifiableDestination) -> Void)!
-  
-  private(set) var isValid = true
-  
-  init<Delegate: StackStateDelegate>(
-    _ delegate: Delegate
-  ) {
-    assert(Delegate.self != AnyStackStateDelegate.self)
-    
-    _stackStateDidDismiss = { [weak self, weak delegate] in
-      guard let delegate else {
-        self?.isValid = false
-        return
-      }
-      
-      delegate.stackStateDidDismiss($0)
-    }
-  }
-  
-  func stackStateDidDismiss(_ destination: AnyIdentifiableDestination) {
-    _stackStateDidDismiss(destination)
-  }
-}
-
-#if canImport(XCTest)
-
-extension StackState {
-  func testBinding() -> Binding<SwiftUI.NavigationPath> {
-    Perception.Bindable(self).path()
-  }
-}
-
-#endif

@@ -13,26 +13,26 @@ extension CoordinatedScreen {
   /// The view configures infrastructure to:
   /// * pass `build view` requrests to the coordinator;
   public static func base<
-    CoordinatorType: ScreenCoordinatorType
+    Coordinator: NavigationCoordinatorType
   >(
-    coordinator: CoordinatorType
+    coordinator: Coordinator
   ) -> some View {
     _CoordinatedScreen_Base(coordinator: coordinator)
   }
 }
 
 struct _CoordinatedScreen_Base<
-  CoordinatorType: ScreenCoordinatorType
+  Coordinator: NavigationCoordinatorType
 >: View {
-  private let coordinator: CoordinatorType
+  private let coordinator: Coordinator
 
   init(
-    coordinator: CoordinatorType
+    coordinator: Coordinator
   ) {
     self.coordinator = coordinator
   }
   
   var body: some View {
-    coordinator.initialScreen()
+    coordinator.initialContent()
   }
 }

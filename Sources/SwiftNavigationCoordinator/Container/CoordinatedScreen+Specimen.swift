@@ -15,15 +15,15 @@ extension CoordinatedScreen {
   /// * pass `build destination view` requrests to the coordinator;
   /// * observe destinations to be presented using coordinator's `SpecimenNavigator`;
   public static func specimen<
-    CoordinatorType: SpecimenCoordinatorType
+    Coordinator: SpecimenCoordinatorType
   >(
-    coordinator: CoordinatorType
+    coordinator: Coordinator
   ) -> some View {
     SpecimenContainer(
       navigator: coordinator.navigator,
       destinationContent: { [unowned coordinator] destination in
-        coordinator.screen(
-          for: destination.wrappedValue
+        coordinator.content(
+          forSpecimen: destination.wrappedValue
         )
       }
     )

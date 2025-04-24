@@ -27,7 +27,7 @@ struct SpecimenStateTests {
   @Test
   func bindingUpdatesDestinationCorrectly() async {
     let sut = await createSut()
-    let binding = Perception.Bindable(sut).destination(for: TestDestination.self)
+    let binding = sut.testBinding(for: TestDestination.self)
     
     let expectedDestination = TestDestination.last
 

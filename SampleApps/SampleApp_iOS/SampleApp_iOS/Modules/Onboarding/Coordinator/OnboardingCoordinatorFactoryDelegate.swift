@@ -8,9 +8,10 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-protocol OnboardingCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
+@MainActor
+protocol OnboardingCoordinatorFactoryDelegateType {
   associatedtype StepScreenType: View
-  associatedtype InfoCoordinatorType: ScreenCoordinatorType & StackCoordinatorType
+  associatedtype InfoCoordinatorType: StackCoordinatorType
   
   func createStepScreen(
     for step: OnboardingStep,
@@ -38,7 +39,7 @@ struct OnboardingCoordinatorFactoryDelegate: OnboardingCoordinatorFactoryDelegat
   
   func createInfoCoordinator(
     onFinish: Callback<Void>
-  ) -> some ScreenCoordinatorType & StackCoordinatorType {
+  ) -> InfoCoordinator<InfoCoordinatorFactoryDelegate> {
     InfoCoordinator(
       navigator: Navigator(),
       factory: InfoCoordinatorFactoryDelegate(),

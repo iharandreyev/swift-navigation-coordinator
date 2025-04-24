@@ -13,13 +13,15 @@ import SwiftNavigationCoordinator
 /// Useful for testing coordinator behavior when we don't care about child coordinator type.
 public final class DummyCoordinator:
   CoordinatorBase,
-  ScreenCoordinatorType,
+  NavigationCoordinatorType,
   ModalCoordinatorType,
   StackCoordinatorType,
   StaticSpecimenCoordinatorType,
   LabelledSpecimenCoordinatorType
 {
-  public typealias Destination = DummyDestination
+  public typealias SpecimenDestination = DummyDestination
+  public typealias ModalDestination = DummyDestination
+  public typealias StackDestination = DummyDestination
 
   public var onProcessDeeplink: (any DeeplinkEventType) async -> ProcessDeeplinkResult
   
@@ -41,25 +43,33 @@ public final class DummyCoordinator:
       onFinish: onFinish
     )
   }
-  
-  public func initialScreen() -> DummyView {
+
+  public func initialContent() -> DummyView {
     DummyView()
   }
 
-  public func screenContent(
-    for destination: Destination
+  public func content(
+    forSpecimen destination: SpecimenDestination
+  ) -> DummyView {
+    DummyView()
+  }
+
+  public func label(
+    forSpecimen destination: SpecimenDestination
+  ) -> DummyLabel {
+    DummyLabel()
+  }
+  
+  public func content(
+    forModal destination: ModalDestination
   ) -> DummyView {
     DummyView()
   }
   
-  public func screen(for destination: Destination) -> DummyView {
+  public func content(
+    forStack destination: StackDestination
+  ) -> DummyView {
     DummyView()
-  }
-  
-  public func label(
-    for destination: Destination
-  ) -> DummyLabel {
-    DummyLabel()
   }
   
   public override func processDeeplink(

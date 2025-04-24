@@ -8,7 +8,8 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-protocol InfoCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
+@MainActor
+protocol InfoCoordinatorFactoryDelegateType {
   associatedtype FirstScreenType: View
   associatedtype LastScreenType: View
   

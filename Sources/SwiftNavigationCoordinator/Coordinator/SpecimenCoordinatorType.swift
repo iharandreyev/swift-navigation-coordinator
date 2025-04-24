@@ -8,32 +8,33 @@
 import SwiftUI
 
 @MainActor
-public protocol SpecimenCoordinatorType: CoordinatorBase {
-  associatedtype Destination: DestinationType
-  associatedtype DestinationScreenType: View
+public protocol SpecimenCoordinatorType: NavigationCoordinatorType where SpecimenDestination: DestinationType {
 
-  @ViewBuilder
-  func screenContent(for destination: Destination) -> DestinationScreenType
-  func screenTransition(for destination: Destination) -> AnyTransition
-}
-
-extension SpecimenCoordinatorType {
-  public func screen(
-    for destination: Destination
-  ) -> some View {
-    screenContent(
-      for: destination
-    )
-    .transition(
-      screenTransition(for: destination)
-    )
-    .id(destination)
-  }
-  
-  public func screenTransition(for destination: Destination) -> AnyTransition {
-    .opacity
-  }
 }
 
 @MainActor
-public protocol StaticSpecimenCoordinatorType: SpecimenCoordinatorType where Destination: CaseIterable, Destination.AllCases: RandomAccessCollection { }
+public protocol StaticSpecimenCoordinatorType: SpecimenCoordinatorType where SpecimenDestination: CaseIterable, SpecimenDestination.AllCases: RandomAccessCollection { }
+
+@MainActor
+public protocol LabelledSpecimenCoordinatorType: SpecimenCoordinatorType {
+  associatedtype SpecimenDestinationScreenLabel: View
+  
+  @ViewBuilder
+  func label(forSpecimen destination: SpecimenDestination) -> SpecimenDestinationScreenLabel
+}
+
+extension SpecimenCoordinatorType {
+  public func replaceSpecimenDestination(
+    with destination: SpecimenDestination,
+    animated: Bool = true,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) async {
+    await navigator.replaceSpecimenDestination(
+      with: destination,
+      animated: animated,
+      sourceFile: sourceFile,
+      line: line
+    )
+  }
+}
