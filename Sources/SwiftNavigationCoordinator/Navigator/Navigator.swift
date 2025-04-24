@@ -68,23 +68,6 @@ public final class Navigator {
       navigationQueue: navigationQueue
     )
   }
-  
-  // MARK: - Specimen State
-  
-  public func replaceSpecimenDestination<Destination: DestinationType>(
-    with destination: Destination,
-    animated: Bool = true,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) async {
-    await navigationQueue.schedule(
-      sourceFile: sourceFile,
-      line: line,
-      animated: animated
-    ) { [weak _specimenState] in
-      _specimenState?.setDestination(destination)
-    }
-  }
 
   // MARK: - Stack State
   
