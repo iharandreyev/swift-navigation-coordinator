@@ -239,9 +239,18 @@ open class CoordinatorBase: NavigatorDelegate {
   // MARK: - Navigator Delegate
   
   open func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination) {
+    guard destination == id else { return }
+    Task { [weak self] in
+      await self?.finish()
+    }
   }
   
-  open func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination) {}
+  open func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination) {
+    guard destination == id else { return }
+    Task { [weak self] in
+      await self?.finish()
+    }
+  }
 }
 
 extension CoordinatorBase {
