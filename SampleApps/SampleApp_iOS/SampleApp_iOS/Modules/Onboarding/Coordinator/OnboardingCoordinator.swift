@@ -67,11 +67,6 @@ final class OnboardingCoordinator<
       }
     )
   }
-  
-  @ViewBuilder
-  func content(forSpecimen destination: SpecimenDestination) -> some View {
-    EmptyView()
-  }
 
   @ViewBuilder
   func content(forModal destination: ModalDestination) -> some View {

@@ -80,16 +80,6 @@ final class MainCoordinator<
     }
   }
 
-  @ViewBuilder
-  func content(forModal destination: ModalDestination) -> some View {
-    EmptyView()
-  }
-
-  @ViewBuilder
-  func content(forStack destination: StackDestination) -> some View {
-    EmptyView()
-  }
-  
   // MARK: - Deeplink
   
   override func processDeeplink(

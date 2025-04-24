@@ -98,16 +98,6 @@ final class AppCoordinator<
     }
   }
   
-  @ViewBuilder
-  func content(forModal destination: ModalDestination) -> some View {
-    EmptyView()
-  }
-
-  @ViewBuilder
-  func content(forStack destination: StackDestination) -> some View {
-    EmptyView()
-  }
-  
   // MARK: - Logic
   
   func initDidFinish() async {
