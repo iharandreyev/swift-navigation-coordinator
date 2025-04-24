@@ -9,8 +9,8 @@
 func cast<In, Out>(
   _ value: In,
   into outType: Out.Type = Out.self,
-  sourceFile: StaticString = #file,
-  line: UInt = #line
+  invokedIn file: StaticString = #file,
+  at line: UInt = #line
 ) -> Out {
   guard let out = value as? Out else {
     fatalError(
@@ -19,8 +19,8 @@ func cast<In, Out>(
         Expected `\(ShortDescription(value))` to be of type 
         `\(ShortDescription(outType))`                     
       """,
-      sourceFile: sourceFile,
-      line: line
+      invokedIn: file,
+      at: line
     )
   }
   return out

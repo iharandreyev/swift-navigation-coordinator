@@ -55,7 +55,7 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
   
   func finishFlow() async {
     await dismissDestination()
-    await handleChildEvent(MultiChildFlowPathBFinishEvent())
+    await sendChildEvent(MultiChildFlowPathBFinishEvent())
   }
   
   // MARK: - Deeplink

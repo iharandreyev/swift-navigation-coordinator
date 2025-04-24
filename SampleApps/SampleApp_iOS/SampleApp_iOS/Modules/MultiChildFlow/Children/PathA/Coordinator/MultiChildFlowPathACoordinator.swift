@@ -50,7 +50,7 @@ final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorTyp
   }
   
   func finishFlow() async {
-    await handleChildEvent(MultiChildFlowPathAFinishEvent())
+    await sendChildEvent(MultiChildFlowPathAFinishEvent())
   }
   
   // MARK: - Deeplink

@@ -40,7 +40,7 @@ final class AppCoordinator<
 
   func initialContent() -> some View {
     AppContainer {
-      SpecimenContainer(
+      SpecimenContainer.for(
         coordinator: self,
         transition: { [unowned self] in
           transition(forSpecimen: $0)

@@ -11,7 +11,7 @@ import SwiftUI
 
 /// Used to throttle animation completions to avoid multiple transitions at the same time
 @MainActor
-final class NavigationQueue {
+final class NavigationQueue: NavigationQueueType {
   private let withoutAnimations: WithoutAnimations
   private let withAnimations: WithAnimations
   
@@ -26,26 +26,44 @@ final class NavigationQueue {
   }
 
   func schedule(
-    uiUpdate job: @MainActor @Sendable @escaping () -> Void,
+    update: @escaping NavigationQueueUpdate,
     animated: Bool,
-    function: StaticString = #function
-  ) async  {
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
+  ) async {
     if queue.isEmpty {
-      await enqueueFirst(job, animated: animated, function: function)
+      await enqueueFirst(
+        update,
+        animated: animated,
+        invokedIn: function,
+        from: file,
+        at: line
+      )
     } else {
-      await enqueueNext(job, animated: animated, function: function)
+      await enqueueNext(
+        update,
+        animated: animated,
+        invokedIn: function,
+        from: file,
+        at: line
+      )
     }
   }
   
   private func enqueueFirst(
     _ job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
-    function: StaticString
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) async {
     enqueue(
       job,
       animated: animated,
-      function: function
+      invokedIn: function,
+      from: file,
+      at: line
     )
     
     await resolveQueue()
@@ -54,7 +72,9 @@ final class NavigationQueue {
   private func enqueueNext(
     _ job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
-    function: StaticString
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) async  {
     await withCheckedContinuation { continuation in
       enqueue(
@@ -63,7 +83,9 @@ final class NavigationQueue {
         completion: {
           continuation.resume()
         },
-        function: function
+        invokedIn: function,
+        from: file,
+        at: line
       )
     }
   }
@@ -72,13 +94,17 @@ final class NavigationQueue {
     _ job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
     completion: NavigationQueueItem.Completion? = nil,
-    function: StaticString
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   )  {
     let item = NavigationQueueItem(
       job: job,
       animated: animated,
       completion: completion,
-      function: function
+      invokedIn: function,
+      from: file,
+      at: line
     )
     queue.append(item)
   }
@@ -95,6 +121,8 @@ final class NavigationQueue {
     }
 
     next.completion?()
+    
+    logMessage("NavigationQueue: Did complete \(next)")
     
     await resolveQueue()
   }
@@ -118,23 +146,13 @@ struct NavigationQueueItem: CustomStringConvertible {
     job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
     completion: Completion? = nil,
-    function: StaticString
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) {
     self.job = job
     self.animated = animated
     self.completion = completion
-    self.description = "\(function)"
-  }
-}
-
-extension NavigationQueue: NavigationQueueType {
-  func schedule(
-    sourceFile: StaticString,
-    line: UInt,
-    function: StaticString,
-    animated: Bool,
-    update: @MainActor @Sendable @escaping () -> Void
-  ) async {
-    await schedule(uiUpdate: update, animated: animated, function: function)
+    self.description = "`\(function)` called from `\(file):\(line)`"
   }
 }

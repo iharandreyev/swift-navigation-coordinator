@@ -11,21 +11,12 @@ extension Clock {
   /// Attempts to sleep, and prints a warning if the task has been cancelled for some reason
   func trySleep(
     for duration: Duration,
-    tolerance: Duration? = nil,
-    file: StaticString = #file,
-    line: UInt = #line
+    tolerance: Duration? = nil
   ) async {
     do {
       try await sleep(for: duration, tolerance: tolerance)
     } catch {
-      logWarning(
-        """
-          Sleep has finished with error: \(ShortDescription(error)) \
-          Source: \(file):\(line)
-        """,
-        file: file,
-        line: line
-      )
+      return
     }
   }
 }

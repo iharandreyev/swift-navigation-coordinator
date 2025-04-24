@@ -9,81 +9,64 @@ import Perception
 import SwiftUI
 
 #warning("TODO: Documentation")
-public struct SpecimenContainer<
-  Destination: DestinationType,
-  DestinationContent: View,
-  Container: View
->: ObservingView {
-  @Perception.Bindable
-  private var state: SpecimenState
-
-  private let destinationContent: (Binding<Destination>) -> DestinationContent
-  private let transition: (Destination) -> AnyTransition
-  
-  private let container: (
-    _ destination: Binding<Destination>,
-    _ destinationContent: @escaping (Binding<Destination>) -> DestinationContent,
-    _ transition: @escaping (Destination) -> AnyTransition
-  ) -> Container
-  
-  private init(
-    navigator: Navigator,
-    @ViewBuilder destinationContent: @escaping (Binding<Destination>) -> DestinationContent,
-    transition: @escaping (Destination) -> AnyTransition,
-    container: @escaping (
-      _ destination: Binding<Destination>,
-      _ destinationContent: @escaping (Binding<Destination>) -> DestinationContent,
-      _ transition: @escaping (Destination) -> AnyTransition
-    ) -> Container
-  ) {
-    self.state = navigator._specimenState
-    self.destinationContent = destinationContent
-    self.transition = transition
-    self.container = container
-  }
-  
-  public init(
+public enum SpecimenContainer {
+  @MainActor
+  public static func `for`<
+    Destination: DestinationType,
+    DestinationContent: View
+  >(
     navigator: Navigator,
     @ViewBuilder destinationContent: @escaping (Binding<Destination>) -> DestinationContent,
     transition: @escaping (Destination) -> AnyTransition = { _ in .opacity }
-  ) where Container == SpecimenContainerContent<Destination, DestinationContent> {
-    self.init(navigator: navigator, destinationContent: destinationContent, transition: transition) {
-      SpecimenContainerContent(
-        destination: $0,
-        destinationContent: $1,
-        transition: $2
-      )
-    }
-  }
-  
-  public init<Coordinator: SpecimenCoordinatorType>(
-    coordinator: Coordinator,
-    transition: @escaping (Destination) -> AnyTransition = { _ in .opacity }
-  ) where
-    Destination == Coordinator.SpecimenDestination,
-    DestinationContent == Coordinator.SpecimenDestinationContent,
-    Container == ModifiedContent<ModifiedContent<SpecimenContainerContent<Destination, DestinationContent>, OptionalModalModifier<Coordinator>>, OptionalStackDestinationModifier<Coordinator>>
-  {
-    self.init(
-      navigator: coordinator.navigator,
-      destinationContent: { [unowned coordinator] destination in
-        coordinator.content(forSpecimen: destination.wrappedValue)
-      },
-      transition: transition,
-      container: { [unowned coordinator] in
-        SpecimenContainerContent(
-          destination: $0,
-          destinationContent: $1,
-          transition: $2
-        )
-        .optionalModal(for: coordinator)
-        .optionalStackDestination(for: coordinator)
-      }
+  ) -> some View {
+    SpecimenContentContainer(
+      state: navigator._specimenState,
+      destinationContent: destinationContent,
+      transition: transition
     )
   }
   
-  public var content: some View {
-    SpecimenContainerContent(
+  @MainActor
+  public static func `for`<
+    Coordinator: SpecimenCoordinatorType
+  >(
+    coordinator: Coordinator,
+    transition: @escaping (Coordinator.SpecimenDestination) -> AnyTransition = { _ in .opacity }
+  ) -> some View {
+    SpecimenContentContainer(
+      state: coordinator.navigator._specimenState,
+      destinationContent: { [unowned coordinator] destination in
+        coordinator.content(forSpecimen: destination.wrappedValue)
+      },
+      transition: transition
+    )
+    .optionalModal(for: coordinator)
+    .optionalStackDestination(for: coordinator)
+  }
+}
+
+private struct SpecimenContentContainer<
+  Destination: DestinationType,
+  DestinationContent: View
+>: ObservingView {
+  @Perception.Bindable
+  private var state: SpecimenState
+  
+  private let destinationContent: (Binding<Destination>) -> DestinationContent
+  private let transition: (Destination) -> AnyTransition
+  
+  init(
+    state: SpecimenState,
+    destinationContent: @escaping (Binding<Destination>) -> DestinationContent,
+    transition: @escaping (Destination) -> AnyTransition
+  ) {
+    self.state = state
+    self.destinationContent = destinationContent
+    self.transition = transition
+  }
+  
+  var content: some View {
+    SpecimenContent(
       destination: $state.destination(for: Destination.self),
       destinationContent: destinationContent,
       transition: transition
@@ -91,7 +74,7 @@ public struct SpecimenContainer<
   }
 }
 
-public struct SpecimenContainerContent<
+private struct SpecimenContent<
   Destination: DestinationType,
   DestinationContent: View
 >: View {
@@ -109,7 +92,7 @@ public struct SpecimenContainerContent<
     self.transition = transition
   }
   
-  public var body: some View {
+  var body: some View {
     Group {
       destinationContent(
         destination

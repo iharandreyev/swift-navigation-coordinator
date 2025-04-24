@@ -5,31 +5,33 @@
 //  Created by Andreyeu, Ihar on 4/24/25.
 //
 
+typealias NavigationQueueUpdate = @MainActor @Sendable () -> Void
+
 @MainActor
 protocol NavigationQueueType: Sendable {
   func schedule(
-    sourceFile: StaticString,
-    line: UInt,
-    function: StaticString,
+    update: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
-    update: @MainActor @Sendable @escaping () -> Void
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) async
 }
 
 extension NavigationQueueType {
   func schedule(
-    sourceFile: StaticString,
-    line: UInt,
-    function: StaticString = #function,
+    update: @escaping NavigationQueueUpdate,
     animated: Bool = true,
-    update: @MainActor @Sendable @escaping () -> Void
+    invokedIn function: StaticString = #function,
+    from file: StaticString = #file,
+    at line: UInt = #line
   ) async {
     await schedule(
-      sourceFile: sourceFile,
-      line: line,
-      function: function,
+      update: update,
       animated: animated,
-      update: update
+      invokedIn: function,
+      from: file,
+      at: line
     )
   }
   

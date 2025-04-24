@@ -8,15 +8,15 @@
 @inline(__always)
 func fatalError(
   _ message: @autoclosure () -> String,
-  sourceFile: StaticString = #file,
-  line: UInt = #line
+  invokedIn file: StaticString = #file,
+  at line: UInt = #line
 ) -> Never {
   fatalError(
     """
       \(message()).                  \
-      Source: \(sourceFile):\(line)
+      Invoked in: \(file):\(line)
     """,
-    file: sourceFile,
+    file: file,
     line: line
   )
 }

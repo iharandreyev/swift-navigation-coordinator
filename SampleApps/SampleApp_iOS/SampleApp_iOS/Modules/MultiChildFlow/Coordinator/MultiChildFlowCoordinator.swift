@@ -141,17 +141,19 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Na
   }
   
   override func handleChildEvent(
-    _ event: any ChildEventType,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) async {
+    _ event: any ChildEventType
+  ) async -> Bool {
     switch event {
     case _ as MultiChildFlowPathAFinishEvent:
       await finish()
+      return true
+      
     case _ as MultiChildFlowPathBFinishEvent:
       await finish()
+      return true
+      
     default:
-      return await super.handleChildEvent(event, sourceFile: sourceFile, line: line)
+      return false
     }
   }
 }

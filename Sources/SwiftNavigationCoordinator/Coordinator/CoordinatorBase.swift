@@ -42,27 +42,27 @@ open class CoordinatorBase: NavigatorDelegate {
   }
   
   // MARK: - Children Management
-  
-  @discardableResult
+
   public final func addChild<
     Child: CoordinatorBase,
     Destination: SomeDestination
   >(
     _ child: Child,
     for destination: Destination,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) -> Child {
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
+  ) {
     let anyDestination = AnyDestination(destination)
     
     guard children[anyDestination] == nil else {
-      fatalError(
+      return logWarning(
         """
           `\(ShortDescription(self))` already contains child of type 
-          `\(ShortDescription(Child.self))`"                          
+          `\(ShortDescription(Child.self))`"                          \
+          Ignore `addChild`
         """,
-        sourceFile: sourceFile,
-        line: line
+        invokedIn: file,
+        at: line
       )
     }
     
@@ -77,13 +77,11 @@ open class CoordinatorBase: NavigatorDelegate {
         into `\(ShortDescription(self))`
       """
     )
-    
-    return child
   }
   
   public final func removeFromParent(
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) {
     guard let parent else { return }
     
@@ -102,8 +100,8 @@ open class CoordinatorBase: NavigatorDelegate {
     
     fatalError(
       "\(ShortDescription(self))` is not found in the `parent.children` list",
-      sourceFile: sourceFile,
-      line: line
+      invokedIn: file,
+      at: line
     )
   }
   
@@ -117,8 +115,8 @@ open class CoordinatorBase: NavigatorDelegate {
   // MARK: - Life Cycle
   
   open func finish(
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) async {
     guard !isFinished else {
       return logWarning(
@@ -126,16 +124,16 @@ open class CoordinatorBase: NavigatorDelegate {
           Trying to finish `\(ShortDescription(self))` that has already been finished \
           This is a programming error
         """,
-        file: sourceFile,
-        line: line
+        invokedIn: file,
+        at: line
       )
     }
     
     await onFinish?.execute()
     
     removeFromParent(
-      sourceFile: sourceFile,
-      line: line
+      invokedIn: file,
+      at: line
     )
     
     isFinished = true
@@ -146,11 +144,14 @@ open class CoordinatorBase: NavigatorDelegate {
   
   @_disfavoredOverload
   final func finish(
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) {
     Task { [weak self] in
-      await self?.finish(sourceFile: sourceFile, line: line)
+      await self?.finish(
+        invokedIn: file,
+        at: line
+      )
     }
   }
   
@@ -162,24 +163,32 @@ open class CoordinatorBase: NavigatorDelegate {
   
   // MARK: - Child Event Handler
   
-  open func handleChildEvent(
+  public final func sendChildEvent(
     _ event: any ChildEventType,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) async {
     guard let parent else {
       fatalError(
         "There's no handler for event `\(ShortDescription(event))`",
-        sourceFile: sourceFile,
-        line: line
+        invokedIn: file,
+        at: line
       )
     }
     
-    return await parent.handleChildEvent(
+    if await parent.handleChildEvent(event) { return }
+    
+    return await parent.sendChildEvent(
       event,
-      sourceFile: sourceFile,
-      line: line
+      invokedIn: file,
+      at: line
     )
+  }
+  
+  open func handleChildEvent(
+    _ event: any ChildEventType
+  ) async -> Bool {
+    false
   }
   
   // MARK: - Deeplink Event Handler

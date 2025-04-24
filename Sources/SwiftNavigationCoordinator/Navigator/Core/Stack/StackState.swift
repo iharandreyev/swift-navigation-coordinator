@@ -22,8 +22,8 @@ final class StackState {
   
   init(
     initialStack: OrderedSet<AnyDestination> = [],
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) {
     _stack = initialStack
     _path = SwiftUI.NavigationPath()
@@ -48,8 +48,8 @@ final class StackState {
   /// Appends a new destination value to the end of this _stack.
   func append<Destination: SomeDestination>(
     _ destination: Destination,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) {
     let entry = AnyDestination(destination)
     guard !_stack.contains(entry) else {
@@ -58,8 +58,8 @@ final class StackState {
           Trying to append \(ShortDescription(destination)), which is already present in the stack  \
           Ignoring `append`
         """,
-        file: sourceFile,
-        line: line
+        invokedIn: file,
+        at: line
       )
     }
 
@@ -69,8 +69,8 @@ final class StackState {
   /// Removes values from the end of this _stack.
   func removeLast(
     _ numOfItemsToRemove: Int = 1,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) {
     guard numOfItemsToRemove > 0 else {
       return logWarning(
@@ -78,8 +78,8 @@ final class StackState {
           Trying to remove last entry from an empty stack  \
           Ignoring `removeLast`
         """,
-        file: sourceFile,
-        line: line
+        invokedIn: file,
+        at: line
       )
     }
 
@@ -94,8 +94,8 @@ final class StackState {
   }
   
   func removeAll(
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) {
     guard !isEmpty else {
       return logWarning(
@@ -103,8 +103,8 @@ final class StackState {
           Trying to remove all entries from an empty stack  \
           Ignoring `removeAll`
         """,
-        file: sourceFile,
-        line: line
+        invokedIn: file,
+        at: line
       )
     }
 
@@ -116,8 +116,8 @@ final class StackState {
   
   fileprivate func setBoundPath(
     _ newValue: SwiftUI.NavigationPath,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) {
     let dismissedDestination: AnyDestination
     
@@ -131,8 +131,8 @@ final class StackState {
     default:
       fatalError(
         "Invalid path update from count `\(_path.count)` to \(newValue.count).",
-        sourceFile: sourceFile,
-        line: line
+        invokedIn: file,
+        at: line
       )
     }
 
@@ -159,8 +159,8 @@ final class StackState {
 extension Perception.Bindable where Value == StackState {
   @MainActor
   func path(
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
   ) -> Binding<SwiftUI.NavigationPath> {
     Binding<SwiftUI.NavigationPath>(
       get: { [unowned wrappedValue] () -> SwiftUI.NavigationPath in
@@ -169,8 +169,8 @@ extension Perception.Bindable where Value == StackState {
       set: { [unowned wrappedValue] (updatedPath) in
         wrappedValue.setBoundPath(
           updatedPath,
-          sourceFile: sourceFile,
-          line: line
+          invokedIn: file,
+          at: line
         )
       }
     )

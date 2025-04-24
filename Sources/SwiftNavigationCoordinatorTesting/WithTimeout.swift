@@ -20,7 +20,7 @@ public func withTimeout<Out: Sendable>(
   perform job: @Sendable @escaping () async throws -> Out,
   fileID: StaticString = #fileID,
   filePath: StaticString = #filePath,
-  line: UInt = #line,
+  at line: UInt = #line,
   column: UInt = #column,
   function: StaticString = #function
 ) async throws -> Out {
@@ -46,7 +46,7 @@ public func withTimeout(
   perform job: @Sendable @escaping () async throws -> Void,
   fileID: StaticString = #fileID,
   filePath: StaticString = #filePath,
-  line: UInt = #line,
+  at line: UInt = #line,
   column: UInt = #column,
   function: StaticString = #function
 ) async throws {
