@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum OnboardingDestination: DestinationType, DestinationType {
+enum OnboardingDestination: DestinationType {
   case step(OnboardingStep)
   case info
   
@@ -25,24 +25,19 @@ final class OnboardingCoordinator<
   FactoryDelegateType: OnboardingCoordinatorFactoryDelegateType
 >: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
   typealias DestinationType = OnboardingDestination
-  
-  let navigator: StackNavigator<OnboardingDestination>
-  let navigator: ModalNavigator<DestinationType>
+
   let factory: FactoryDelegateType
   
   private(set) var currentStepIdx = 0
   
   init(
-    navigator: StackNavigator<DestinationType>,
-    navigator: ModalNavigator<DestinationType>,
+    navigator: Navigator,
     factory: FactoryDelegateType,
     onFinish: Callback<Void>
   ) {
-    self.navigator = navigator
-    self.navigator = navigator
     self.factory = factory
     
-    super.init(onFinish: onFinish)
+    super.init(navigator: navigator, onFinish: onFinish)
   }
   
   func destinationDidDismiss(_ destination: OnboardingDestination) {
@@ -104,7 +99,7 @@ final class OnboardingCoordinator<
       return await finish()
     }
     
-    await navigator.push(.step(nextStep))
+    await navigator.push(Destination.step(nextStep))
   }
   
   private func nextStep() -> OnboardingStep? {
@@ -114,7 +109,7 @@ final class OnboardingCoordinator<
   }
   
   func showInfo() async {
-    await navigator.presentDestination(.sheet(.info))
+    await navigator.presentDestination(.sheet(Destination.info))
   }
   
   func infoDidFinish() async {

@@ -18,18 +18,7 @@ enum UsecasesDestination: String, DestinationType {
 }
 
 final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType, CoordinatorChildSearch {
-  typealias DestinationType = UsecasesDestination
-  
-  let navigator: StackNavigator<DestinationType>
-  let navigator: ModalNavigator<DestinationType>
-  
-  init(
-    navigator: StackNavigator<DestinationType> = StackNavigator(),
-    navigator: ModalNavigator<DestinationType> = ModalNavigator()
-  ) {
-    self.navigator = navigator
-    self.navigator = navigator
-  }
+  typealias Destination = UsecasesDestination
   
   func initialScreen() -> some View {
     UsecasesListScreen(
@@ -48,7 +37,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
     )
   }
   
-  func screen(for destination: DestinationType) -> some View {
+  func screen(for destination: Destination) -> some View {
     switch destination {
     case .modalSheet:
       SomeScreen(
@@ -92,24 +81,24 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   }
   
   private func showModalSheet() async {
-    await navigator.presentDestination(.sheet(.modalSheet))
+    await navigator.presentDestination(.sheet(Destination.modalSheet))
   }
   
   private func showModalCover() async {
-    await navigator.presentDestination(.cover(.modalCover))
+    await navigator.presentDestination(.cover(Destination.modalCover))
   }
   
   private func showPushedScreen() async {
-    await navigator.push(.pushedScreen)
+    await navigator.push(Destination.pushedScreen)
   }
   
   private func showMultiChildFlow() async {
-    let destination = DestinationType.multiChildFlow
+    let destination = Destination.multiChildFlow
     
     addChild(
       childFactory: {
         MultiChildFlowCoordinator(
-          navigator: navigator.scope(),
+          navigator: Navigator.continue(navigator),
           onFinish: Callback { [unowned self] in
             await multiChildFlowDidFinish()
           }

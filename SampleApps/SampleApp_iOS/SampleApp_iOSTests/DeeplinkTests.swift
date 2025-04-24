@@ -35,11 +35,11 @@ struct DeeplinkTests {
     
     try await withTimeout(.seconds(1)) {
       for deeplink in Deeplink.allCases {
-        await navigator.replaceSpecimenDestination(with: .appInit)
+        await navigator.replaceSpecimenDestination(with: Destination.appInit)
         #expect(await sut.handleDeeplink(deeplink) == false)
-        await navigator.replaceSpecimenDestination(with: .onboarding)
+        await navigator.replaceSpecimenDestination(with: Destination.onboarding)
         #expect(await sut.handleDeeplink(deeplink) == false)
-        await navigator.replaceSpecimenDestination(with: .main)
+        await navigator.replaceSpecimenDestination(with: Destination.main)
         #expect(await sut.handleDeeplink(deeplink) == true)
       }
     }

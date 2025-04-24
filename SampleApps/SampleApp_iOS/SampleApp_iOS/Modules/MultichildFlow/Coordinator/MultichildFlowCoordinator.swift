@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MultiChildFlowDestination: DestinationType {
+enum MultiChildFlowDestination: String, DestinationType {
   case selectPath
   case pathA
   case pathB
@@ -16,18 +16,7 @@ enum MultiChildFlowDestination: DestinationType {
 }
 
 final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType, CoordinatorChildSearch {
-  typealias DestinationType = MultiChildFlowDestination
-
-  let navigator: StackNavigator<DestinationType>
-
-  init(
-    navigator: StackNavigator<DestinationType>,
-    onFinish: Callback<Void>? = nil
-  ) {
-    self.navigator = navigator
-
-    super.init(onFinish: onFinish)
-  }
+  typealias Destination = MultiChildFlowDestination
 
   func initialScreen() -> some View {
     MultiChildFlowRootScreen(
@@ -38,7 +27,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     .onRemoveFromHierarchy(finish: self)
   }
 
-  func screen(for destination: DestinationType) -> some View {
+  func screen(for destination: Destination) -> some View {
     switch destination {
     case .selectPath:
       MultiChildFlowSelectPathScreen(
@@ -80,19 +69,19 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
   }
 
   func showSelectPath() async {
-    await navigator.push(.selectPath)
+    await navigator.push(Destination.selectPath)
   }
 
   func showConfirmRestart() async {
-    await navigator.push(.confirmRestart)
+    await navigator.push(Destination.confirmRestart)
   }
 
   func showPathA() async {
-    let destination = DestinationType.pathA
+    let destination = Destination.pathA
     
     addChild(
       childFactory: {
-        MultiChildFlowPathACoordinator(navigator: navigator.scope())
+        MultiChildFlowPathACoordinator(navigator: Navigator.continue(navigator))
       },
       as: destination
     )
@@ -101,11 +90,11 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
   }
 
   func showPathB() async {
-    let destination = DestinationType.pathB
+    let destination = Destination.pathB
     
     addChild(
       childFactory: {
-        MultiChildFlowPathBCoordinator(navigator: ModalNavigator())
+        MultiChildFlowPathBCoordinator(navigator: Navigator())
       },
       as: destination
     )

@@ -36,8 +36,7 @@ struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
     onFinish: Callback<Void>
   ) -> some ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType {
     OnboardingCoordinator(
-      navigator: StackNavigator(),
-      navigator: ModalNavigator(),
+      navigator: Navigator(),
       factory: OnboardingCoordinatorFactoryDelegate(),
       onFinish: onFinish
     )
@@ -45,7 +44,7 @@ struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
   
   func createMainCoordinator() -> some StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType {
     MainCoordinator(
-      navigator: SpecimenNavigator(initialDestination: .usecases),
+      navigator: Navigator(initialSpecimenDestination: MainTab.usecases),
       factory: MainCoordinatorFactoryDelegate()
     )
   }

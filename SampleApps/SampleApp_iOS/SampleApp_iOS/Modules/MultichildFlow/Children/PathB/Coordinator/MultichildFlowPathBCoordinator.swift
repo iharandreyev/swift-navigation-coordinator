@@ -17,18 +17,7 @@ enum MultiChildFlowPathBDestination: String, DestinationType {
 }
 
 final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorType, ScreenCoordinatorType {
-  typealias DestinationType = MultiChildFlowPathBDestination
-  
-  let navigator: ModalNavigator<DestinationType>
-  
-  init(
-    navigator: ModalNavigator<DestinationType>,
-    onFinish: Callback<Void>? = nil
-  ) {
-    self.navigator = navigator
-    
-    super.init(onFinish: onFinish)
-  }
+  typealias Destination = MultiChildFlowPathBDestination
 
   func initialScreen() -> some View {
     MultiChildFlowPathBInitialScreen(
@@ -39,7 +28,7 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
     .onRemoveFromHierarchy(finish: self)
   }
   
-  func screen(for destination: DestinationType) -> some View {
+  func screen(for destination: Destination) -> some View {
     switch destination {
     case .finish:
       MultiChildFlowFinishScreen(
@@ -51,7 +40,7 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
   }
   
   func proceedToFinishFlow() async {
-    await navigator.presentDestination(.cover(.finish))
+    await navigator.presentDestination(.cover(Destination.finish))
   }
   
   func finishFlow() async {
