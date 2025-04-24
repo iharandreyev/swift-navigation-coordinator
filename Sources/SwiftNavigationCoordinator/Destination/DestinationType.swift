@@ -8,7 +8,7 @@
 public protocol DestinationType: SomeDestination { }
 
 public extension DestinationType where Self: RawRepresentable, RawValue: Hashable {
-  public var id: RawValue {
+  var id: RawValue {
     rawValue
   }
 }

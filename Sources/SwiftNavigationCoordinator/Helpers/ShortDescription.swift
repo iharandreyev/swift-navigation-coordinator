@@ -18,6 +18,10 @@ struct ShortDescription: CustomStringConvertible {
     description = value
   }
   
+  init<T, Collection: Swift.Collection<T>>(_ collection: Collection) {
+    description = "[\(collection.map { ShortDescription($0).description }.joined(separator: ","))]"
+  }
+  
   #warning("TODO: Get rid of regex in favor of linear string search")
   @_disfavoredOverload
   init<T>(_ value: T) {

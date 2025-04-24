@@ -211,6 +211,17 @@ public final class Navigator {
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) async {
+    guard !_stackState.isEmpty else {
+      return logWarning(
+        """
+          Trying to pop from empty stack. \
+          Ignoring `pop`.
+        """,
+        file: sourceFile,
+        line: line
+      )
+    }
+    
     await navigationQueue.schedule(
       sourceFile: sourceFile,
       line: line,
@@ -226,7 +237,7 @@ public final class Navigator {
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) async {
-    guard let index = _stackState.firstIndex(of: destination) else {
+    guard let index = _stackState.index(of: destination) else {
       return logWarning(
         """
           Destination `\(ShortDescription(destination))` is not present in the stack. \
@@ -273,10 +284,7 @@ extension Navigator {
     _specimenState.destination(for: destinationType, sourceFile: sourceFile, line: line)
   }
   
-  public func specimenDestination(
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) -> AnyIdentifiableDestination {
+  public func specimenDestination() -> AnyIdentifiableDestination {
     _specimenState._destination
   }
   
@@ -289,15 +297,12 @@ extension Navigator {
     _modalState.destination(for: destinationType, sourceFile: sourceFile, line: line)
   }
   
-  public func modalDestination(
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) -> ModalDestination<AnyIdentifiableDestination>? {
+  public func modalDestination() -> ModalDestination<AnyIdentifiableDestination>? {
     _modalState._destination
   }
   
   public func stack() -> [AnyIdentifiableDestination] {
-    _stackState.stack
+    _stackState.stack()
   }
 }
 
@@ -318,3 +323,33 @@ public protocol NavigatorDelegate: AnyObject {
   func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination)
   func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination)
 }
+
+#if canImport(XCTest)
+
+import Clocks
+
+extension Navigator {
+  static func test<Destination: SomeDestination>(
+    specimenDestination: Destination? = nil,
+    modalDestination: ModalDestination<Destination>? = nil,
+    stack: [Destination] = []
+  ) -> Navigator {
+    let navigator = Navigator(navigationQueue: NavigationQueue(clock: ImmediateClock()))
+    
+    if let specimenDestination {
+      navigator._specimenState.setDestination(specimenDestination)
+    }
+    
+    if let modalDestination {
+      navigator._modalState.setDestination(modalDestination)
+    }
+    
+    stack.forEach {
+      navigator._stackState.append($0)
+    }
+
+    return navigator
+  }
+}
+
+#endif

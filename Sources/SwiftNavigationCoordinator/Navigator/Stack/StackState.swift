@@ -5,16 +5,17 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
+import OrderedCollections
 import Perception
 import SwiftUI
 
 @MainActor
 @Perceptible
 final class StackState {
-  fileprivate var _path: SwiftUI.NavigationPath
+  fileprivate(set) var _path: SwiftUI.NavigationPath
   
   @PerceptionIgnored
-  fileprivate(set) var stack: [AnyIdentifiableDestination]
+  fileprivate(set) var _stack: OrderedSet<AnyIdentifiableDestination>
 
   @PerceptionIgnored
   private var delegates: [ObjectIdentifier: AnyStackStateDelegate] = [:]
@@ -24,36 +25,36 @@ final class StackState {
     line: UInt = #line
   ) {
     _path = SwiftUI.NavigationPath()
-    stack = []
+    _stack = []
   }
   
-  /// A Boolean that indicates whether this stack is empty.
+  /// A Boolean that indicates whether this _stack is empty.
   @PerceptionIgnored
   var isEmpty: Bool {
     _path.isEmpty
   }
   
-  /// The number of elements in this stack.
+  /// The number of elements in this _stack.
   @PerceptionIgnored
   var count: Int {
     _path.count
   }
   
-  /// Appends a new destination value to the end of this stack.
-  func append<Destination: Sendable & Hashable & Identifiable>(
+  /// Appends a new destination value to the end of this _stack.
+  func append<Destination: SomeDestination>(
     _ destination: Destination
   ) {
     let entry = AnyIdentifiableDestination(destination)
-    guard !stack.contains(entry) else {
+    guard !_stack.contains(entry) else {
       fatalError()
     }
     
     logMessage("\(ShortDescription(self)): Append \(ShortDescription(destination))")
     
     _path.append(destination)
-    stack.append(entry)
+    _stack.append(entry)
   }
-  /// Removes values from the end of this stack.
+  /// Removes values from the end of this _stack.
   func removeLast(
     _ numOfItemsToRemove: Int = 1
   ) {
@@ -62,13 +63,13 @@ final class StackState {
     logMessage("\(ShortDescription(self)): Remove last \(numOfItemsToRemove)")
     
     _path.removeLast(numOfItemsToRemove)
-    stack.removeLast(numOfItemsToRemove)
+    _stack.removeLast(numOfItemsToRemove)
   }
   
-  func firstIndex<Destination: Sendable & Hashable & Identifiable>(
+  func index<Destination: SomeDestination>(
     of destination: Destination
   ) -> Int? {
-    stack.firstIndex(of: AnyIdentifiableDestination(destination))
+    _stack.firstIndex(of: AnyIdentifiableDestination(destination))
   }
   
   func removeAll() {
@@ -79,7 +80,7 @@ final class StackState {
     let numOfItemsToRemove = count
     
     _path.removeLast(numOfItemsToRemove)
-    stack.removeLast(numOfItemsToRemove)
+    _stack.removeLast(numOfItemsToRemove)
   }
   
   fileprivate func setBoundPath(
@@ -94,7 +95,7 @@ final class StackState {
       return
       
     case -1:
-      dismissedDestination = stack.removeLast()
+      dismissedDestination = _stack.removeLast()
       
     default:
       fatalError(
@@ -125,6 +126,7 @@ final class StackState {
 }
 
 extension Perception.Bindable where Value == StackState {
+  @MainActor
   func path(
     sourceFile: StaticString = #file,
     line: UInt = #line
@@ -141,6 +143,14 @@ extension Perception.Bindable where Value == StackState {
         )
       }
     )
+  }
+}
+
+extension StackState {
+  @MainActor
+  @inline(__always)
+  func stack() -> [AnyIdentifiableDestination] {
+    _stack.elements
   }
 }
 

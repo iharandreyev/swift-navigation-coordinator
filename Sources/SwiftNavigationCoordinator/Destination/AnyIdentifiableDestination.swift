@@ -57,42 +57,52 @@ extension AnyIdentifiableDestination: Equatable {
   }
 }
 
+extension AnyIdentifiableDestination: CustomStringConvertible {
+  public var description: String {
+    "Erased(\(ShortDescription(wrapped)))"
+  }
+}
+
 extension AnyIdentifiableDestination {
-  @_disfavoredOverload
   public static func == <Destination: SomeDestination>(
     lhs: Self,
     rhs: Destination
   ) -> Bool {
-    lhs == AnyIdentifiableDestination(rhs)
-  }
-  
-  public static func == <Destination: SomeDestination>(
-    lhs: Destination,
-    rhs: Self
-  ) -> Bool {
-    AnyIdentifiableDestination(lhs) == rhs
+    let result = lhs == AnyIdentifiableDestination(rhs)
+    return result
   }
 }
 
 extension Optional where Wrapped == AnyIdentifiableDestination {
-  @_disfavoredOverload
   public static func == <Destination: Sendable & Hashable & Identifiable>(
     lhs: Self,
     rhs: Destination
   ) -> Bool {
     switch lhs {
-    case .none: return false
-    case let .some(lhs): return lhs == rhs
+    case .none:
+      return false
+    case let .some(lhs):
+      let result = lhs == rhs
+      return result
     }
   }
-  
+}
+
+extension Array where Element == AnyIdentifiableDestination {
   public static func == <Destination: Sendable & Hashable & Identifiable>(
-    lhs: Destination,
-    rhs: Self
+    lhs: Self,
+    rhs: [Destination]
   ) -> Bool {
-    switch rhs {
-    case .none: return false
-    case let .some(rhs): return lhs == rhs
+    guard lhs.count == rhs.count else {
+      return false
     }
+    
+    for (lhs, rhs) in zip(lhs, rhs) {
+      guard lhs == rhs else {
+        return false
+      }
+    }
+    
+    return true
   }
 }

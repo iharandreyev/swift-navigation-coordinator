@@ -28,13 +28,17 @@ final class SpecimenState {
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
-    guard assert(
-      _destination.wrapped,
-      is: Destination.self,
-      sourceFile: sourceFile,
-      line: line
-    ) else {
-      return
+    CheckNever: if _destination.wrapped is DestinationNever {
+      break CheckNever
+    } else {
+      guard assert(
+        _destination.wrapped,
+        is: Destination.self,
+        sourceFile: sourceFile,
+        line: line
+      ) else {
+        return
+      }
     }
     
     let newValue = AnyIdentifiableDestination(newValue)
@@ -44,6 +48,7 @@ final class SpecimenState {
 }
 
 extension SpecimenState {
+  @MainActor
   func destination<Destination: Sendable & Hashable & Identifiable>(
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
@@ -54,6 +59,7 @@ extension SpecimenState {
 }
 
 extension Perception.Bindable where Value == SpecimenState {
+  @MainActor
   func destination<Destination: Sendable & Hashable & Identifiable>(
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,

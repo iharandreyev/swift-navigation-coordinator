@@ -14,7 +14,7 @@ final class ModalState {
   fileprivate(set) var _destination: ModalDestination<AnyIdentifiableDestination>?
   
   @PerceptionIgnored
-  private var delegates: [ObjectIdentifier: AnyModalStateDelegate] = [:]
+  private(set) var delegates: [ObjectIdentifier: AnyModalStateDelegate] = [:]
 
   init<Destination: Sendable & Hashable & Identifiable>(
     initialDestination: ModalDestination<Destination>?
@@ -87,7 +87,8 @@ final class ModalState {
 }
 
 extension Perception.Bindable where Value == ModalState {
-  func destination<Destination: Sendable & Hashable & Identifiable>(
+  @MainActor
+  func destination<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
     line: UInt = #line
@@ -104,6 +105,7 @@ extension Perception.Bindable where Value == ModalState {
 }
 
 extension ModalState {
+  @MainActor
   func destination<Destination: Sendable & Hashable & Identifiable>(
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
