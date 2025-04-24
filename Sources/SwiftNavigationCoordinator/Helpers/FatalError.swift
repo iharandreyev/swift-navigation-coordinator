@@ -13,7 +13,7 @@ func fatalError(
 ) -> Never {
   fatalError(
     """
-      \(message())                  \
+      \(message()).                  \
       Source: \(sourceFile):\(line)
     """,
     file: sourceFile,

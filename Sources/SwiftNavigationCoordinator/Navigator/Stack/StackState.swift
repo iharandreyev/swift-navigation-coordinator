@@ -42,26 +42,42 @@ final class StackState {
   
   /// Appends a new destination value to the end of this _stack.
   func append<Destination: SomeDestination>(
-    _ destination: Destination
+    _ destination: Destination,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
   ) {
     let entry = AnyIdentifiableDestination(destination)
     guard !_stack.contains(entry) else {
-      fatalError()
+      return logWarning(
+        """
+          Trying to append \(ShortDescription(destination)), which is already present in the stack  \
+          Ignoring `append`
+        """,
+        file: sourceFile,
+        line: line
+      )
     }
-    
-    logMessage("\(ShortDescription(self)): Append \(ShortDescription(destination))")
-    
+
     _path.append(destination)
     _stack.append(entry)
   }
   /// Removes values from the end of this _stack.
   func removeLast(
-    _ numOfItemsToRemove: Int = 1
+    _ numOfItemsToRemove: Int = 1,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
   ) {
-    guard numOfItemsToRemove > 0 else { return }
-    
-    logMessage("\(ShortDescription(self)): Remove last \(numOfItemsToRemove)")
-    
+    guard numOfItemsToRemove > 0 else {
+      return logWarning(
+        """
+          Trying to remove last entry from an empty stack  \
+          Ignoring `removeLast`
+        """,
+        file: sourceFile,
+        line: line
+      )
+    }
+
     _path.removeLast(numOfItemsToRemove)
     _stack.removeLast(numOfItemsToRemove)
   }
@@ -72,11 +88,21 @@ final class StackState {
     _stack.firstIndex(of: AnyIdentifiableDestination(destination))
   }
   
-  func removeAll() {
-    guard !isEmpty else { return }
-    
-    logMessage("\(ShortDescription(self)): Remove all")
-    
+  func removeAll(
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) {
+    guard !isEmpty else {
+      return logWarning(
+        """
+          Trying to remove all entries from an empty stack  \
+          Ignoring `removeAll`
+        """,
+        file: sourceFile,
+        line: line
+      )
+    }
+
     let numOfItemsToRemove = count
     
     _path.removeLast(numOfItemsToRemove)
@@ -85,8 +111,8 @@ final class StackState {
   
   fileprivate func setBoundPath(
     _ newValue: SwiftUI.NavigationPath,
-    sourceFile: StaticString,
-    line: UInt
+    sourceFile: StaticString = #file,
+    line: UInt = #line
   ) {
     let dismissedDestination: AnyIdentifiableDestination
     

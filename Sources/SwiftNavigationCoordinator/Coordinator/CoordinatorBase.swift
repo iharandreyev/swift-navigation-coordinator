@@ -84,7 +84,7 @@ open class CoordinatorBase: NavigatorDelegate {
   >(
     _ child: Child,
     as destination: Destination,
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
     let anyDestination = AnyIdentifiableDestination(destination)
@@ -93,10 +93,9 @@ open class CoordinatorBase: NavigatorDelegate {
       fatalError(
         """
           `\(ShortDescription(self))` already contains child of type 
-          `\(ShortDescription(Child.self))`"                          \
-          Source: \(file):\(line)
+          `\(ShortDescription(Child.self))`"                          
         """,
-        file: file,
+        sourceFile: sourceFile,
         line: line
       )
     }
@@ -115,7 +114,7 @@ open class CoordinatorBase: NavigatorDelegate {
   }
   
   public final func removeFromParent(
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
     guard let parent else { return }
@@ -134,11 +133,8 @@ open class CoordinatorBase: NavigatorDelegate {
     }
     
     fatalError(
-      """
-        `\(ShortDescription(self))` is not found in the `parent.children` list. \
-        Source: \(file):\(line)
-      """,
-      file: file,
+      "\(ShortDescription(self))` is not found in the `parent.children` list",
+      sourceFile: sourceFile,
       line: line
     )
   }
@@ -153,7 +149,7 @@ open class CoordinatorBase: NavigatorDelegate {
   // MARK: - Life Cycle
   
   open func finish(
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) async {
     guard !isFinished else {
@@ -162,7 +158,7 @@ open class CoordinatorBase: NavigatorDelegate {
           Trying to finish `\(ShortDescription(self))` that has already been finished \
           This is a programming error
         """,
-        file: file,
+        file: sourceFile,
         line: line
       )
     }
@@ -170,7 +166,7 @@ open class CoordinatorBase: NavigatorDelegate {
     await onFinish?.execute()
     
     removeFromParent(
-      file: file,
+      sourceFile: sourceFile,
       line: line
     )
     
@@ -190,23 +186,20 @@ open class CoordinatorBase: NavigatorDelegate {
   
   open func handleChildEvent(
     _ event: any ChildEventType,
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) async {
     guard let parent else {
       fatalError(
-        """
-          There's no handler for event `\(ShortDescription(event))` \
-          Source: \(file):\(line)
-        """,
-        file: file,
+        "There's no handler for event `\(ShortDescription(event))`",
+        sourceFile: sourceFile,
         line: line
       )
     }
     
     return await parent.handleChildEvent(
       event,
-      file: file,
+      sourceFile: sourceFile,
       line: line
     )
   }

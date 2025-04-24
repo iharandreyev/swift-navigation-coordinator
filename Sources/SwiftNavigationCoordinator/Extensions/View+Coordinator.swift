@@ -36,7 +36,7 @@ extension View {
   @inline(__always)
   public func onRemoveFromHierarchy(
     finish coordinator: CoordinatorBase,
-    file: StaticString = #file,
+    sourceFile: StaticString = #file,
     line: UInt = #line
   ) -> some View {
     self.onRemoveFromParent(
@@ -44,9 +44,7 @@ extension View {
         guard let coordinator else { return }
         guard !coordinator.isFinished else { return }
 
-        Task {
-          await coordinator.finish(file: file, line: line)
-        }
+        coordinator.finish(sourceFile: sourceFile, line: line)
       }
     )
   }

@@ -15,7 +15,9 @@ func cast<In, Out>(
   guard let out = value as? Out else {
     fatalError(
       """
-        Type mismatch. `\(value)` of type `\(In.self)` can't be cast into `\(outType)`
+        Type mismatch!                                        \
+        Expected `\(ShortDescription(value))` to be of type 
+        `\(ShortDescription(outType))`                     
       """,
       sourceFile: sourceFile,
       line: line

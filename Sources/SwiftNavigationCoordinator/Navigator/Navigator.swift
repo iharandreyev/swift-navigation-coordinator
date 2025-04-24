@@ -132,7 +132,7 @@ public final class Navigator {
       line: line,
       animated: animated
     ) { [weak _stackState] in
-      _stackState?.append(destination)
+      _stackState?.append(destination, sourceFile: sourceFile, line: line)
     }
   }
   
@@ -158,7 +158,7 @@ public final class Navigator {
       line: line,
       animated: animated
     ) { [weak _stackState] in
-      _stackState?.append(destination)
+      _stackState?.append(destination, sourceFile: sourceFile, line: line)
     }
     
     await navigationQueue.schedule(
@@ -166,8 +166,8 @@ public final class Navigator {
       line: line,
       animated: false
     ) { [weak _stackState] in
-      _stackState?.removeLast(2)
-      _stackState?.append(destination)
+      _stackState?.removeLast(2, sourceFile: sourceFile, line: line)
+      _stackState?.append(destination, sourceFile: sourceFile, line: line)
     }
   }
   
@@ -191,7 +191,7 @@ public final class Navigator {
       line: line,
       animated: animated
     ) { [weak _stackState] in
-      _stackState?.append(destination)
+      _stackState?.append(destination, sourceFile: sourceFile, line: line)
     }
     
     await navigationQueue.schedule(
@@ -199,8 +199,8 @@ public final class Navigator {
       line: line,
       animated: false
     ) { [weak _stackState] in
-      _stackState?.removeAll()
-      _stackState?.append(destination)
+      _stackState?.removeAll(sourceFile: sourceFile, line: line)
+      _stackState?.append(destination, sourceFile: sourceFile, line: line)
     }
   }
   
@@ -227,7 +227,7 @@ public final class Navigator {
       line: line,
       animated: animated
     ) { [weak _stackState] in
-      _stackState?.removeLast()
+      _stackState?.removeLast(sourceFile: sourceFile, line: line)
     }
   }
   
@@ -255,7 +255,7 @@ public final class Navigator {
       line: line,
       animated: animated
     ) { [weak _stackState] in
-      _stackState?.removeLast(itemsToRemove)
+      _stackState?.removeLast(itemsToRemove, sourceFile: sourceFile, line: line)
     }
   }
   
@@ -269,7 +269,7 @@ public final class Navigator {
       line: line,
       animated: animated
     ) { [weak _stackState] in
-      _stackState?.removeAll()
+      _stackState?.removeAll(sourceFile: sourceFile, line: line)
     }
   }
 }
@@ -332,7 +332,9 @@ extension Navigator {
   static func test<Destination: SomeDestination>(
     specimenDestination: Destination? = nil,
     modalDestination: ModalDestination<Destination>? = nil,
-    stack: [Destination] = []
+    stack: [Destination] = [],
+    sourceFile: StaticString = #file,
+    line: UInt = #line
   ) -> Navigator {
     let navigator = Navigator(navigationQueue: NavigationQueue(clock: ImmediateClock()))
     
@@ -345,7 +347,7 @@ extension Navigator {
     }
     
     stack.forEach {
-      navigator._stackState.append($0)
+      navigator._stackState.append($0, sourceFile: sourceFile, line: line)
     }
 
     return navigator
