@@ -119,7 +119,7 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Na
   }
 
   func restart() async {
-    await popToRoot()
+    await popToInitial()
   }
   
   // MARK: - Deeplink

@@ -86,6 +86,19 @@ extension StackCoordinatorType {
     )
   }
   
+  public func popToInitial(
+    animated: Bool = true,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) async {
+    await navigator.popToSomeDestination(
+      id,
+      animated: animated,
+      sourceFile: sourceFile,
+      line: line
+    )
+  }
+  
   public func popToRoot(
     animated: Bool = true,
     sourceFile: StaticString = #file,

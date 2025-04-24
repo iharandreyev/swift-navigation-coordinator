@@ -119,7 +119,23 @@ extension Navigator {
     }
   }
   
+  @inline(__always)
   public func popToDestination<Destination: DestinationType>(
+    _ destination: Destination,
+    animated: Bool = true,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) async {
+    await popToSomeDestination(
+      destination,
+      animated: animated,
+      sourceFile: sourceFile,
+      line: line
+    )
+  }
+  
+  @_disfavoredOverload
+  func popToSomeDestination<Destination: SomeDestination>(
     _ destination: Destination,
     animated: Bool = true,
     sourceFile: StaticString = #file,

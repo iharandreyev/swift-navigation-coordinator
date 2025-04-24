@@ -6,5 +6,9 @@
 //
 
 public struct DestinationNever: SomeDestination {
-  public let id = "DestinationNever"
+  public let id: String
+  
+  init(id: String = "DestinationNever") {
+    self.id = id
+  }
 }
