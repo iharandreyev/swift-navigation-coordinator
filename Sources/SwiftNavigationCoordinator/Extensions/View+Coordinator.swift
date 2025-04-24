@@ -32,20 +32,4 @@ extension View {
       }
     )
   }
-  
-  @inline(__always)
-  public func onRemoveFromHierarchy(
-    finish coordinator: CoordinatorBase,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) -> some View {
-    self.onRemoveFromParent(
-      perform: { [weak coordinator] in
-        guard let coordinator else { return }
-        guard !coordinator.isFinished else { return }
-
-        coordinator.finish(sourceFile: sourceFile, line: line)
-      }
-    )
-  }
 }
