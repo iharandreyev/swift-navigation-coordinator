@@ -13,7 +13,7 @@ import SwiftUI
 final class SpecimenState {
   fileprivate(set) var _destination: AnyDestination
 
-  init<Destination: Sendable & Hashable & Identifiable>(
+  init<Destination: SomeDestination>(
     initialDestination: Destination
   ) {
     _destination = AnyDestination(initialDestination)
@@ -23,7 +23,7 @@ final class SpecimenState {
     self.init(initialDestination: DestinationNever())
   }
   
-  func setDestination<Destination: Sendable & Hashable & Identifiable>(
+  func setDestination<Destination: SomeDestination>(
     _ newValue: Destination,
     sourceFile: StaticString = #file,
     line: UInt = #line
@@ -49,7 +49,7 @@ final class SpecimenState {
 
 extension SpecimenState {
   @MainActor
-  func destination<Destination: Sendable & Hashable & Identifiable>(
+  func destination<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
     line: UInt = #line
@@ -60,7 +60,7 @@ extension SpecimenState {
 
 extension Perception.Bindable where Value == SpecimenState {
   @MainActor
-  func destination<Destination: Sendable & Hashable & Identifiable>(
+  func destination<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self,
     sourceFile: StaticString = #file,
     line: UInt = #line

@@ -76,7 +76,7 @@ extension AnyDestination {
 }
 
 extension Optional where Wrapped == AnyDestination {
-  public static func == <Destination: Sendable & Hashable & Identifiable>(
+  public static func == <Destination: SomeDestination>(
     lhs: Self,
     rhs: Destination
   ) -> Bool {
@@ -91,7 +91,7 @@ extension Optional where Wrapped == AnyDestination {
 }
 
 extension Array where Element == AnyDestination {
-  public static func == <Destination: Sendable & Hashable & Identifiable>(
+  public static func == <Destination: SomeDestination>(
     lhs: Self,
     rhs: [Destination]
   ) -> Bool {
@@ -110,7 +110,7 @@ extension Array where Element == AnyDestination {
 }
 
 extension OrderedSet where Element == AnyDestination {
-  public static func == <Destination: Sendable & Hashable & Identifiable>(
+  public static func == <Destination: SomeDestination>(
     lhs: Self,
     rhs: OrderedSet<Destination>
   ) -> Bool {

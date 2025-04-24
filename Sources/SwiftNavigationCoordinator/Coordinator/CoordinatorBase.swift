@@ -45,7 +45,7 @@ open class CoordinatorBase: NavigatorDelegate {
   @discardableResult
   public final func addChild<
     Child: CoordinatorBase,
-    Destination: Sendable & Hashable & Identifiable
+    Destination: SomeDestination
   >(
     _ child: Child,
     for destination: Destination,

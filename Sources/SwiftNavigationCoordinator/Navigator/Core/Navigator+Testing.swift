@@ -103,7 +103,7 @@ extension Navigator {
     Navigator(navigationQueue: ImmediateNavigationQueue())
   }
   
-  func testModalStateBinding<Destination: Sendable & Hashable & Identifiable>(
+  func testModalStateBinding<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self
   ) -> Binding<ModalDestinationPath<Destination>?> {
     _modalState.testBinding(for: destinationType)

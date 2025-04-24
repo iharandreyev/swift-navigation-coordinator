@@ -8,7 +8,7 @@
 import CasePaths
 
 @CasePathable
-public enum ModalDestinationPath<Destination: Sendable & Hashable & Identifiable>: Sendable, Hashable {
+public enum ModalDestinationPath<Destination: SomeDestination>: Sendable, Hashable {
   case cover(Destination)
   case sheet(Destination)
 }

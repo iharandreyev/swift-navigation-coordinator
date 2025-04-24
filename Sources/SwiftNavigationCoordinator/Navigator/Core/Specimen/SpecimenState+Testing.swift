@@ -11,7 +11,7 @@ import Perception
 import SwiftUI
 
 extension SpecimenState {
-  func testBinding<Destination: Sendable & Hashable & Identifiable>(
+  func testBinding<Destination: SomeDestination>(
     for destinationType: Destination.Type = Destination.self
   ) -> Binding<Destination> {
     Perception.Bindable(self).destination(for: destinationType)

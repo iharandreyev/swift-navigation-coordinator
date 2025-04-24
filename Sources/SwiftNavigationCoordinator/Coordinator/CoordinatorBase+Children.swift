@@ -9,7 +9,7 @@ extension CoordinatorBase {
   @discardableResult
   public func addChild<
     Child: CoordinatorBase,
-    Destination: Sendable & Hashable & Identifiable
+    Destination: SomeDestination
   >(
     for destination: Destination,
     _ createChild: () -> Child,
@@ -41,7 +41,7 @@ extension CoordinatorBase {
   @discardableResult
   public func addChild<
     Child: CoordinatorBase,
-    Destination: Sendable & Hashable & Identifiable
+    Destination: SomeDestination
   >(
     for destination: Destination,
     _ createChild: (Navigator) -> Child,
@@ -60,7 +60,7 @@ extension CoordinatorBase {
   
   public func child<
     Child: CoordinatorBase,
-    Destination: Sendable & Hashable & Identifiable
+    Destination: SomeDestination
   >(
     of childType: Child.Type = Child.self,
     for destination: Destination,
@@ -84,7 +84,7 @@ extension CoordinatorBase {
   }
   
   @inline(__always)
-  public func child<Destination: Sendable & Hashable & Identifiable>(
+  public func child<Destination: SomeDestination>(
     for destination: Destination
   ) -> CoordinatorBase? {
     children[AnyDestination(destination)]
