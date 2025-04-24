@@ -27,11 +27,6 @@ public protocol NavigationCoordinatorType<
   func content(forModal destination: ModalDestination) -> ModalDestinationContent
   @ViewBuilder
   func content(forStack destination: StackDestination) -> StackDestinationContent
-  
-  associatedtype InitialContent: View
-  
-  @ViewBuilder
-  func initialContent() -> InitialContent
 }
 
 @MainActor
@@ -57,27 +52,3 @@ extension NavigationCoordinatorType where StackDestination == DestinationNever {
     EmptyView()
   }
 }
-
-//@MainActor
-//public protocol RootNavigationCoordinatorType<
-//  SpecimenDestination,
-//  ModalDestination,
-//  StackDestination
-//>: NavigationCoordinatorType {
-//  associatedtype RootContainer: View
-//
-//  @ViewBuilder
-//  func rootContainer() -> RootContainer
-//}
-//
-//@MainActor
-//public protocol LeafNavigationCoordinatorType<
-//  SpecimenDestination,
-//  ModalDestination,
-//  StackDestination
-//>: NavigationCoordinatorType {
-//  associatedtype InitialContent: View
-//
-//  @ViewBuilder
-//  func initialContent() -> InitialContent
-//}
