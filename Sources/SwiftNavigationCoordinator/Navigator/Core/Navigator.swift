@@ -32,7 +32,7 @@ public final class Navigator {
   
   // MARK: - Init
 
-  fileprivate init<NavigationQueue: NavigationQueueType>(
+  init<NavigationQueue: NavigationQueueType>(
     createSpecimenState: @MainActor @Sendable @escaping () -> SpecimenState = { SpecimenState() },
     createModalState: @MainActor @Sendable @escaping () -> ModalState = { ModalState() },
     createStackState: @MainActor @Sendable @escaping () -> StackState = { StackState() },
@@ -81,52 +81,3 @@ extension Navigator: StackStateDelegate {
     delegate?.navigatorDidDismissStackDestination(destination)
   }
 }
-
-@MainActor
-public protocol NavigatorDelegate: AnyObject {
-  func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination)
-  func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination)
-}
-
-#if canImport(XCTest)
-
-import Clocks
-import SwiftUI
-
-extension Navigator {
-  static func test<Destination: SomeDestination>(
-    specimenDestination: Destination? = nil,
-    modalDestination: ModalDestinationPath<Destination>? = nil,
-    stack: [Destination] = [],
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) -> Navigator {
-    let navigator = Navigator(navigationQueue: NavigationQueue(clock: ImmediateClock()))
-    
-    if let specimenDestination {
-      navigator._specimenState.setDestination(specimenDestination)
-    }
-    
-    if let modalDestination {
-      navigator._modalState.setDestination(modalDestination)
-    }
-    
-    stack.forEach {
-      navigator._stackState.append($0, sourceFile: sourceFile, line: line)
-    }
-    
-    return navigator
-  }
-  
-  func testModalStateBinding<Destination: Sendable & Hashable & Identifiable>(
-    for destinationType: Destination.Type = Destination.self
-  ) -> Binding<ModalDestinationPath<Destination>?> {
-    _modalState.testBinding(for: destinationType)
-  }
-  
-  func testStackStateBinding() -> Binding<SwiftUI.NavigationPath> {
-    _stackState.testBinding()
-  }
-}
-
-#endif
