@@ -307,7 +307,7 @@ extension Navigator: ModalStateDelegate {
   }
 }
 
-extension Navigator: StackStateDelegate2 {
+extension Navigator: StackStateDelegate {
   func stackStateDidDismiss(_ destination: AnyDestination) {
     delegate?.navigatorDidDismissStackDestination(destination)
   }

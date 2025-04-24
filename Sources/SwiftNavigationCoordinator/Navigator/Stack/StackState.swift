@@ -109,7 +109,7 @@ final class StackState {
     reportDismiss(of: dismissedDestination)
   }
   
-  func appendDelegate<Delegate: StackStateDelegate2>(_ delegate: Delegate) {
+  func appendDelegate<Delegate: StackStateDelegate>(_ delegate: Delegate) {
     delegates[ObjectIdentifier(delegate)] = delegate.eraseToAnyStackStateDelegate()
   }
   
@@ -145,11 +145,11 @@ extension Perception.Bindable where Value == StackState {
 }
 
 @MainActor
-protocol StackStateDelegate2: AnyObject {
+protocol StackStateDelegate: AnyObject {
   func stackStateDidDismiss(_ destination: AnyDestination)
 }
 
-extension StackStateDelegate2 {
+extension StackStateDelegate {
   @_disfavoredOverload
   func eraseToAnyStackStateDelegate() -> AnyStackStateDelegate {
     AnyStackStateDelegate(self)
@@ -161,12 +161,12 @@ extension StackStateDelegate2 {
 }
 
 @MainActor
-final class AnyStackStateDelegate: StackStateDelegate2 {
+final class AnyStackStateDelegate: StackStateDelegate {
   private var _stackStateDidDismiss: ((AnyDestination) -> Void)!
   
   private(set) var isValid = true
   
-  init<Delegate: StackStateDelegate2>(
+  init<Delegate: StackStateDelegate>(
     _ delegate: Delegate
   ) {
     assert(Delegate.self != AnyStackStateDelegate.self)
