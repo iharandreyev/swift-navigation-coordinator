@@ -21,6 +21,7 @@ extension Environment {
   static fileprivate(set) nonisolated(unsafe)
   var current: Environment = .debug
   
+  @MainActor
   static func setEnvironment(_ newValue: Environment) {
     let oldValue = Environment.current
     
@@ -37,9 +38,11 @@ extension Environment {
 // MARK: - Environment + NavigationQueue
 
 extension Environment {
-  static fileprivate(set) nonisolated(unsafe)
+  @MainActor
+  static fileprivate(set)
   var navigationQueue = NavigationQueue(clock: ContinuousClock())
   
+  @MainActor
   private static func updateNavigationQueue(
     oldEnvironment: Environment,
     newEnvironment: Environment

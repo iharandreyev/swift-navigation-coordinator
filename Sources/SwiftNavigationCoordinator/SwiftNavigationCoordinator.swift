@@ -9,6 +9,7 @@ public func setLogger(_ logger: LoggerType) {
   Logger.setLogger(logger)
 }
 
+@MainActor
 public func setEnvironment(_ newValue: Environment) {
   Environment.setEnvironment(newValue)
 }
