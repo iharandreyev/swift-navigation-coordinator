@@ -8,9 +8,7 @@
 import SwiftUI
 
 @MainActor
-public protocol ModalCoordinatorType: NavigationCoordinatorType where ModalDestination: DestinationType {
-
-}
+public protocol ModalCoordinatorType: NavigationCoordinatorType where ModalDestination: DestinationType { }
 
 extension ModalCoordinatorType {
   public func presentDestination(

@@ -9,7 +9,7 @@ import SwiftUI
 
 extension View {
   @inline(__always)
-  public func cover<Item: Identifiable, Content: View>(
+  func cover<Item: Identifiable, Content: View>(
     item: Binding<Item?>,
     onDismiss: (() -> Void)? = nil,
     @ViewBuilder content: @escaping (Item) -> Content

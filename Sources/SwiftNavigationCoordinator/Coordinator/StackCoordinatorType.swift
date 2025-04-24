@@ -8,9 +8,7 @@
 import SwiftUI
 
 @MainActor
-public protocol StackCoordinatorType: NavigationCoordinatorType where StackDestination: DestinationType {
-
-}
+public protocol StackCoordinatorType: NavigationCoordinatorType where StackDestination: DestinationType { }
 
 extension StackCoordinatorType {
   
