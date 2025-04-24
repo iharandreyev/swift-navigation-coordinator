@@ -23,7 +23,7 @@ struct CallbackTests {
     try await withTimeout(Constants.timeout) {
       let completion = createSut()
       
-      await completion()
+      completion()
       
       await completion.onCompleted()
     }
@@ -36,7 +36,7 @@ struct CallbackTests {
       
       Task.detached {
         try await Task.sleep(for: Constants.sutInvocationDelay)
-        await completion()
+        completion()
       }
       
       await completion.onCompleted()

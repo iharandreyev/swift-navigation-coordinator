@@ -57,7 +57,7 @@ extension CoordinatorBaseTests {
   
   @Test
   func pop_finishesChildren() async throws {
-    try await withTimeout(.seconds(10)) { @MainActor in
+    try await withTimeout(Constants.timeout) { @MainActor in
       let parent = CoordinatorBase(
         onFinish: Callback(job: {})
       )
