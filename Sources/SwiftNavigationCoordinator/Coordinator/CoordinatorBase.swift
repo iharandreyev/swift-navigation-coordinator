@@ -206,13 +206,21 @@ open class CoordinatorBase: NavigatorDelegate {
   // MARK: - Navigator Delegate
   
   open func navigatorDidDismissModalDestination(_ destination: AnyIdentifiableDestination) {
-    guard destination == id else { return }
-    finish()
+    switch destination {
+    case id:
+      finish()
+    default:
+      child(for: destination)?.finish()
+    }
   }
   
   open func navigatorDidDismissStackDestination(_ destination: AnyIdentifiableDestination) {
-    guard destination == id else { return }
-    finish()
+    switch destination {
+    case id:
+      finish()
+    default:
+      child(for: destination)?.finish()
+    }
   }
 }
 
