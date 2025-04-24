@@ -7,32 +7,100 @@
 
 #if canImport(XCTest)
 
+import OrderedCollections
 import Clocks
 import SwiftUI
 
 extension Navigator {
-  static func test<Destination: SomeDestination>(
-    specimenDestination: Destination? = nil,
-    modalDestination: ModalDestinationPath<Destination>? = nil,
-    stack: [Destination] = [],
-    sourceFile: StaticString = #file,
-    line: UInt = #line
+  public static func test<
+    ModalDestination: DestinationType
+  >(
+    modalDestination: ModalDestinationPath<ModalDestination>
   ) -> Navigator {
-    let navigator = Navigator(navigationQueue: NavigationQueue(clock: ImmediateClock()))
-    
-    if let specimenDestination {
-      navigator._specimenState.setDestination(specimenDestination)
-    }
-    
-    if let modalDestination {
-      navigator._modalState.setDestination(modalDestination)
-    }
-    
-    stack.forEach {
-      navigator._stackState.append($0, sourceFile: sourceFile, line: line)
-    }
-    
-    return navigator
+    Navigator(
+      initialModalDestination: modalDestination,
+      navigationQueue: NavigationQueue(clock: ImmediateClock())
+    )
+  }
+  
+  public static func test<
+    SpecimenDestination: DestinationType
+  >(
+    specimenDestination: SpecimenDestination
+  ) -> Navigator {
+    Navigator(
+      initialSpecimenDestination: specimenDestination,
+      navigationQueue: NavigationQueue(clock: ImmediateClock())
+    )
+  }
+
+  public static func test(
+    stack: OrderedSet<AnyIdentifiableDestination>
+  ) -> Navigator {
+    Navigator(
+      initialStack: stack,
+      navigationQueue: NavigationQueue(clock: ImmediateClock())
+    )
+  }
+  
+  public static func test<
+    ModalDestination: DestinationType,
+    SpecimenDestination: DestinationType
+  >(
+    modalDestination: ModalDestinationPath<ModalDestination>,
+    specimenDestination: SpecimenDestination
+  ) -> Navigator {
+    Navigator(
+      initialModalDestination: modalDestination,
+      initialSpecimenDestination: specimenDestination,
+      navigationQueue: NavigationQueue(clock: ImmediateClock())
+    )
+  }
+  
+  public static func test<
+    SpecimenDestination: DestinationType
+  >(
+    specimenDestination: SpecimenDestination,
+    stack: OrderedSet<AnyIdentifiableDestination>
+  ) -> Navigator {
+    Navigator(
+      initialSpecimenDestination: specimenDestination,
+      initialStack: stack,
+      navigationQueue: NavigationQueue(clock: ImmediateClock())
+    )
+  }
+  
+  public static func test<
+    ModalDestination: DestinationType
+  >(
+    modalDestination: ModalDestinationPath<ModalDestination>,
+    stack: OrderedSet<AnyIdentifiableDestination>
+  ) -> Navigator {
+    Navigator(
+      initialModalDestination: modalDestination,
+      initialStack: stack,
+      navigationQueue: NavigationQueue(clock: ImmediateClock())
+    )
+  }
+  
+  public static func test<
+    ModalDestination: DestinationType,
+    SpecimenDestination: DestinationType
+  >(
+    modalDestination: ModalDestinationPath<ModalDestination>,
+    specimenDestination: SpecimenDestination,
+    stack: OrderedSet<AnyIdentifiableDestination>
+  ) -> Navigator {
+    Navigator(
+      initialModalDestination: modalDestination,
+      initialSpecimenDestination: specimenDestination,
+      initialStack: stack,
+      navigationQueue: NavigationQueue(clock: ImmediateClock())
+    )
+  }
+  
+  public static func test() -> Navigator {
+    Navigator(navigationQueue: NavigationQueue(clock: ImmediateClock()))
   }
   
   func testModalStateBinding<Destination: Sendable & Hashable & Identifiable>(

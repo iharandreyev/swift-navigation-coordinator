@@ -5,6 +5,8 @@
 //  Created by Andreyeu, Ihar on 4/24/25.
 //
 
+import OrderedCollections
+
 public struct AnyIdentifiableDestination: Sendable {
   internal let wrapped: Sendable
 
@@ -104,5 +106,36 @@ extension Array where Element == AnyIdentifiableDestination {
     }
     
     return true
+  }
+}
+
+extension OrderedSet where Element == AnyIdentifiableDestination {
+  public static func == <Destination: Sendable & Hashable & Identifiable>(
+    lhs: Self,
+    rhs: OrderedSet<Destination>
+  ) -> Bool {
+    guard lhs.count == rhs.count else {
+      return false
+    }
+    
+    for (lhs, rhs) in zip(lhs, rhs) {
+      guard lhs == rhs else {
+        return false
+      }
+    }
+    
+    return true
+  }
+}
+
+extension Array where Element: DestinationType {
+  public func erase() -> Array<AnyIdentifiableDestination> {
+    map(AnyIdentifiableDestination.init)
+  }
+}
+
+extension OrderedSet where Element: DestinationType {
+  public func erase() -> OrderedSet<AnyIdentifiableDestination> {
+    OrderedSet<AnyIdentifiableDestination>(map(AnyIdentifiableDestination.init))
   }
 }

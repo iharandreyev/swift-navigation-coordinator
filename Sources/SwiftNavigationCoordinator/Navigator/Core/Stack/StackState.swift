@@ -21,11 +21,16 @@ final class StackState {
   private var delegates: [ObjectIdentifier: AnyStackStateDelegate] = [:]
   
   init(
+    initialStack: OrderedSet<AnyIdentifiableDestination> = [],
     sourceFile: StaticString = #file,
     line: UInt = #line
   ) {
+    _stack = initialStack
     _path = SwiftUI.NavigationPath()
-    _stack = []
+    
+    for destination in initialStack {
+      _path.append(destination)
+    }
   }
   
   /// A Boolean that indicates whether this _stack is empty.

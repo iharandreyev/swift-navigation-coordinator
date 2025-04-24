@@ -176,7 +176,7 @@ extension NavigatorTests {
   @Test
   func continue_yieldsSynchronisedChild() async {
     let parent = await createSut(
-      modalDestination: .cover(.last),
+      modalDestination: .cover(TestDestination.last),
       stack: [TestDestination.first, .second, .third]
     )
     let child = await Navigator.continue(parent)
