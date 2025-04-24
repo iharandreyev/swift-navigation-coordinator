@@ -98,7 +98,7 @@ public final class NavigationQueue {
       await withoutAnimations.run(next.job)
     }
 
-    await next.completion?()
+    next.completion?()
     
     logMessage("NavigationQueue: Did complete \(next)")
     await resolveQueue()
