@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct AppRoot<
   CoordinatorType: SpecimenCoordinatorType
->: View {
+>: View where CoordinatorType.SpecimenDestination: DestinationType {
   private let coordinator: CoordinatorType
   
   public init(coordinator: CoordinatorType) {

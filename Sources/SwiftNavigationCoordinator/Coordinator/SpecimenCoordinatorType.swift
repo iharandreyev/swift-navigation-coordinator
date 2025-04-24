@@ -9,7 +9,7 @@ import SwiftUI
 
 @MainActor
 public protocol SpecimenCoordinatorType: CoordinatorBase {
-  associatedtype SpecimenDestination: DestinationType
+  associatedtype SpecimenDestination: SomeDestination
   associatedtype SpecimenDestinationScreen: View
 
   @ViewBuilder
@@ -44,4 +44,20 @@ public protocol LabelledSpecimenCoordinatorType: SpecimenCoordinatorType {
   
   @ViewBuilder
   func label(forSpecimen destination: SpecimenDestination) -> SpecimenDestinationScreenLabel
+}
+
+extension SpecimenCoordinatorType {
+  public func replaceSpecimenDestination(
+    with destination: SpecimenDestination,
+    animated: Bool = true,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) async where SpecimenDestination: DestinationType {
+    await navigator.replaceSpecimenDestination(
+      with: destination,
+      animated: animated,
+      sourceFile: sourceFile,
+      line: line
+    )
+  }
 }

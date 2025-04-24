@@ -12,7 +12,7 @@ extension View {
   @inline(__always)
   public func modal<CoordinatorType: ModalCoordinatorType>(
     for coordinator: CoordinatorType
-  ) -> some View {
+  ) -> some View where CoordinatorType.ModalDestination: DestinationType {
     self.modal(
       navigator: coordinator.navigator,
       content: { [unowned coordinator] destination in
@@ -24,7 +24,7 @@ extension View {
   @inline(__always)
   func navigationDestination<CoordinatorType: StackCoordinatorType>(
     for coordinator: CoordinatorType
-  ) -> some View {
+  ) -> some View where CoordinatorType.StackDestination: DestinationType{
     self.navigationDestination(
       for: CoordinatorType.StackDestination.self,
       destination: { [unowned coordinator] destination in

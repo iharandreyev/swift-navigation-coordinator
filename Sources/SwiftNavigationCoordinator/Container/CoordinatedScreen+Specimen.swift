@@ -18,7 +18,7 @@ extension CoordinatedScreen {
     CoordinatorType: SpecimenCoordinatorType
   >(
     coordinator: CoordinatorType
-  ) -> some View {
+  ) -> some View where CoordinatorType.SpecimenDestination: DestinationType {
     SpecimenContainer(
       navigator: coordinator.navigator,
       destinationContent: { [unowned coordinator] destination in

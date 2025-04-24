@@ -19,14 +19,14 @@ extension CoordinatedScreen {
     CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType
   >(
     modalCoordinator coordinator: CoordinatorType
-  ) -> some View {
+  ) -> some View where CoordinatorType.ModalDestination: DestinationType {
     _CoordinatedScreen_Base_Modal(coordinator: coordinator)
   }
 }
 
 struct _CoordinatedScreen_Base_Modal<
   CoordinatorType: ScreenCoordinatorType & ModalCoordinatorType
->: View {
+>: View where CoordinatorType.ModalDestination: DestinationType {
   private let coordinator: CoordinatorType
 
   init(

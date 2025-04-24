@@ -19,7 +19,7 @@ extension CoordinatedScreen {
     CoordinatorType: LabelledSpecimenCoordinatorType
   >(
     coordinator: CoordinatorType
-  ) -> some View where CoordinatorType.SpecimenDestination: CaseIterable, CoordinatorType.SpecimenDestination.AllCases: RandomAccessCollection {
+  ) -> some View where CoordinatorType.SpecimenDestination: DestinationType, CoordinatorType.SpecimenDestination: CaseIterable, CoordinatorType.SpecimenDestination.AllCases: RandomAccessCollection {
     _CoordinatedScreen_Tabbed(coordinator: coordinator)
   }
   
@@ -35,14 +35,14 @@ extension CoordinatedScreen {
   >(
     coordinator: CoordinatorType,
     tabs: [CoordinatorType.SpecimenDestination]
-  ) -> some View {
+  ) -> some View where CoordinatorType.SpecimenDestination: DestinationType {
     _CoordinatedScreen_Tabbed(coordinator: coordinator, tabs: tabs)
   }
 }
 
 struct _CoordinatedScreen_Tabbed<
   CoordinatorType: LabelledSpecimenCoordinatorType
->: View {
+>: View where CoordinatorType.SpecimenDestination: DestinationType {
   private let coordinator: CoordinatorType
   private let navigator: Navigator
   

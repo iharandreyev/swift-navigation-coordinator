@@ -19,14 +19,14 @@ extension CoordinatedScreen {
     CoordinatorType: ScreenCoordinatorType & StackCoordinatorType
   >(
     stackCoordinator coordinator: CoordinatorType
-  ) -> some View {
+  ) -> some View where CoordinatorType.StackDestination: DestinationType {
     _CoordinatedScreen_StackPage(coordinator: coordinator)
   }
 }
 
 struct _CoordinatedScreen_StackPage<
   CoordinatorType: ScreenCoordinatorType & StackCoordinatorType
->: View {
+>: View where CoordinatorType.StackDestination: DestinationType {
   private let coordinator: CoordinatorType
 
   init(

@@ -6,6 +6,7 @@
 //
 
 extension Navigator {
+  
   // MARK: Push
   
   public func push<Destination: DestinationType>(
