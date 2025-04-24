@@ -8,7 +8,7 @@
 import OrderedCollections
 
 #warning("TODO: Documentation")
-public struct AnyDestination: Sendable {
+public struct AnyDestination: SomeDestination {
   internal let wrapped: Sendable
 
   private let getId: @Sendable () -> String
@@ -40,21 +40,15 @@ public struct AnyDestination: Sendable {
       hasher.combine(destination)
     }
   }
-}
 
-extension AnyDestination: Identifiable {
   public var id: String {
     getId()
   }
-}
 
-extension AnyDestination: Hashable {
   public func hash(into hasher: inout Hasher) {
     hashInto(&hasher)
   }
-}
 
-extension AnyDestination: Equatable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.equateTo(rhs)
   }
