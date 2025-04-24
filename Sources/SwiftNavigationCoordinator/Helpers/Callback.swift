@@ -7,7 +7,7 @@
 
 import IssueReporting
 
-public final class Callback<Params: Sendable>: Sendable {
+public actor Callback<Params: Sendable>: Sendable {
   private typealias Completion = @Sendable () -> Void
   
   private let job: @Sendable (Params) async -> Void
