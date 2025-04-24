@@ -8,7 +8,7 @@
 import Clocks
 
 extension NavigationQueue {
-  static func `for`(_ environment: Environment) -> NavigationQueue {
+  nonisolated static func `for`(_ environment: Environment) -> NavigationQueue {
     switch environment {
     case .debug, .release:
       return NavigationQueue(clock: ContinuousClock())

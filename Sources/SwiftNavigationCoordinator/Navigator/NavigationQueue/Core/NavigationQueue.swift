@@ -18,7 +18,7 @@ public final class NavigationQueue {
   // Fifo queue
   private var queue: [NavigationQueueItem] = []
   
-  init<ClockType: Clock<Duration>>(
+  nonisolated init<ClockType: Clock<Duration>>(
     clock: ClockType
   ) {
     self.withoutAnimations = WithoutAnimations(clock: clock)
