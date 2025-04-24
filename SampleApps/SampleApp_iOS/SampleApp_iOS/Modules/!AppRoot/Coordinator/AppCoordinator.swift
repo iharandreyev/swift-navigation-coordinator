@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum AppDestination: ScreenDestinationType {
+enum AppDestination: String, DestinationType {
   case appInit
   case onboarding
   case main
@@ -17,23 +17,40 @@ enum AppDestination: ScreenDestinationType {
 @MainActor
 final class AppCoordinator<
   FactoryDelegateType: AppCoordinatorFactoryDelegateType
->: CoordinatorBase, CoordinatorType, SpecimenCoordinatorType {
-  typealias DestinationType = AppDestination
-  
-  let specimenNavigator: SpecimenNavigator<AppDestination>
+>: CoordinatorBase, SpecimenCoordinatorType {
   let factory: FactoryDelegateType
   
+  // MARK: - Init
+  
   init(
-    specimenNavigator: SpecimenNavigator<AppDestination>,
-    factory: FactoryDelegateType
+    navigator: Navigator,
+    factory: FactoryDelegateType,
+    onFinish: Callback<Void>? = nil
   ) {
-    self.specimenNavigator = specimenNavigator
     self.factory = factory
     
-    super.init(onFinish: nil)
+    super.init(navigator: navigator, onFinish: onFinish)
   }
+  
+  // MARK: - Navigation Coordinator
+  
+  typealias SpecimenDestination = AppDestination
+  typealias ModalDestination = DestinationNever
+  typealias StackDestination = DestinationNever
 
-  func screenContent(for destination: DestinationType) -> some View {
+  func initialContent() -> some View {
+    AppContainer {
+      SpecimenContainer.for(
+        coordinator: self,
+        transition: { [unowned self] in
+          transition(forSpecimen: $0)
+        }
+      )
+    }
+  }
+  
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .appInit:
       factory.createAppInitScreen(
@@ -42,29 +59,24 @@ final class AppCoordinator<
         }
       )
     case .onboarding:
-      CoordinatedScreen.stackRoot(
-        modalCoordinator: addChild(
-          childFactory: {
-            factory.createOnboardingCoordinator(
-              onFinish: Callback { [unowned self] in
-                await onboardingDidFinish()
-              }
-            )
-          },
-          as: destination
+      initialContent(
+        for: destination
+      ) {
+        factory.createOnboardingCoordinator(
+          onFinish: Callback { [unowned self] in
+            await onboardingDidFinish()
+          }
         )
-      )
+      }
     case .main:
-      CoordinatedScreen.tabbed(
-        coordinator: addChild(
-          childFactory: factory.createMainCoordinator,
-          as: destination
-        )
+      initialContent(
+        for: destination,
+        factory.createMainCoordinator
       )
     }
   }
   
-  func screenTransition(for destination: DestinationType) -> AnyTransition {
+  func transition(forSpecimen destination: SpecimenDestination) -> AnyTransition {
     switch destination {
     case .appInit:
       return .asymmetric(
@@ -84,20 +96,24 @@ final class AppCoordinator<
     }
   }
   
+  // MARK: - Logic
+  
   func initDidFinish() async {
-    await specimenNavigator.replaceDestination(with: .onboarding)
+    await replaceSpecimenDestination(with: .onboarding)
   }
 
   func onboardingDidFinish() async {
-    await specimenNavigator.replaceDestination(with: .main)
+    await replaceSpecimenDestination(with: .main)
   }
+  
+  // MARK: - Deeplink
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
   ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case _ as Deeplink:
-      guard specimenNavigator.destination == .main else {
+      guard navigator.specimenDestination() == AppDestination.main else {
         return .impossible
       }
       

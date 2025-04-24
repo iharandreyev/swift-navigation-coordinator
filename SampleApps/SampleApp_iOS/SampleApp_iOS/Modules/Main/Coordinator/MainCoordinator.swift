@@ -8,7 +8,7 @@
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum MainTab: ScreenDestinationType, CaseIterable {
+enum MainTab: String, DestinationType, CaseIterable {
   case usecases
   case deeplinks
 }
@@ -16,46 +16,52 @@ enum MainTab: ScreenDestinationType, CaseIterable {
 @MainActor
 final class MainCoordinator<
   FactoryDelegateType: MainCoordinatorFactoryDelegateType
->: CoordinatorBase, CoordinatorType, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
-  typealias DestinationType = MainTab
-  
-  let specimenNavigator: SpecimenNavigator<MainTab>
+>: CoordinatorBase, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
   let factory: FactoryDelegateType
   
   init(
-    specimenNavigator: SpecimenNavigator<MainTab>,
+    navigator: Navigator,
     factory: FactoryDelegateType
   ) {
-    self.specimenNavigator = specimenNavigator
     self.factory = factory
     
-    super.init(onFinish: nil)
+    super.init(navigator: navigator, onFinish: nil)
   }
   
-  func screenContent(for destination: DestinationType) -> some View {
+  // MARK: - Navigation Coordinator
+  
+  typealias SpecimenDestination = MainTab
+  typealias ModalDestination = DestinationNever
+  typealias StackDestination = DestinationNever
+  
+  func initialContent() -> some View {
+    TabContainer(
+      coordinator: self,
+      tabs: SpecimenDestination.allCases,
+      label: { [unowned self] in
+        label(forSpecimen: $0)
+      }
+    )
+  }
+
+  @ViewBuilder
+  func content(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .usecases:
-      CoordinatedScreen.stackRoot(
-        modalCoordinator: addChild(
-          childFactory: {
-            factory.createUsecasesCoordinator()
-          },
-          as: MainTab.usecases
-        )
+      initialContent(
+        for: destination,
+        factory.createUsecasesCoordinator
       )
     case .deeplinks:
-      CoordinatedScreen.base(
-        coordinator: addChild(
-          childFactory: {
-            factory.createDeeplinksCoordinator()
-          },
-          as: MainTab.deeplinks
-        )
+      initialContent(
+        for: destination,
+        factory.createDeeplinksCoordinator
       )
     }
   }
   
-  func label(for destination: DestinationType) -> some View {
+  @ViewBuilder
+  func label(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .usecases:
       Label("Usecases", systemImage: "folder.fill")
@@ -71,13 +77,15 @@ final class MainCoordinator<
 //      }
     }
   }
+
+  // MARK: - Deeplink
   
   override func processDeeplink(
     _ deeplink: any DeeplinkEventType
   ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecases:
-      await specimenNavigator.replaceDestination(with: .usecases)
+      await replaceSpecimenDestination(with: .usecases)
       return .done
       
     case
@@ -89,7 +97,7 @@ final class MainCoordinator<
       Deeplink.showMultiChildPathB,
       Deeplink.showMultiChildPathBFinish:
       
-      await specimenNavigator.replaceDestination(with: .usecases)
+      await replaceSpecimenDestination(with: .usecases)
       return .partial
       
     default:

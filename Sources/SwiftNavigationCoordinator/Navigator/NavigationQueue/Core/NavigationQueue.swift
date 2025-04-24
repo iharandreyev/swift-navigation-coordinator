@@ -10,41 +10,60 @@ import Foundation
 import SwiftUI
 
 /// Used to throttle animation completions to avoid multiple transitions at the same time
-public actor NavigationQueue {
+@MainActor
+final class NavigationQueue: NavigationQueueType {
   private let withoutAnimations: WithoutAnimations
   private let withAnimations: WithAnimations
   
   // Fifo queue
-  private var queue: [NavigationQueueItem] = []
+  private(set) var queue: [NavigationQueueItem] = []
   
-  init<ClockType: Clock<Duration>>(
+  nonisolated init<ClockType: Clock<Duration>>(
     clock: ClockType
   ) {
     self.withoutAnimations = WithoutAnimations(clock: clock)
     self.withAnimations = WithAnimations(clock: clock)
   }
 
-  public func schedule(
-    uiUpdate job: @MainActor @Sendable @escaping () -> Void,
+  func schedule(
+    update: @escaping NavigationQueueUpdate,
     animated: Bool,
-    function: StaticString = #function
-  ) async  {
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
+  ) async {
     if queue.isEmpty {
-      await enqueueFirst(job, animated: animated, function: function)
+      await enqueueFirst(
+        update,
+        animated: animated,
+        invokedIn: function,
+        from: file,
+        at: line
+      )
     } else {
-      await enqueueNext(job, animated: animated, function: function)
+      await enqueueNext(
+        update,
+        animated: animated,
+        invokedIn: function,
+        from: file,
+        at: line
+      )
     }
   }
   
   private func enqueueFirst(
     _ job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
-    function: StaticString
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) async {
     enqueue(
       job,
       animated: animated,
-      function: function
+      invokedIn: function,
+      from: file,
+      at: line
     )
     
     await resolveQueue()
@@ -53,7 +72,9 @@ public actor NavigationQueue {
   private func enqueueNext(
     _ job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
-    function: StaticString
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) async  {
     await withCheckedContinuation { continuation in
       enqueue(
@@ -62,7 +83,9 @@ public actor NavigationQueue {
         completion: {
           continuation.resume()
         },
-        function: function
+        invokedIn: function,
+        from: file,
+        at: line
       )
     }
   }
@@ -71,17 +94,19 @@ public actor NavigationQueue {
     _ job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
     completion: NavigationQueueItem.Completion? = nil,
-    function: StaticString
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   )  {
     let item = NavigationQueueItem(
       job: job,
       animated: animated,
       completion: completion,
-      function: function
+      invokedIn: function,
+      from: file,
+      at: line
     )
     queue.append(item)
-    
-    logMessage("NavigationQueue: Did enqueue \(item)")
   }
   
   private func resolveQueue() async  {
@@ -89,23 +114,23 @@ public actor NavigationQueue {
     
     let next = queue.removeFirst()
     
-    logMessage("NavigationQueue: Did dequeue \(next)")
-    
     if next.animated {
       await withAnimations.run(next.job)
     } else {
       await withoutAnimations.run(next.job)
     }
 
-    await next.completion?()
+    next.completion?()
     
     logMessage("NavigationQueue: Did complete \(next)")
+    
     await resolveQueue()
   }
 }
 
 extension NavigationQueue {
-  public var shared: NavigationQueue { Environment.navigationQueue }
+  static let live = NavigationQueue(clock: ContinuousClock())
+  static let test = NavigationQueue(clock: ImmediateClock())
 }
 
 struct NavigationQueueItem: CustomStringConvertible {
@@ -121,22 +146,13 @@ struct NavigationQueueItem: CustomStringConvertible {
     job: @MainActor @Sendable @escaping () -> Void,
     animated: Bool,
     completion: Completion? = nil,
-    function: StaticString
+    invokedIn function: StaticString,
+    from file: StaticString,
+    at line: UInt
   ) {
     self.job = job
     self.animated = animated
     self.completion = completion
-    self.description = "\(function)"
+    self.description = "`\(function)` called from `\(file):\(line)`"
   }
 }
-
-#if canImport(XCTest)
-
-extension NavigationQueue {
-  var queueLength: Int {
-    Environment.assert(.test)
-    return queue.count
-  }
-}
-
-#endif

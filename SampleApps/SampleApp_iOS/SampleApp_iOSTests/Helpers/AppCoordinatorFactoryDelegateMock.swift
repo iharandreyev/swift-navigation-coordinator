@@ -10,17 +10,36 @@ import SwiftNavigationCoordinatorTesting
 
 #warning("TODO: Move into stencil template")
 enum AppCoordinatorFactoryDelegateMock {
-  typealias Dummy = AppCoordinatorFactoryDelegateTypeMock<DummyView, DummyCoordinator, DummyCoordinator>
+  typealias Dummy = AppCoordinatorFactoryDelegateTypeMock<
+    DummyView,
+    DummyCoordinator,
+    DummyCoordinator
+  >
+  
   typealias DummyOnboarding<
     MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
-  > = AppCoordinatorFactoryDelegateTypeMock<DummyView, MainCoordinatorType, DummyCoordinator>
+  > = AppCoordinatorFactoryDelegateTypeMock<
+    DummyView,
+    MainCoordinatorType,
+    DummyCoordinator
+  > where MainCoordinatorType.SpecimenDestination: DestinationType
+  
   typealias DummyMain<
-    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
-  > = AppCoordinatorFactoryDelegateTypeMock<DummyView, DummyCoordinator, OnboardingCoordinatorType>
+    OnboardingCoordinatorType: NavigationCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  > = AppCoordinatorFactoryDelegateTypeMock<
+    DummyView,
+    DummyCoordinator,
+    OnboardingCoordinatorType
+  > where OnboardingCoordinatorType.ModalDestination: DestinationType, OnboardingCoordinatorType.StackDestination: DestinationType
+  
   typealias Full<
     MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType,
-    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
-  > = AppCoordinatorFactoryDelegateTypeMock<DummyView, MainCoordinatorType, OnboardingCoordinatorType>
+    OnboardingCoordinatorType: NavigationCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  > = AppCoordinatorFactoryDelegateTypeMock<
+    DummyView,
+    MainCoordinatorType,
+    OnboardingCoordinatorType
+  > where MainCoordinatorType.SpecimenDestination: DestinationType, OnboardingCoordinatorType.ModalDestination: DestinationType, OnboardingCoordinatorType.StackDestination: DestinationType
   
   @MainActor
   static func create() -> Dummy {
@@ -46,7 +65,7 @@ enum AppCoordinatorFactoryDelegateMock {
   
   @MainActor
   static func create<
-    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+    OnboardingCoordinatorType: NavigationCoordinatorType & StackCoordinatorType & ModalCoordinatorType
   >(
     onboardingCoordinator: OnboardingCoordinatorType
   ) -> DummyMain<OnboardingCoordinatorType> {
@@ -60,7 +79,7 @@ enum AppCoordinatorFactoryDelegateMock {
   @MainActor
   static func create<
     MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType,
-    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+    OnboardingCoordinatorType: NavigationCoordinatorType & StackCoordinatorType & ModalCoordinatorType
   >(
     mainCoordinator: MainCoordinatorType,
     onboardingCoordinator: OnboardingCoordinatorType

@@ -15,31 +15,26 @@ import SampleApp_iOS
 
 @MainActor
 struct DeeplinkTests {
-  init() {
-    SwiftNavigationCoordinator.setEnvironment(.test)
-  }
-  
   @Test
   func appCoordinator_canHandleDeeplink_onlyWhen_main() async throws {
-    let navigator = SpecimenNavigator(
-      initialDestination: AppDestination.appInit
-    )
     let sut = AppCoordinator(
-      specimenNavigator: navigator,
+      navigator: Navigator.test(
+        specimenDestination: AppDestination.appInit
+      ),
       factory: AppCoordinatorFactoryDelegateMock.create()
     )
     
-    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.appInit)
-    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.onboarding)
-    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), as: AppDestination.main)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), for: AppDestination.appInit)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), for: AppDestination.onboarding)
+    sut.addChild(DummyCoordinator(processDeeplinkResult: .done), for: AppDestination.main)
     
-    try await withTimeout(.seconds(1)) {
+    try await withTimeout(Constants.timeout) {
       for deeplink in Deeplink.allCases {
-        await navigator.replaceDestination(with: .appInit)
+        await sut.navigator.replaceSpecimenDestination(with: AppDestination.appInit)
         #expect(await sut.handleDeeplink(deeplink) == false)
-        await navigator.replaceDestination(with: .onboarding)
+        await sut.navigator.replaceSpecimenDestination(with: AppDestination.onboarding)
         #expect(await sut.handleDeeplink(deeplink) == false)
-        await navigator.replaceDestination(with: .main)
+        await sut.navigator.replaceSpecimenDestination(with: AppDestination.main)
         #expect(await sut.handleDeeplink(deeplink) == true)
       }
     }
@@ -48,79 +43,65 @@ struct DeeplinkTests {
   @MainActor
   @Test
   func app_handles_showUsecasesAndModalSheet() async throws {
-    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
-    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
-    
-    let mainNavigator = SpecimenNavigator(
-      initialDestination: MainTab.usecases
-    )
+    let usecases = UsecasesCoordinator()
     let main = MainCoordinator(
-      specimenNavigator: mainNavigator,
+      navigator: Navigator.test(specimenDestination: MainTab.usecases),
       factory: MainCoordinatorFactoryDelegateMock.create(usecasesCoordinator: usecases)
     )
-    
-    let rootNavigator = SpecimenNavigator(
-      initialDestination: AppDestination.main
-    )
     let root = AppCoordinator(
-      specimenNavigator: rootNavigator,
+      navigator: Navigator.test(specimenDestination: AppDestination.main),
       factory: AppCoordinatorFactoryDelegateMock.create(mainCoordinator: main)
     )
     
-    try await withTimeout(.seconds(1)) { @MainActor in
+    try await withTimeout(Constants.timeout) { @MainActor in
       #warning("TODO: Figure out how to reduce this boilerplate")
       // Simulate view presentation
-      _ = root.screenContent(for: .main)
-      _ = main.screenContent(for: .usecases)
-      await mainNavigator.replaceDestination(with: .deeplinks)
-      _ = main.screenContent(for: .deeplinks)
+      _ = root.content(forSpecimen: .main)
+      _ = main.content(forSpecimen: .usecases)
+      await main.navigator.replaceSpecimenDestination(with: MainTab.deeplinks)
+      _ = main.content(forSpecimen: .deeplinks)
       
       #expect(root.factory.createMainCoordinatorCalled)
       #expect(!root.factory.createAppInitScreenOnFinishCallbackVoidCalled)
       #expect(!root.factory.createOnboardingCoordinatorOnFinishCallbackVoidCalled)
       
       #expect(await root.handleDeeplink(Deeplink.showUsecasesAndModalSheet))
-      #expect(await mainNavigator.destination == .usecases)
-      #expect(await usecasesModalNavigator.destination == .sheet(.modalSheet))
+      #expect(main.navigator.specimenDestination() == MainTab.usecases)
+      #expect(usecases.navigator.modalDestination() == .sheet(UsecasesDestination.Modal.modalSheet))
     }
   }
   
   @MainActor
   @Test
   func app_handles_showUsecasesAndModalCover() async throws {
-    let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
-    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
-    
-    let mainNavigator = SpecimenNavigator(
-      initialDestination: MainTab.usecases
-    )
+    let usecases = UsecasesCoordinator()
     let main = MainCoordinator(
-      specimenNavigator: mainNavigator,
+      navigator: Navigator.test(specimenDestination: MainTab.usecases),
       factory: MainCoordinatorFactoryDelegateMock.create(usecasesCoordinator: usecases)
     )
-    
-    let rootNavigator = SpecimenNavigator(
-      initialDestination: AppDestination.main
-    )
     let root = AppCoordinator(
-      specimenNavigator: rootNavigator,
+      navigator: Navigator.test(specimenDestination: AppDestination.main),
       factory: AppCoordinatorFactoryDelegateMock.create(mainCoordinator: main)
     )
 
-    try await withTimeout(.seconds(1)) { @MainActor in
+    try await withTimeout(Constants.timeout) { @MainActor in
       // Simulate view presentation
-      _ = root.screenContent(for: .main)
-      _ = main.screenContent(for: .usecases)
-      await mainNavigator.replaceDestination(with: .deeplinks)
-      _ = main.screenContent(for: .deeplinks)
+      _ = root.content(forSpecimen: .main)
+      _ = main.content(forSpecimen: .usecases)
+      await main.navigator.replaceSpecimenDestination(with: MainTab.deeplinks)
+      _ = main.content(forSpecimen: .deeplinks)
       
       #expect(root.factory.createMainCoordinatorCalled)
       #expect(!root.factory.createAppInitScreenOnFinishCallbackVoidCalled)
       #expect(!root.factory.createOnboardingCoordinatorOnFinishCallbackVoidCalled)
       
       #expect(await root.handleDeeplink(Deeplink.showUsecasesAndModalCover))
-      #expect(await mainNavigator.destination == .usecases)
-      #expect(await usecasesModalNavigator.destination == .cover(.modalCover))
+      #expect(main.navigator.specimenDestination() == MainTab.usecases)
+      #expect(usecases.navigator.modalDestination() == .cover(UsecasesDestination.Modal.modalCover))
     }
+  }
+  
+  enum Constants {
+    static let timeout = Duration.milliseconds(1500)
   }
 }

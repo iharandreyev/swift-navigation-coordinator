@@ -13,18 +13,16 @@ import SwiftNavigationCoordinator
 /// Useful for testing coordinator behavior when we don't care about child coordinator type.
 public final class DummyCoordinator:
   CoordinatorBase,
-  ScreenCoordinatorType,
+  NavigationCoordinatorType,
   ModalCoordinatorType,
   StackCoordinatorType,
   StaticSpecimenCoordinatorType,
   LabelledSpecimenCoordinatorType
 {
-  public typealias DestinationType = DummyDestination
-  
-  public let stackNavigator = StackNavigator<DestinationType>()
-  public let modalNavigator = ModalNavigator<DestinationType>()
-  public let specimenNavigator = SpecimenNavigator<DestinationType>(initialDestination: DestinationType())
-  
+  public typealias SpecimenDestination = DummyDestination
+  public typealias ModalDestination = DummyDestination
+  public typealias StackDestination = DummyDestination
+
   public var onProcessDeeplink: (any DeeplinkEventType) async -> ProcessDeeplinkResult
   
   public init(
@@ -45,21 +43,33 @@ public final class DummyCoordinator:
       onFinish: onFinish
     )
   }
-  
-  public func initialScreen() -> DummyView {
+
+  public func initialContent() -> DummyView {
     DummyView()
   }
 
-  public func screenContent(
-    for destination: DestinationType
+  public func content(
+    forSpecimen destination: SpecimenDestination
+  ) -> DummyView {
+    DummyView()
+  }
+
+  public func label(
+    forSpecimen destination: SpecimenDestination
+  ) -> DummyLabel {
+    DummyLabel()
+  }
+  
+  public func content(
+    forModal destination: ModalDestination
   ) -> DummyView {
     DummyView()
   }
   
-  public func label(
-    for destination: DestinationType
-  ) -> DummyLabel {
-    DummyLabel()
+  public func content(
+    forStack destination: StackDestination
+  ) -> DummyView {
+    DummyView()
   }
   
   public override func processDeeplink(
@@ -69,7 +79,7 @@ public final class DummyCoordinator:
   }
 }
 
-public struct DummyDestination: ModalDestinationContentType {
+public struct DummyDestination: DestinationType {
   public let id: String
   
   public init(id: String = "dummy-destination") {

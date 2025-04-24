@@ -9,9 +9,10 @@ import SwiftNavigationCoordinator
 import SwiftUI
 
 // sourcery: AutoMockable
-protocol AppCoordinatorFactoryDelegateType: CoordinatorFactoryDelegateType {
+@MainActor
+protocol AppCoordinatorFactoryDelegateType {
   associatedtype AppInitScreenType: View
-  associatedtype OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  associatedtype OnboardingCoordinatorType: StackCoordinatorType & ModalCoordinatorType
   associatedtype MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType
   
   func createAppInitScreen(
@@ -34,18 +35,17 @@ struct AppCoordinatorFactoryDelegate: AppCoordinatorFactoryDelegateType {
   
   func createOnboardingCoordinator(
     onFinish: Callback<Void>
-  ) -> some ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType {
+  ) -> OnboardingCoordinator<OnboardingCoordinatorFactoryDelegate> {
     OnboardingCoordinator(
-      stackNavigator: StackNavigator(),
-      modalNavigator: ModalNavigator(),
+      navigator: Navigator(),
       factory: OnboardingCoordinatorFactoryDelegate(),
       onFinish: onFinish
     )
   }
   
-  func createMainCoordinator() -> some StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType {
+  func createMainCoordinator() -> MainCoordinator<MainCoordinatorFactoryDelegate> {
     MainCoordinator(
-      specimenNavigator: SpecimenNavigator(initialDestination: .usecases),
+      navigator: Navigator(initialSpecimenDestination: MainTab.usecases),
       factory: MainCoordinatorFactoryDelegate()
     )
   }

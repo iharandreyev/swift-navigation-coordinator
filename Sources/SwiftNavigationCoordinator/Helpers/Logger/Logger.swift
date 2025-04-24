@@ -36,13 +36,13 @@ func logWarning(_ message: @autoclosure () -> String) {
 @inline(__always)
 func logWarning(
   _ message: @autoclosure () -> String,
-  file: StaticString,
-  line: UInt
+  invokedIn file: StaticString,
+  at line: UInt
 ) {
   Logger.shared.logWarning(
     """
       \(message()).             \
-      Source: \(file):\(line)
+      Invoked in: \(file):\(line)
     """
   )
 }

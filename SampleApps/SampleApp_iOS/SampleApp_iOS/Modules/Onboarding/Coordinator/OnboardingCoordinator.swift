@@ -5,17 +5,22 @@
 //  Created by Andreyeu, Ihar on 4/1/25.
 //
 
+import SUIOnRemoveFromParent
 import SwiftNavigationCoordinator
 import SwiftUI
 
-enum OnboardingDestination: ScreenDestinationType, ModalDestinationContentType {
-  case step(OnboardingStep)
-  case info
+enum OnboardingDestination {
+  enum Modal: String, DestinationType {
+    case info
+  }
   
-  var id: String {
-    switch self {
-    case let .step(step): return "step-\(step.id)"
-    case .info: return "info"
+  enum Stack: DestinationType {
+    case step(OnboardingStep)
+    
+    var id: String {
+      switch self {
+      case let .step(step): return "step-\(step.id)"
+      }
     }
   }
 }
@@ -23,52 +28,66 @@ enum OnboardingDestination: ScreenDestinationType, ModalDestinationContentType {
 @MainActor
 final class OnboardingCoordinator<
   FactoryDelegateType: OnboardingCoordinatorFactoryDelegateType
->: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
-  typealias DestinationType = OnboardingDestination
-  
-  let stackNavigator: StackNavigator<OnboardingDestination>
-  let modalNavigator: ModalNavigator<DestinationType>
+>: CoordinatorBase, NavigationCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
   let factory: FactoryDelegateType
   
   private(set) var currentStepIdx = 0
   
+  // MARK: - Init
+  
   init(
-    stackNavigator: StackNavigator<DestinationType>,
-    modalNavigator: ModalNavigator<DestinationType>,
+    navigator: Navigator,
     factory: FactoryDelegateType,
     onFinish: Callback<Void>
   ) {
-    self.stackNavigator = stackNavigator
-    self.modalNavigator = modalNavigator
     self.factory = factory
     
-    super.init(onFinish: onFinish)
+    super.init(navigator: navigator, onFinish: onFinish)
   }
   
-  func destinationDidDismiss(_ destination: OnboardingDestination) {
-    logMessage("OnboardingCoordinator: Did dismiss \(destination)")
-    revertToPreviousStep()
-  }
-  
-  private func revertToPreviousStep() {
-    guard currentStepIdx > 0 else { return }
-    currentStepIdx -= 1
-  }
-  
-  func initialScreen() -> some View {
-    factory.createStepScreen(
-      for: OnboardingStep.allCases[0],
-      onNext: Callback { [unowned self] in
-        await showNextStep()
-      },
-      onShowInfo: Callback{ [unowned self] in
-        await showInfo()
+  // MARK: - Navigation Coordinator
+
+  typealias SpecimenDestination = DestinationNever
+  typealias ModalDestination = OnboardingDestination.Modal
+  typealias StackDestination = OnboardingDestination.Stack
+
+  func initialContent() -> some View {
+    StackContainer.root(
+      coordinator: self,
+      initialContent: { [unowned self] in
+        factory.createStepScreen(
+          for: OnboardingStep.allCases[0],
+          onNext: Callback { [unowned self] in
+            await showNextStep()
+          },
+          onShowInfo: Callback{ [unowned self] in
+            await showInfo()
+          }
+        )
       }
     )
-    .onRemoveFromHierarchy(finish: self)
   }
-  
-  func screen(for destination: OnboardingDestination) -> some View {
+
+  @ViewBuilder
+  func content(forModal destination: ModalDestination) -> some View {
+    switch destination {
+    case .info:
+      StackContainer.leaf(
+        coordinator: addChild(
+          for: destination
+        ) {
+          factory.createInfoCoordinator(
+            onFinish: Callback { [unowned self] in
+              await infoDidFinish()
+            }
+          )
+        }
+      )
+    }
+  }
+
+  @ViewBuilder
+  func content(forStack destination: StackDestination) -> some View {
     switch destination {
     case let .step(step):
       factory.createStepScreen(
@@ -81,22 +100,21 @@ final class OnboardingCoordinator<
         }
       )
       .onRemoveFromParent { [weak self] in
-        self?.destinationDidDismiss(destination)
+        self?.stepDidDismiss(step)
       }
-    case .info:
-      CoordinatedScreen.stackRoot(
-        stackCoordinator: addChild(
-          childFactory: {
-            factory.createInfoCoordinator(
-              onFinish: Callback { [unowned self] in
-                await infoDidFinish()
-              }
-            )
-          },
-          as: destination
-        )
-      )
     }
+  }
+  
+  // MARK: Logic
+  
+  func stepDidDismiss(_ destination: OnboardingStep) {
+    logMessage("OnboardingCoordinator: Did dismiss \(destination)")
+    revertToPreviousStep()
+  }
+  
+  private func revertToPreviousStep() {
+    guard currentStepIdx > 0 else { return }
+    currentStepIdx -= 1
   }
   
   func showNextStep() async {
@@ -104,7 +122,7 @@ final class OnboardingCoordinator<
       return await finish()
     }
     
-    await stackNavigator.push(.step(nextStep))
+    await push(.step(nextStep))
   }
   
   private func nextStep() -> OnboardingStep? {
@@ -114,10 +132,10 @@ final class OnboardingCoordinator<
   }
   
   func showInfo() async {
-    await modalNavigator.presentDestination(.sheet(.info))
+    await presentDestination(.sheet(.info))
   }
   
   func infoDidFinish() async {
-    await modalNavigator.dismissDestination()
+    await dismissDestination()
   }
 }

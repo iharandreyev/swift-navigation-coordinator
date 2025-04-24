@@ -7,35 +7,33 @@
 
 import SwiftUI
 
+#warning("TODO: Documentation")
 @MainActor
-public protocol SpecimenCoordinatorType: CoordinatorBase {
-  associatedtype DestinationType: ScreenDestinationType
-  associatedtype DestinationScreenContentType: View
-  
-  var specimenNavigator: SpecimenNavigator<DestinationType> { get }
+public protocol SpecimenCoordinatorType: NavigationCoordinatorType where SpecimenDestination: DestinationType { }
+
+@MainActor
+public protocol StaticSpecimenCoordinatorType: SpecimenCoordinatorType where SpecimenDestination: CaseIterable, SpecimenDestination.AllCases: RandomAccessCollection { }
+
+@MainActor
+public protocol LabelledSpecimenCoordinatorType: SpecimenCoordinatorType {
+  associatedtype SpecimenDestinationScreenLabel: View
   
   @ViewBuilder
-  func screenContent(for destination: DestinationType) -> DestinationScreenContentType
-  func screenTransition(for destination: DestinationType) -> AnyTransition
+  func label(forSpecimen destination: SpecimenDestination) -> SpecimenDestinationScreenLabel
 }
 
 extension SpecimenCoordinatorType {
-  public func screen(
-    for destination: DestinationType
-  ) -> some View {
-    screenContent(
-      for: destination
+  public func replaceSpecimenDestination(
+    with destination: SpecimenDestination,
+    animated: Bool = true,
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
+  ) async {
+    await navigator.replaceSpecimenDestination(
+      with: destination,
+      animated: animated,
+      invokedIn: file,
+      at: line
     )
-    .transition(
-      screenTransition(for: destination)
-    )
-    .id(destination)
-  }
-  
-  public func screenTransition(for destination: DestinationType) -> AnyTransition {
-    .opacity
   }
 }
-
-@MainActor
-public protocol StaticSpecimenCoordinatorType: SpecimenCoordinatorType where DestinationType: CaseIterable, DestinationType.AllCases: RandomAccessCollection { }

@@ -7,13 +7,34 @@
 
 import SwiftUI
 
+#warning("TODO: Documentation")
 @MainActor
-public protocol ModalCoordinatorType: CoordinatorBase {
-  associatedtype DestinationType: ModalDestinationContentType
-  associatedtype DestinationScreenType: View
+public protocol ModalCoordinatorType: NavigationCoordinatorType where ModalDestination: DestinationType { }
+
+extension ModalCoordinatorType {
+  public func presentDestination(
+    _ destination: ModalDestinationPath<ModalDestination>,
+    animated: Bool = true,
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
+  ) async {
+    await navigator.presentDestination(
+      destination,
+      animated: animated,
+      invokedIn: file,
+      at: line
+    )
+  }
   
-  var modalNavigator: ModalNavigator<DestinationType> { get }
-  
-  @ViewBuilder
-  func screen(for destination: DestinationType) -> DestinationScreenType
+  public func dismissDestination(
+    animated: Bool = true,
+    invokedIn file: StaticString = #file,
+    at line: UInt = #line
+  ) async {
+    await navigator.dismissDestination(
+      animated: animated,
+      invokedIn: file,
+      at: line
+    )
+  }
 }

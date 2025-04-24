@@ -41,7 +41,7 @@ import SwiftNavigationCoordinator
 final class AppCoordinatorFactoryDelegateTypeMock<
     AppInitScreenType: View,
     MainCoordinatorType: StaticSpecimenCoordinatorType & LabelledSpecimenCoordinatorType,
-    OnboardingCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType>: AppCoordinatorFactoryDelegateType {
+    OnboardingCoordinatorType: StackCoordinatorType & ModalCoordinatorType>: AppCoordinatorFactoryDelegateType {
 
 
 
@@ -111,8 +111,8 @@ final class AppCoordinatorFactoryDelegateTypeMock<
 
 }
 final class MainCoordinatorFactoryDelegateTypeMock<
-    DeeplinksCoordinatorType: ScreenCoordinatorType,
-    UsecasesCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType>: MainCoordinatorFactoryDelegateType {
+    DeeplinksCoordinatorType: NavigationCoordinatorType,
+    UsecasesCoordinatorType: StackCoordinatorType & ModalCoordinatorType>: MainCoordinatorFactoryDelegateType {
 
 
 
