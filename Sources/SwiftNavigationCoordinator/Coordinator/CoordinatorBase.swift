@@ -42,8 +42,7 @@ open class CoordinatorBase: NavigatorDelegate {
   }
   
   // MARK: - Children Management
-  
-  @discardableResult
+
   public final func addChild<
     Child: CoordinatorBase,
     Destination: SomeDestination
@@ -52,14 +51,15 @@ open class CoordinatorBase: NavigatorDelegate {
     for destination: Destination,
     invokedIn file: StaticString = #file,
     at line: UInt = #line
-  ) -> Child {
+  ) {
     let anyDestination = AnyDestination(destination)
     
     guard children[anyDestination] == nil else {
-      fatalError(
+      return logWarning(
         """
           `\(ShortDescription(self))` already contains child of type 
-          `\(ShortDescription(Child.self))`"                          
+          `\(ShortDescription(Child.self))`"                          \
+          Ignore `addChild`
         """,
         invokedIn: file,
         at: line
@@ -77,8 +77,6 @@ open class CoordinatorBase: NavigatorDelegate {
         into `\(ShortDescription(self))`
       """
     )
-    
-    return child
   }
   
   public final func removeFromParent(
