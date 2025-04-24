@@ -24,11 +24,15 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
   typealias StackDestination = DestinationNever
 
   func initialContent() -> some View {
-    MultiChildFlowPathBInitialScreen(
-      onProceed: { [unowned self] in
-        Task(operation: proceedToFinishFlow)
-      }
-    )
+    Container(
+      coordinator: self
+    ) { [unowned self] in
+      MultiChildFlowPathBInitialScreen(
+        onProceed: { [unowned self] in
+          Task(operation: proceedToFinishFlow)
+        }
+      )
+    }
   }
   
   @ViewBuilder

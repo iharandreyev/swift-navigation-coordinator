@@ -39,7 +39,14 @@ final class AppCoordinator<
   typealias StackDestination = DestinationNever
 
   func initialContent() -> some View {
-    AppRoot(coordinator: self)
+    AppContainer {
+      SpecimenContainer(
+        coordinator: self,
+        transition: { [unowned self] in
+          transition(forSpecimen: $0)
+        }
+      )
+    }
   }
   
   @ViewBuilder
@@ -52,17 +59,16 @@ final class AppCoordinator<
         }
       )
     case .onboarding:
-      CoordinatedScreen.stackRoot(
-        modalCoordinator: addChild(
-          for: destination
-        ) {
-          factory.createOnboardingCoordinator(
-            onFinish: Callback { [unowned self] in
-              await onboardingDidFinish()
-            }
-          )
-        }
-      )
+      addChild(
+        for: destination
+      ) {
+        factory.createOnboardingCoordinator(
+          onFinish: Callback { [unowned self] in
+            await onboardingDidFinish()
+          }
+        )
+      }
+      .initialContent()
     case .main:
       addChild(
         for: destination,

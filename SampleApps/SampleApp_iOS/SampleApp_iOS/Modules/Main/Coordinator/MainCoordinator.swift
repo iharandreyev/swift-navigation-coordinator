@@ -35,8 +35,12 @@ final class MainCoordinator<
   typealias StackDestination = DestinationNever
   
   func initialContent() -> some View {
-    CoordinatedScreen.tabbed(
-      coordinator: self
+    TabContainer(
+      coordinator: self,
+      tabs: SpecimenDestination.allCases,
+      label: { [unowned self] in
+        label(forSpecimen: $0)
+      }
     )
   }
 
@@ -44,19 +48,17 @@ final class MainCoordinator<
   func content(forSpecimen destination: SpecimenDestination) -> some View {
     switch destination {
     case .usecases:
-      CoordinatedScreen.stackRoot(
-        modalCoordinator: addChild(
-          for: destination,
-          factory.createUsecasesCoordinator
-        )
+      addChild(
+        for: destination,
+        factory.createUsecasesCoordinator
       )
+      .initialContent()
     case .deeplinks:
-      CoordinatedScreen.base(
-        coordinator: addChild(
-          for: destination,
-          factory.createDeeplinksCoordinator
-        )
+      addChild(
+        for: destination,
+        factory.createDeeplinksCoordinator
       )
+      .initialContent()
     }
   }
   

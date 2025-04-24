@@ -23,11 +23,15 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Na
   typealias StackDestination = MultiChildFlowDestination
 
   func initialContent() -> some View {
-    MultiChildFlowRootScreen(
-      onNext: { [unowned self] in
-        Task(operation: showSelectPath)
-      }
-    )
+    Container(
+      coordinator: self
+    ) { [unowned self] in
+      MultiChildFlowRootScreen(
+        onNext: { [unowned self] in
+          Task(operation: showSelectPath)
+        }
+      )
+    }
   }
   
   @ViewBuilder
@@ -58,20 +62,18 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Na
       .navigationTitle("Select Path")
 
     case .pathA:
-      CoordinatedScreen.stackPage(
-        stackCoordinator: child(
-          of: MultiChildFlowPathACoordinator.self,
-          for: destination
-        )
+      child(
+        of: MultiChildFlowPathACoordinator.self,
+        for: destination
       )
+      .initialContent()
 
     case .pathB:
-      CoordinatedScreen.base(
-        modalCoordinator: child(
-          of: MultiChildFlowPathBCoordinator.self,
-          for: destination
-        )
+      child(
+        of: MultiChildFlowPathBCoordinator.self,
+        for: destination
       )
+      .initialContent()
 
     case .confirmRestart:
       MultiChildFlowConfirmRestartScreen(

@@ -50,6 +50,7 @@ public struct SpecimenContainer<
       )
       .id(currentDestination)
       .tag(currentDestination)
+      .transition(transition(currentDestination))
     }
     .animation(
       .easeInOut,

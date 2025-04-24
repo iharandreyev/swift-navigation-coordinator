@@ -27,6 +27,27 @@ public struct StackContainer<
     self.state = coordinator.navigator._stackState
   }
   
+  public static func root(
+    coordinator: Coordinator,
+    initialContent: @escaping () -> InitialContent
+  ) -> Self {
+    StackContainer(
+      coordinator: coordinator,
+      initialContent: initialContent
+    )
+  }
+  
+  public static func leaf(
+    coordinator: Coordinator
+  ) -> Self where InitialContent == Coordinator.InitialContent {
+    StackContainer(
+      coordinator: coordinator,
+      initialContent: { [unowned coordinator] in
+        coordinator.initialContent()
+      }
+    )
+  }
+  
   public var content: some View {
     NavigationStack(
       path: $state.path(),

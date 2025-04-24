@@ -27,6 +27,11 @@ public protocol NavigationCoordinatorType<
   func content(forModal destination: ModalDestination) -> ModalDestinationContent
   @ViewBuilder
   func content(forStack destination: StackDestination) -> StackDestinationContent
+  
+  associatedtype InitialContent: View
+  
+  @ViewBuilder
+  func initialContent() -> InitialContent
 }
 
 @MainActor

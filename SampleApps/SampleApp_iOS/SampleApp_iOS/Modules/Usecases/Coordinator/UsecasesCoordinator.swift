@@ -28,18 +28,23 @@ final class UsecasesCoordinator: CoordinatorBase, NavigationCoordinatorType, Sta
   typealias StackDestination = UsecasesDestination.Stack
 
   func initialContent() -> some View {
-    UsecasesListScreen(
-      onShowModalSheet: { [unowned self] in
-        Task(operation: showModalSheet)
-      },
-      onShowModalCover: { [unowned self] in
-        Task(operation: showModalCover)
-      },
-      onShowPushedScreen: { [unowned self] in
-        Task(operation: showPushedScreen)
-      },
-      onShowMultiChildFlow: { [unowned self] in
-        Task(operation: showMultiChildFlow)
+    StackContainer.root(
+      coordinator: self,
+      initialContent: { [unowned self] in
+        UsecasesListScreen(
+          onShowModalSheet: { [unowned self] in
+            Task(operation: showModalSheet)
+          },
+          onShowModalCover: { [unowned self] in
+            Task(operation: showModalCover)
+          },
+          onShowPushedScreen: { [unowned self] in
+            Task(operation: showPushedScreen)
+          },
+          onShowMultiChildFlow: { [unowned self] in
+            Task(operation: showMultiChildFlow)
+          }
+        )
       }
     )
   }
@@ -88,13 +93,11 @@ final class UsecasesCoordinator: CoordinatorBase, NavigationCoordinatorType, Sta
       .id(destination)
 
     case .multiChildFlow:
-      CoordinatedScreen
-        .stackPage(
-          stackCoordinator: child(
-            of: MultiChildFlowCoordinator.self,
-            for: destination
-          )
-        )
+      child(
+        of: MultiChildFlowCoordinator.self,
+        for: destination
+      )
+      .initialContent()
     }
   }
 

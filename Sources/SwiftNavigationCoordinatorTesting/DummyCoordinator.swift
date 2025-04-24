@@ -44,6 +44,10 @@ public final class DummyCoordinator:
     )
   }
 
+  public func initialContent() -> DummyView {
+    DummyView()
+  }
+
   public func content(
     forSpecimen destination: SpecimenDestination
   ) -> DummyView {
