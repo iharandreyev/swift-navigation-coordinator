@@ -6,7 +6,6 @@
 //
 
 import OrderedCollections
-import Perception
 import Testing
 
 @testable
@@ -14,248 +13,6 @@ import SwiftNavigationCoordinator
 import SwiftNavigationCoordinatorTesting
 
 struct NavigatorTests {
-  @Test
-  func presentDestination_finishes() async throws {
-    try await withTimeout(.seconds(1)) {
-      let sut = await createSut()
-      let destination = TestModalDestination.cover(.first)
-      
-      await sut.presentDestination(destination)
-      
-      #expect(await sut.modalDestination() == destination)
-    }
-  }
-  
-  @Test
-  func dismissDestination_finishes() async throws {
-    try await withTimeout(.seconds(1)) {
-      let sut = await createSut(modalDestination: .sheet(.first))
-      
-      await sut.dismissDestination()
-      
-      #expect(await sut.modalDestination() == nil)
-    }
-  }
-  
-  @Test
-  func replaceSpecimenDestination_finishes() async throws {
-    try await withTimeout(.seconds(1)) {
-      let sut = await createSut(specimenDestination: .first)
-      let expectedDestination = TestDestination.second
-      
-      await sut.replaceSpecimenDestination(with: expectedDestination)
-      
-      let receivedDestination = await sut.specimenDestination()
-      
-      #expect(receivedDestination == expectedDestination)
-    }
-  }
-  
-  @Test
-  func push_singleDestination_yieldsCorrectResult() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [],
-        yields: [TestDestination.first],
-        on: { sut in
-          await sut.push(TestDestination.first)
-        }
-      )
-    }
-  }
-  
-  @Test
-  func push_multipleDestinations_yieldsCorrectResult() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [],
-        yields: [TestDestination.first, .second, .third, .last],
-        on: { sut in
-          await sut.push(TestDestination.first)
-          await sut.push(TestDestination.second)
-          await sut.push(TestDestination.third)
-          await sut.push(TestDestination.last)
-        }
-      )
-    }
-  }
-  
-  @Test
-  func replaceLast_yieldsCorrectResult() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [TestDestination.first, .second, .third],
-        yields: [.first, .second, .last],
-        on: { sut in
-          await sut.replaceLast(with: TestDestination.last)
-        }
-      )
-    }
-  }
-  
-  @Test
-  func replaceLast_doesNothing_whenEmpty() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: OrderedSet<TestDestination>(),
-        yields: [],
-        on: { sut in
-          await sut.replaceLast(with: TestDestination.last)
-        }
-      )
-    }
-  }
-  
-  @Test
-  func replacePath_yieldsCorrectResult_whenNotEmpty() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [TestDestination.first, .second, .third],
-        yields: [.last],
-        on: { sut in
-          await sut.replacePath(with: TestDestination.last)
-        }
-      )
-    }
-  }
-  
-  @Test
-  func replacePath_yieldsCorrectResult_whenEmpty() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [],
-        yields: [TestDestination.last],
-        on: { sut in
-          await sut.replacePath(with: TestDestination.last)
-        }
-      )
-    }
-  }
-  
-  @Test
-  func pop_singleDestination_yieldsCorrectResult() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [TestDestination.first, .second, .third],
-        yields: [.first, .second],
-        on: { sut in
-          await sut.pop()
-        }
-      )
-    }
-  }
-  
-  @Test
-  func pop_multipleDestinations_yieldsCorrectResult() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [TestDestination.first, .second, .third, .last],
-        yields: [TestDestination.first],
-        on: { sut in
-          await sut.pop()
-          await sut.pop()
-          await sut.pop()
-        }
-      )
-    }
-  }
-  
-  @Test
-  func pop_doesNothing_whenEmpty() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: OrderedSet<TestDestination>(),
-        yields: [],
-        on: { sut in
-          await sut.pop()
-        }
-      )
-    }
-  }
-  
-  @Test
-  func popToDestination_yieldsCorrectResult() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [TestDestination.first, .second, .third, .last],
-        yields: [.first, .second],
-        on: { sut in
-          await sut.popToDestination(TestDestination.second)
-        }
-      )
-    }
-  }
-  
-  @Test
-  func popToDestination_doesNothing_whenInvalidDestination() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [TestDestination.first, .second],
-        yields: [.first, .second],
-        on: { sut in
-          await sut.popToDestination(TestDestination.third)
-        }
-      )
-    }
-  }
-  
-  @Test
-  func popToRoot_yieldsCorrectResult() async throws {
-    try await withTimeout(.seconds(1)) {
-      await assertSut(
-        withInputs: [TestDestination.first, .second],
-        yields: [],
-        on: { sut in
-          await sut.popToRoot()
-        }
-      )
-    }
-  }
-  
-  @Test
-  func continue_yieldsSynchronisedChild() async {
-    let parent = await createSut(
-      modalDestination: .cover(.last),
-      stack: [TestDestination.first, .second, .third]
-    )
-    let child = await Navigator.continue(parent)
-    
-    #expect(await parent.stack() == child.stack())
-    #expect(await parent.modalDestination() == TestModalDestination.cover(.last))
-    #expect(await child.modalDestination() == nil)
-    
-    await child.push(TestDestinationOf<Tags.T1>.first)
-    
-    #expect(await parent.stack() == child.stack())
-  }
-  
-  @MainActor
-  @Test
-  func childNavigator_popToRoot_popsAllChildren() async throws {
-    let parent = await createSut(
-      stack: [TestDestination.first, .second, .third]
-    )
-    
-    let child1 = Navigator.continue(parent)
-    await child1.push(TestDestinationOf<Tags.T1>.first)
-    await child1.push(TestDestinationOf<Tags.T1>.second)
-    
-    let child2 = Navigator.continue(child1)
-    await child2.push(TestDestinationOf<Tags.T2>.first)
-    
-    let child3 = Navigator.continue(child2)
-    await child3.push(TestDestinationOf<Tags.T3>.first)
-    
-    await child2.popToRoot()
-    
-    #expect(parent.stack() == [])
-    #expect(child1.stack() == [])
-    #expect(child2.stack() == [])
-    #expect(child3.stack() == [])
-  }
-}
-
-extension NavigatorTests {
   typealias Sut = Navigator
   
   func createSut(
@@ -285,7 +42,7 @@ extension NavigatorTests {
     )
   }
   
-  private func assertSut<Tag>(
+  func assertSut<Tag>(
     withInputs inputs: OrderedSet<TestDestinationOf<Tag>>,
     yields result: OrderedSet<TestDestinationOf<Tag>>,
     on opearation: (Sut) async -> Void,
@@ -309,5 +66,9 @@ extension NavigatorTests {
       "Expected stack to = `\(result)` after operation, but it is = `\(stack)`",
       sourceLocation: sourceLocation
     )
+  }
+  
+  enum Constants {
+    static let timeout = Duration.milliseconds(500)
   }
 }
