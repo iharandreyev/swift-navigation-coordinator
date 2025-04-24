@@ -42,7 +42,7 @@ func logWarning(
   Logger.shared.logWarning(
     """
       \(message()).             \
-      Source: \(file):\(line)
+      Invoked in: \(file):\(line)
     """
   )
 }
