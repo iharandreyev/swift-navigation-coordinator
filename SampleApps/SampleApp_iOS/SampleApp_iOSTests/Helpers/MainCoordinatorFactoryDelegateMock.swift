@@ -9,17 +9,32 @@ import SwiftNavigationCoordinator
 import SwiftNavigationCoordinatorTesting
 
 enum MainCoordinatorFactoryDelegateMock {
-  typealias Dummy = MainCoordinatorFactoryDelegateTypeMock<DummyCoordinator, DummyCoordinator>
+  typealias Dummy = MainCoordinatorFactoryDelegateTypeMock<
+    DummyCoordinator,
+    DummyCoordinator
+  >
+  
   typealias DummyDeeplinks<
-    UsecasesCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
-  > = MainCoordinatorFactoryDelegateTypeMock<DummyCoordinator, UsecasesCoordinatorType>
+    UsecasesCoordinatorType: NavigationCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  > = MainCoordinatorFactoryDelegateTypeMock<
+    DummyCoordinator,
+    UsecasesCoordinatorType
+  > where UsecasesCoordinatorType.ModalDestination: DestinationType, UsecasesCoordinatorType.StackDestination: DestinationType
+  
   typealias DummyUsecases<
-    DeeplinksCoordinatorType: ScreenCoordinatorType
-  > = MainCoordinatorFactoryDelegateTypeMock<DeeplinksCoordinatorType, DummyCoordinator>
+    DeeplinksCoordinatorType: NavigationCoordinatorType
+  > = MainCoordinatorFactoryDelegateTypeMock<
+    DeeplinksCoordinatorType,
+    DummyCoordinator
+  >
+  
   typealias Full<
-    DeeplinksCoordinatorType: ScreenCoordinatorType,
-    UsecasesCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
-  > = MainCoordinatorFactoryDelegateTypeMock<DeeplinksCoordinatorType, UsecasesCoordinatorType>
+    DeeplinksCoordinatorType: NavigationCoordinatorType,
+    UsecasesCoordinatorType: NavigationCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+  > = MainCoordinatorFactoryDelegateTypeMock<
+    DeeplinksCoordinatorType,
+    UsecasesCoordinatorType
+  > where UsecasesCoordinatorType.ModalDestination: DestinationType, UsecasesCoordinatorType.StackDestination: DestinationType
   
   @MainActor
   static func create() -> Dummy {
@@ -31,7 +46,7 @@ enum MainCoordinatorFactoryDelegateMock {
   
   @MainActor
   static func create<
-    UsecasesCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+    UsecasesCoordinatorType: NavigationCoordinatorType & StackCoordinatorType & ModalCoordinatorType
   >(
     usecasesCoordinator: UsecasesCoordinatorType
   ) -> DummyDeeplinks<UsecasesCoordinatorType> {
@@ -43,7 +58,7 @@ enum MainCoordinatorFactoryDelegateMock {
   
   @MainActor
   static func create<
-    DeeplinksCoordinatorType: ScreenCoordinatorType
+    DeeplinksCoordinatorType: NavigationCoordinatorType
   >(
     deeplinksCoordinator: DeeplinksCoordinatorType
   ) -> DummyUsecases<DeeplinksCoordinatorType> {
@@ -55,8 +70,8 @@ enum MainCoordinatorFactoryDelegateMock {
   
   @MainActor
   static func create<
-    DeeplinksCoordinatorType: ScreenCoordinatorType,
-    UsecasesCoordinatorType: ScreenCoordinatorType & StackCoordinatorType & ModalCoordinatorType
+    DeeplinksCoordinatorType: NavigationCoordinatorType,
+    UsecasesCoordinatorType: NavigationCoordinatorType & StackCoordinatorType & ModalCoordinatorType
   >(
     deeplinksCoordinator: DeeplinksCoordinatorType,
     usecasesCoordinator: UsecasesCoordinatorType

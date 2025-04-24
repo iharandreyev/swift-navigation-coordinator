@@ -60,10 +60,10 @@ struct DeeplinkTests {
     try await withTimeout(.seconds(1)) { @MainActor in
       #warning("TODO: Figure out how to reduce this boilerplate")
       // Simulate view presentation
-      _ = root.screenContent(for: .main)
-      _ = main.screenContent(for: .usecases)
+      _ = root.content(forSpecimen: .main)
+      _ = main.content(forSpecimen: .usecases)
       await main.navigator.replaceSpecimenDestination(with: MainTab.deeplinks)
-      _ = main.screenContent(for: .deeplinks)
+      _ = main.content(forSpecimen: .deeplinks)
       
       #expect(root.factory.createMainCoordinatorCalled)
       #expect(!root.factory.createAppInitScreenOnFinishCallbackVoidCalled)
@@ -71,7 +71,7 @@ struct DeeplinkTests {
       
       #expect(await root.handleDeeplink(Deeplink.showUsecasesAndModalSheet))
       #expect(main.navigator.specimenDestination() == MainTab.usecases)
-      #expect(usecases.navigator.modalDestination() == .sheet(UsecasesDestination.modalSheet))
+      #expect(usecases.navigator.modalDestination() == .sheet(UsecasesDestination.Modal.modalSheet))
     }
   }
   
@@ -90,10 +90,10 @@ struct DeeplinkTests {
 
     try await withTimeout(.seconds(1)) { @MainActor in
       // Simulate view presentation
-      _ = root.screenContent(for: .main)
-      _ = main.screenContent(for: .usecases)
+      _ = root.content(forSpecimen: .main)
+      _ = main.content(forSpecimen: .usecases)
       await main.navigator.replaceSpecimenDestination(with: MainTab.deeplinks)
-      _ = main.screenContent(for: .deeplinks)
+      _ = main.content(forSpecimen: .deeplinks)
       
       #expect(root.factory.createMainCoordinatorCalled)
       #expect(!root.factory.createAppInitScreenOnFinishCallbackVoidCalled)
@@ -101,7 +101,7 @@ struct DeeplinkTests {
       
       #expect(await root.handleDeeplink(Deeplink.showUsecasesAndModalCover))
       #expect(main.navigator.specimenDestination() == MainTab.usecases)
-      #expect(usecases.navigator.modalDestination() == .cover(UsecasesDestination.modalCover))
+      #expect(usecases.navigator.modalDestination() == .cover(UsecasesDestination.Modal.modalCover))
     }
   }
 }
