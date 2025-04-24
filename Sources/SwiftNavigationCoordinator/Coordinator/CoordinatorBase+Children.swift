@@ -5,6 +5,7 @@
 //  Created by Andreyeu, Ihar on 4/24/25.
 //
 
+#warning("TODO: Documentation")
 extension CoordinatorBase {
   @discardableResult
   public func addChild<

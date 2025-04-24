@@ -7,6 +7,7 @@
 
 import OrderedCollections
 
+#warning("TODO: Documentation")
 @MainActor
 public final class Navigator {
   private let createModalState: () -> ModalState

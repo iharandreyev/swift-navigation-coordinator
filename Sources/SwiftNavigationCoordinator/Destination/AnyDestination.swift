@@ -7,6 +7,7 @@
 
 import OrderedCollections
 
+#warning("TODO: Documentation")
 public struct AnyDestination: Sendable {
   internal let wrapped: Sendable
 

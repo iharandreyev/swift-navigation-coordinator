@@ -5,6 +5,7 @@
 //  Created by Andreyeu, Ihar on 3/26/25.
 //
 
+#warning("TODO: Documentation")
 @MainActor
 open class CoordinatorBase: NavigatorDelegate {
   private(set) weak var parent: CoordinatorBase?

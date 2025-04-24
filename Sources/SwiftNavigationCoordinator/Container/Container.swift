@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+#warning("TODO: Documentation")
+/*
+ A root container for any coordinator that is not in the root of the current navigation flow.
+ 
+ Subscribes to coordinator modal and stack presentation if necessary.
+ */
 public struct Container<
   Coordinator: NavigationCoordinatorType,
   Content: View

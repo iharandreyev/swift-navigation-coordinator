@@ -10,6 +10,7 @@ import Perception
 import SwiftUI
 import SwiftUINavigation
 
+#warning("TODO: Documentation")
 extension View {
   public func optionalModal<Coordinator: NavigationCoordinatorType>(
     for coordinator: Coordinator

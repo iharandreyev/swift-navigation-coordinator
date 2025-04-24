@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+#warning("TODO: Documentation")
 extension View {
   public func optionalStackDestination<Coordinator: NavigationCoordinatorType>(
     for coordinator: Coordinator
