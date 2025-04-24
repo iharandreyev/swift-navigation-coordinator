@@ -10,12 +10,12 @@ import SwiftUI
 extension View {
   public func optionalStackDestination<Coordinator: NavigationCoordinatorType>(
     for coordinator: Coordinator
-  ) -> some View {
+  ) -> ModifiedContent<Self, OptionalStackDestinationModifier<Coordinator>> {
     modifier(OptionalStackDestinationModifier(coordinator: coordinator))
   }
 }
 
-struct OptionalStackDestinationModifier<Coordinator: NavigationCoordinatorType>: ViewModifier {
+public struct OptionalStackDestinationModifier<Coordinator: NavigationCoordinatorType>: ViewModifier {
   private let coordinator: Coordinator
   private let isEnabled: Bool
   
@@ -24,7 +24,7 @@ struct OptionalStackDestinationModifier<Coordinator: NavigationCoordinatorType>:
     self.isEnabled = Coordinator.StackDestination.self != DestinationNever.self
   }
   
-  func body(content: Content) -> some View {
+  public func body(content: Content) -> some View {
     if isEnabled {
       activeBody(content: content)
     } else {

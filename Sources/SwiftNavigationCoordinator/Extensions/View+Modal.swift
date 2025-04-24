@@ -13,12 +13,12 @@ import SwiftUINavigation
 extension View {
   public func optionalModal<Coordinator: NavigationCoordinatorType>(
     for coordinator: Coordinator
-  ) -> some View {
+  ) -> ModifiedContent<Self, OptionalModalModifier<Coordinator>> {
     modifier(OptionalModalModifier(coordinator: coordinator))
   }
 }
 
-struct OptionalModalModifier<Coordinator: NavigationCoordinatorType>: ViewModifier {
+public struct OptionalModalModifier<Coordinator: NavigationCoordinatorType>: ViewModifier {
   private let coordinator: Coordinator
   
   @Perception.Bindable
@@ -32,7 +32,7 @@ struct OptionalModalModifier<Coordinator: NavigationCoordinatorType>: ViewModifi
     self.isEnabled = Coordinator.ModalDestination.self != DestinationNever.self
   }
   
-  func body(content: Content) -> some View {
+  public func body(content: Content) -> some View {
     if isEnabled {
       activeBody(content: content)
     } else {
