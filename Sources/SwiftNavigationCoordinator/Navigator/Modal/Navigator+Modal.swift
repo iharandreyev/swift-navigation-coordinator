@@ -35,3 +35,18 @@ extension Navigator {
     }
   }
 }
+
+extension Navigator {
+  @_disfavoredOverload
+  public func modalDestination<Destination: SomeDestination>(
+    for destinationType: Destination.Type = Destination.self,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) -> ModalDestinationPath<Destination>? {
+    _modalState.destination(for: destinationType, sourceFile: sourceFile, line: line)
+  }
+  
+  public func modalDestination() -> ModalDestinationPath<AnyIdentifiableDestination>? {
+    _modalState._destination
+  }
+}

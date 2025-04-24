@@ -160,3 +160,9 @@ extension Navigator {
     }
   }
 }
+
+extension Navigator {
+  public func stack() -> [AnyIdentifiableDestination] {
+    _stackState.stack()
+  }
+}

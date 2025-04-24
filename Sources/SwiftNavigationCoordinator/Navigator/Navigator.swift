@@ -70,38 +70,6 @@ public final class Navigator {
   }
 }
 
-extension Navigator {
-  @_disfavoredOverload
-  public func specimenDestination<Destination: SomeDestination>(
-    for destinationType: Destination.Type = Destination.self,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) -> Destination {
-    _specimenState.destination(for: destinationType, sourceFile: sourceFile, line: line)
-  }
-  
-  public func specimenDestination() -> AnyIdentifiableDestination {
-    _specimenState._destination
-  }
-  
-  @_disfavoredOverload
-  public func modalDestination<Destination: SomeDestination>(
-    for destinationType: Destination.Type = Destination.self,
-    sourceFile: StaticString = #file,
-    line: UInt = #line
-  ) -> ModalDestinationPath<Destination>? {
-    _modalState.destination(for: destinationType, sourceFile: sourceFile, line: line)
-  }
-  
-  public func modalDestination() -> ModalDestinationPath<AnyIdentifiableDestination>? {
-    _modalState._destination
-  }
-  
-  public func stack() -> [AnyIdentifiableDestination] {
-    _stackState.stack()
-  }
-}
-
 extension Navigator: ModalStateDelegate {
   func modalStateDidDismiss(_ destination: AnyIdentifiableDestination) {
     delegate?.navigatorDidDismissModalDestination(destination)

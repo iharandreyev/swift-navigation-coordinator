@@ -21,3 +21,18 @@ extension Navigator {
     }
   }
 }
+
+extension Navigator {
+  @_disfavoredOverload
+  public func specimenDestination<Destination: SomeDestination>(
+    for destinationType: Destination.Type = Destination.self,
+    sourceFile: StaticString = #file,
+    line: UInt = #line
+  ) -> Destination {
+    _specimenState.destination(for: destinationType, sourceFile: sourceFile, line: line)
+  }
+  
+  public func specimenDestination() -> AnyIdentifiableDestination {
+    _specimenState._destination
+  }
+}
