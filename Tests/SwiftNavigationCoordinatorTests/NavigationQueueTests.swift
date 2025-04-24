@@ -19,7 +19,7 @@ struct NavigationQueueTests {
       let sut = await createSut()
       
       await sut.schedule(
-        uiUpdate: { },
+        update: { },
         animated: true
       )
       
@@ -33,7 +33,7 @@ struct NavigationQueueTests {
       let sut = await createSut()
       
       await sut.schedule(
-        uiUpdate: { },
+        update: { },
         animated: false
       )
       
@@ -50,7 +50,7 @@ struct NavigationQueueTests {
         for _ in 0 ..< 10 {
           taskGroup.addTask {
             await sut.schedule(
-              uiUpdate: { },
+              update: { },
               animated: true
             )
           }

@@ -88,11 +88,10 @@ final class UsecasesCoordinator: CoordinatorBase, NavigationCoordinatorType, Sta
       .id(destination)
 
     case .multiChildFlow:
-      child(
-        of: MultiChildFlowCoordinator.self,
-        for: destination
+      initialContent(
+        for: destination,
+        ofChild: MultiChildFlowCoordinator.self
       )
-      .initialContent()
     }
   }
 
