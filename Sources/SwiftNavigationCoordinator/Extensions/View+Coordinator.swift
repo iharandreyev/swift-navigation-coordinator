@@ -14,7 +14,7 @@ extension View {
     for coordinator: CoordinatorType
   ) -> some View {
     self.modal(
-      modalNavigator: coordinator.modalNavigator,
+      navigator: coordinator.navigator,
       content: { [unowned coordinator] destination in
         coordinator.screen(for: destination)
       }
@@ -26,7 +26,7 @@ extension View {
     for coordinator: CoordinatorType
   ) -> some View {
     self.navigationDestination(
-      for: CoordinatorType.DestinationType.self,
+      for: CoordinatorType.Destination.self,
       destination: { [unowned coordinator] destination in
         coordinator.screen(for: destination)
       }

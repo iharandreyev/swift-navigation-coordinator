@@ -20,14 +20,14 @@ final class AppCoordinator<
 >: CoordinatorBase, CoordinatorType, SpecimenCoordinatorType {
   typealias DestinationType = AppDestination
   
-  let specimenNavigator: SpecimenNavigator<AppDestination>
+  let navigator: SpecimenNavigator<AppDestination>
   let factory: FactoryDelegateType
   
   init(
-    specimenNavigator: SpecimenNavigator<AppDestination>,
+    navigator: SpecimenNavigator<AppDestination>,
     factory: FactoryDelegateType
   ) {
-    self.specimenNavigator = specimenNavigator
+    self.navigator = navigator
     self.factory = factory
     
     super.init(onFinish: nil)
@@ -85,11 +85,11 @@ final class AppCoordinator<
   }
   
   func initDidFinish() async {
-    await specimenNavigator.replaceSpecimenDestination(with: .onboarding)
+    await navigator.replaceSpecimenDestination(with: .onboarding)
   }
 
   func onboardingDidFinish() async {
-    await specimenNavigator.replaceSpecimenDestination(with: .main)
+    await navigator.replaceSpecimenDestination(with: .main)
   }
   
   override func processDeeplink(
@@ -97,7 +97,7 @@ final class AppCoordinator<
   ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case _ as Deeplink:
-      guard specimenNavigator.destination == .main else {
+      guard navigator.destination == .main else {
         return .impossible
       }
       

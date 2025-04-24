@@ -20,11 +20,7 @@ public final class DummyCoordinator:
   LabelledSpecimenCoordinatorType
 {
   public typealias DestinationType = DummyDestination
-  
-  public let stackNavigator = StackNavigator<DestinationType>()
-  public let modalNavigator = ModalNavigator<DestinationType>()
-  public let specimenNavigator = SpecimenNavigator<DestinationType>(initialDestination: DestinationType())
-  
+
   public var onProcessDeeplink: (any DeeplinkEventType) async -> ProcessDeeplinkResult
   
   public init(
@@ -56,6 +52,10 @@ public final class DummyCoordinator:
     DummyView()
   }
   
+  public func screen(for destination: DestinationType) -> DummyView {
+    DummyView()
+  }
+  
   public func label(
     for destination: DestinationType
   ) -> DummyLabel {
@@ -69,7 +69,7 @@ public final class DummyCoordinator:
   }
 }
 
-public struct DummyDestination: ModalDestinationContentType {
+public struct DummyDestination: DestinationType {
   public let id: String
   
   public init(id: String = "dummy-destination") {

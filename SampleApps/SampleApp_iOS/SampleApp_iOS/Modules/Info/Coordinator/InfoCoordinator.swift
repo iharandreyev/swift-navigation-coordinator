@@ -18,15 +18,15 @@ final class InfoCoordinator<
 >: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType {
   typealias DestinationType = InfoDestination
   
-  let stackNavigator: StackNavigator<DestinationType>
+  let navigator: StackNavigator<DestinationType>
   let factory: FactoryDelegateType
 
   init(
-    stackNavigator: StackNavigator<DestinationType>,
+    navigator: StackNavigator<DestinationType>,
     factory: FactoryDelegateType,
     onFinish: Callback<Void>
   ) {
-    self.stackNavigator = stackNavigator
+    self.navigator = navigator
     self.factory = factory
     
     super.init(onFinish: onFinish)
@@ -53,6 +53,6 @@ final class InfoCoordinator<
   }
 
   func showLastScreen() async {
-    await stackNavigator.push(.last)
+    await navigator.push(.last)
   }
 }

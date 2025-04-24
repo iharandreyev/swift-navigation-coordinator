@@ -19,7 +19,7 @@ extension CoordinatedScreen {
     CoordinatorType: LabelledSpecimenCoordinatorType
   >(
     coordinator: CoordinatorType
-  ) -> some View where CoordinatorType.DestinationType: CaseIterable, CoordinatorType.DestinationType.AllCases: RandomAccessCollection {
+  ) -> some View where CoordinatorType.Destination: CaseIterable, CoordinatorType.Destination.AllCases: RandomAccessCollection {
     _CoordinatedScreen_Tabbed(coordinator: coordinator)
   }
   
@@ -34,7 +34,7 @@ extension CoordinatedScreen {
     CoordinatorType: LabelledSpecimenCoordinatorType
   >(
     coordinator: CoordinatorType,
-    tabs: [CoordinatorType.DestinationType]
+    tabs: [CoordinatorType.Destination]
   ) -> some View {
     _CoordinatedScreen_Tabbed(coordinator: coordinator, tabs: tabs)
   }
@@ -44,32 +44,32 @@ struct _CoordinatedScreen_Tabbed<
   CoordinatorType: LabelledSpecimenCoordinatorType
 >: View {
   private let coordinator: CoordinatorType
-  private let specimenNavigator: SpecimenNavigator<CoordinatorType.DestinationType>
+  private let navigator: Navigator
   
-  private let tabs: [CoordinatorType.DestinationType]
+  private let tabs: [CoordinatorType.Destination]
   
   init(
     coordinator: CoordinatorType
-  ) where CoordinatorType.DestinationType: CaseIterable, CoordinatorType.DestinationType.AllCases: RandomAccessCollection {
+  ) where CoordinatorType.Destination: CaseIterable, CoordinatorType.Destination.AllCases: RandomAccessCollection {
     self.init(
       coordinator: coordinator,
-      tabs: Array(CoordinatorType.DestinationType.allCases)
+      tabs: Array(CoordinatorType.Destination.allCases)
     )
   }
   
   init(
     coordinator: CoordinatorType,
-    tabs: [CoordinatorType.DestinationType]
+    tabs: [CoordinatorType.Destination]
   ) {
     self.coordinator = coordinator
-    self.specimenNavigator = coordinator.specimenNavigator
+    self.navigator = coordinator.navigator
     self.tabs = tabs
   }
   
   var body: some View {
     SpecimenContainer(
-      specimenNavigator: specimenNavigator,
-      destinationContent: { destination in
+      navigator: navigator,
+      destinationContent: { (destination: Binding<CoordinatorType.Destination>) in
         TabView(
           selection: destination
         ) {

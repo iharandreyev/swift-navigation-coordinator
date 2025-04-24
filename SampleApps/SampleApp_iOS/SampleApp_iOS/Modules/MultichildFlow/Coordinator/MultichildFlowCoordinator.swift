@@ -18,13 +18,13 @@ enum MultiChildFlowDestination: ScreenDestinationType {
 final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType, CoordinatorChildSearch {
   typealias DestinationType = MultiChildFlowDestination
 
-  let stackNavigator: StackNavigator<DestinationType>
+  let navigator: StackNavigator<DestinationType>
 
   init(
-    stackNavigator: StackNavigator<DestinationType>,
+    navigator: StackNavigator<DestinationType>,
     onFinish: Callback<Void>? = nil
   ) {
-    self.stackNavigator = stackNavigator
+    self.navigator = navigator
 
     super.init(onFinish: onFinish)
   }
@@ -80,11 +80,11 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
   }
 
   func showSelectPath() async {
-    await stackNavigator.push(.selectPath)
+    await navigator.push(.selectPath)
   }
 
   func showConfirmRestart() async {
-    await stackNavigator.push(.confirmRestart)
+    await navigator.push(.confirmRestart)
   }
 
   func showPathA() async {
@@ -92,12 +92,12 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     
     addChild(
       childFactory: {
-        MultiChildFlowPathACoordinator(stackNavigator: stackNavigator.scope())
+        MultiChildFlowPathACoordinator(navigator: navigator.scope())
       },
       as: destination
     )
 
-    await stackNavigator.push(destination)
+    await navigator.push(destination)
   }
 
   func showPathB() async {
@@ -105,16 +105,16 @@ final class MultiChildFlowCoordinator: CoordinatorBase, StackCoordinatorType, Sc
     
     addChild(
       childFactory: {
-        MultiChildFlowPathBCoordinator(modalNavigator: ModalNavigator())
+        MultiChildFlowPathBCoordinator(navigator: ModalNavigator())
       },
       as: destination
     )
 
-    await stackNavigator.push(destination)
+    await navigator.push(destination)
   }
 
   func restart() async {
-    await stackNavigator.popToRoot()
+    await navigator.popToRoot()
   }
 
   override func processDeeplink(

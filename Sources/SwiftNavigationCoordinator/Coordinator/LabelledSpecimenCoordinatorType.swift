@@ -12,5 +12,5 @@ public protocol LabelledSpecimenCoordinatorType: SpecimenCoordinatorType {
   associatedtype LabelType: View
   
   @ViewBuilder
-  func label(for tab: DestinationType) -> LabelType
+  func label(for tab: Destination) -> LabelType
 }

@@ -20,15 +20,15 @@ enum UsecasesDestination: String, ModalDestinationContentType {
 final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType, CoordinatorChildSearch {
   typealias DestinationType = UsecasesDestination
   
-  let stackNavigator: StackNavigator<DestinationType>
-  let modalNavigator: ModalNavigator<DestinationType>
+  let navigator: StackNavigator<DestinationType>
+  let navigator: ModalNavigator<DestinationType>
   
   init(
-    stackNavigator: StackNavigator<DestinationType> = StackNavigator(),
-    modalNavigator: ModalNavigator<DestinationType> = ModalNavigator()
+    navigator: StackNavigator<DestinationType> = StackNavigator(),
+    navigator: ModalNavigator<DestinationType> = ModalNavigator()
   ) {
-    self.stackNavigator = stackNavigator
-    self.modalNavigator = modalNavigator
+    self.navigator = navigator
+    self.navigator = navigator
   }
   
   func initialScreen() -> some View {
@@ -92,15 +92,15 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
   }
   
   private func showModalSheet() async {
-    await modalNavigator.presentDestination(.sheet(.modalSheet))
+    await navigator.presentDestination(.sheet(.modalSheet))
   }
   
   private func showModalCover() async {
-    await modalNavigator.presentDestination(.cover(.modalCover))
+    await navigator.presentDestination(.cover(.modalCover))
   }
   
   private func showPushedScreen() async {
-    await stackNavigator.push(.pushedScreen)
+    await navigator.push(.pushedScreen)
   }
   
   private func showMultiChildFlow() async {
@@ -109,7 +109,7 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
     addChild(
       childFactory: {
         MultiChildFlowCoordinator(
-          stackNavigator: stackNavigator.scope(),
+          navigator: navigator.scope(),
           onFinish: Callback { [unowned self] in
             await multiChildFlowDidFinish()
           }
@@ -118,12 +118,12 @@ final class UsecasesCoordinator: CoordinatorBase, ScreenCoordinatorType, StackCo
       as: destination
     )
     
-    await stackNavigator.push(destination)
+    await navigator.push(destination)
   }
 
 
   func multiChildFlowDidFinish() async {
-    await stackNavigator.popToRoot()
+    await navigator.popToRoot()
   }
 
   override func processDeeplink(

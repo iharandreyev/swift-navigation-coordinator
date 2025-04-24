@@ -40,7 +40,7 @@ struct OnboardingCoordinatorFactoryDelegate: OnboardingCoordinatorFactoryDelegat
     onFinish: Callback<Void>
   ) -> some ScreenCoordinatorType & StackCoordinatorType {
     InfoCoordinator(
-      stackNavigator: StackNavigator(),
+      navigator: StackNavigator(),
       factory: InfoCoordinatorFactoryDelegate(),
       onFinish: onFinish
     )

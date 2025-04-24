@@ -26,20 +26,20 @@ final class OnboardingCoordinator<
 >: CoordinatorBase, CoordinatorType, ScreenCoordinatorType, StackCoordinatorType, ModalCoordinatorType {
   typealias DestinationType = OnboardingDestination
   
-  let stackNavigator: StackNavigator<OnboardingDestination>
-  let modalNavigator: ModalNavigator<DestinationType>
+  let navigator: StackNavigator<OnboardingDestination>
+  let navigator: ModalNavigator<DestinationType>
   let factory: FactoryDelegateType
   
   private(set) var currentStepIdx = 0
   
   init(
-    stackNavigator: StackNavigator<DestinationType>,
-    modalNavigator: ModalNavigator<DestinationType>,
+    navigator: StackNavigator<DestinationType>,
+    navigator: ModalNavigator<DestinationType>,
     factory: FactoryDelegateType,
     onFinish: Callback<Void>
   ) {
-    self.stackNavigator = stackNavigator
-    self.modalNavigator = modalNavigator
+    self.navigator = navigator
+    self.navigator = navigator
     self.factory = factory
     
     super.init(onFinish: onFinish)
@@ -104,7 +104,7 @@ final class OnboardingCoordinator<
       return await finish()
     }
     
-    await stackNavigator.push(.step(nextStep))
+    await navigator.push(.step(nextStep))
   }
   
   private func nextStep() -> OnboardingStep? {
@@ -114,10 +114,10 @@ final class OnboardingCoordinator<
   }
   
   func showInfo() async {
-    await modalNavigator.presentDestination(.sheet(.info))
+    await navigator.presentDestination(.sheet(.info))
   }
   
   func infoDidFinish() async {
-    await modalNavigator.dismissDestination()
+    await navigator.dismissDestination()
   }
 }

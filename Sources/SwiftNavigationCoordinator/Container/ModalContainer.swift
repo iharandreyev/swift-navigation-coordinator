@@ -11,22 +11,22 @@ import SwiftUI
 import SwiftUINavigation
 
 public struct ModalContainer<
-  DestinationType: ModalDestinationContentType,
+  Destination: DestinationType,
   Root: View,
   DestinationContent: View
 >: ObservingView {
   @Perception.Bindable
-  private var modalNavigator: ModalNavigator<DestinationType>
+  private var state: ModalState
   
   private let root: () -> Root
-  private let destinationContent: (DestinationType) -> DestinationContent
+  private let destinationContent: (Destination) -> DestinationContent
   
   public init(
-    modalNavigator: ModalNavigator<DestinationType>,
+    navigator: Navigator,
     root: @escaping () -> Root,
-    destinationContent: @escaping (DestinationType) -> DestinationContent
+    destinationContent: @escaping (Destination) -> DestinationContent
   ) {
-    self.modalNavigator = modalNavigator
+    self.state = navigator._modalState
     self.root = root
     self.destinationContent = destinationContent
   }
@@ -34,11 +34,11 @@ public struct ModalContainer<
   public var content: some View {
     return root()
       .sheet(
-        item: $modalNavigator.destination().sheet,
+        item: $state.destination().sheet,
         content: destinationContent
       )
       .cover(
-        item: $modalNavigator.destination().cover,
+        item: $state.destination().cover,
         content: destinationContent
       )
   }

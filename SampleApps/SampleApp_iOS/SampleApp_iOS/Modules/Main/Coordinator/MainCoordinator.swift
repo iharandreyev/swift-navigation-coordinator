@@ -19,14 +19,14 @@ final class MainCoordinator<
 >: CoordinatorBase, CoordinatorType, StaticSpecimenCoordinatorType, LabelledSpecimenCoordinatorType {
   typealias DestinationType = MainTab
   
-  let specimenNavigator: SpecimenNavigator<MainTab>
+  let navigator: SpecimenNavigator<MainTab>
   let factory: FactoryDelegateType
   
   init(
-    specimenNavigator: SpecimenNavigator<MainTab>,
+    navigator: SpecimenNavigator<MainTab>,
     factory: FactoryDelegateType
   ) {
-    self.specimenNavigator = specimenNavigator
+    self.navigator = navigator
     self.factory = factory
     
     super.init(onFinish: nil)
@@ -77,7 +77,7 @@ final class MainCoordinator<
   ) async -> ProcessDeeplinkResult {
     switch deeplink {
     case Deeplink.showUsecases:
-      await specimenNavigator.replaceSpecimenDestination(with: .usecases)
+      await navigator.replaceSpecimenDestination(with: .usecases)
       return .done
       
     case
@@ -89,7 +89,7 @@ final class MainCoordinator<
       Deeplink.showMultiChildPathB,
       Deeplink.showMultiChildPathBFinish:
       
-      await specimenNavigator.replaceSpecimenDestination(with: .usecases)
+      await navigator.replaceSpecimenDestination(with: .usecases)
       return .partial
       
     default:

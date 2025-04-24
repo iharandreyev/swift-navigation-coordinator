@@ -15,13 +15,13 @@ enum MultiChildFlowPathADestination: ScreenDestinationType {
 final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorType, ScreenCoordinatorType {
   typealias DestinationType = MultiChildFlowPathADestination
   
-  let stackNavigator: StackNavigator<DestinationType>
+  let navigator: StackNavigator<DestinationType>
   
   init(
-    stackNavigator: StackNavigator<DestinationType>,
+    navigator: StackNavigator<DestinationType>,
     onFinish: Callback<Void>? = nil
   ) {
-    self.stackNavigator = stackNavigator
+    self.navigator = navigator
     
     super.init(onFinish: onFinish)
   }
@@ -47,7 +47,7 @@ final class MultiChildFlowPathACoordinator: CoordinatorBase, StackCoordinatorTyp
   }
   
   func proceedToFinishFlow() async {
-    await stackNavigator.push(.finish)
+    await navigator.push(.finish)
   }
   
   func finishFlow() async {

@@ -19,13 +19,13 @@ enum MultiChildFlowPathBDestination: String, ModalDestinationContentType {
 final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorType, ScreenCoordinatorType {
   typealias DestinationType = MultiChildFlowPathBDestination
   
-  let modalNavigator: ModalNavigator<DestinationType>
+  let navigator: ModalNavigator<DestinationType>
   
   init(
-    modalNavigator: ModalNavigator<DestinationType>,
+    navigator: ModalNavigator<DestinationType>,
     onFinish: Callback<Void>? = nil
   ) {
-    self.modalNavigator = modalNavigator
+    self.navigator = navigator
     
     super.init(onFinish: onFinish)
   }
@@ -51,11 +51,11 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
   }
   
   func proceedToFinishFlow() async {
-    await modalNavigator.presentDestination(.cover(.finish))
+    await navigator.presentDestination(.cover(.finish))
   }
   
   func finishFlow() async {
-    await modalNavigator.dismissDestination()
+    await navigator.dismissDestination()
     await handleChildEvent(MultiChildFlowPathBFinishEvent())
   }
   

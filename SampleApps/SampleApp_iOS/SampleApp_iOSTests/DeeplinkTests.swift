@@ -25,7 +25,7 @@ struct DeeplinkTests {
       initialDestination: AppDestination.appInit
     )
     let sut = AppCoordinator(
-      specimenNavigator: navigator,
+      navigator: navigator,
       factory: AppCoordinatorFactoryDelegateMock.create()
     )
     
@@ -49,13 +49,13 @@ struct DeeplinkTests {
   @Test
   func app_handles_showUsecasesAndModalSheet() async throws {
     let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
-    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
+    let usecases = UsecasesCoordinator(navigator: usecasesModalNavigator)
     
     let mainNavigator = SpecimenNavigator(
       initialDestination: MainTab.usecases
     )
     let main = MainCoordinator(
-      specimenNavigator: mainNavigator,
+      navigator: mainNavigator,
       factory: MainCoordinatorFactoryDelegateMock.create(usecasesCoordinator: usecases)
     )
     
@@ -63,7 +63,7 @@ struct DeeplinkTests {
       initialDestination: AppDestination.main
     )
     let root = AppCoordinator(
-      specimenNavigator: rootNavigator,
+      navigator: rootNavigator,
       factory: AppCoordinatorFactoryDelegateMock.create(mainCoordinator: main)
     )
     
@@ -89,13 +89,13 @@ struct DeeplinkTests {
   @Test
   func app_handles_showUsecasesAndModalCover() async throws {
     let usecasesModalNavigator = ModalNavigator<UsecasesDestination>()
-    let usecases = UsecasesCoordinator(modalNavigator: usecasesModalNavigator)
+    let usecases = UsecasesCoordinator(navigator: usecasesModalNavigator)
     
     let mainNavigator = SpecimenNavigator(
       initialDestination: MainTab.usecases
     )
     let main = MainCoordinator(
-      specimenNavigator: mainNavigator,
+      navigator: mainNavigator,
       factory: MainCoordinatorFactoryDelegateMock.create(usecasesCoordinator: usecases)
     )
     
@@ -103,7 +103,7 @@ struct DeeplinkTests {
       initialDestination: AppDestination.main
     )
     let root = AppCoordinator(
-      specimenNavigator: rootNavigator,
+      navigator: rootNavigator,
       factory: AppCoordinatorFactoryDelegateMock.create(mainCoordinator: main)
     )
 

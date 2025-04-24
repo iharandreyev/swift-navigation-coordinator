@@ -20,7 +20,7 @@ extension CoordinatedScreen {
     coordinator: CoordinatorType
   ) -> some View {
     SpecimenContainer(
-      specimenNavigator: coordinator.specimenNavigator,
+      navigator: coordinator.navigator,
       destinationContent: { [unowned coordinator] destination in
         coordinator.screen(
           for: destination.wrappedValue
