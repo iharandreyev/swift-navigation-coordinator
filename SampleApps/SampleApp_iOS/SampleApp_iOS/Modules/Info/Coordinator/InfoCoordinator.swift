@@ -43,16 +43,6 @@ final class InfoCoordinator<
   }
 
   @ViewBuilder
-  func content(forSpecimen destination: SpecimenDestination) -> some View {
-    EmptyView()
-  }
-
-  @ViewBuilder
-  func content(forModal destination: ModalDestination) -> some View {
-    EmptyView()
-  }
-
-  @ViewBuilder
   func content(forStack destination: StackDestination) -> some View {
     switch destination {
     case .last:

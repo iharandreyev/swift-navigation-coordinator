@@ -34,11 +34,6 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
       )
     }
   }
-  
-  @ViewBuilder
-  func content(forSpecimen destination: SpecimenDestination) -> some View {
-    EmptyView()
-  }
 
   @ViewBuilder
   func content(forModal destination: ModalDestination) -> some View {
@@ -50,11 +45,6 @@ final class MultiChildFlowPathBCoordinator: CoordinatorBase, ModalCoordinatorTyp
         }
       )
     }
-  }
-
-  @ViewBuilder
-  func content(forStack destination: StackDestination) -> some View {
-    EmptyView()
   }
 
   // MARK: - Logic
